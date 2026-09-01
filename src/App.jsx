@@ -218,7 +218,7 @@ export default function App() {
   const showMap = isNarrow || view !== "list";
   const showList = isNarrow || view !== "map";
   useEffect(() => {
-    fetch("/huts.json")
+    fetch(`${import.meta.env.BASE_URL}huts.json`)
       .then((res) => {
         if (!res.ok) throw new Error(res.status);
         return res.json();
@@ -228,7 +228,7 @@ export default function App() {
         setStatus("ready");
       })
       .catch(() => setStatus("error"));
-    fetch("/availability.json")
+    fetch(`${import.meta.env.BASE_URL}availability.json`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setAvail(data))
       .catch(() => setAvail(null));
