@@ -1,0 +1,231 @@
+/* ============================================================
+   HutFinder — design tokens
+   ------------------------------------------------------------
+   Every colour, size and timing the app uses, defined once.
+   In your components, replace hard-coded hex values with
+   var(--name). Changing a colour then means editing one line
+   here instead of hunting through App.jsx.
+
+   Fonts are loaded in main.jsx, not here. See the notes at the
+   bottom of this file.
+   ============================================================ */
+
+:root {
+
+  /* ---------- SURFACES ---------- */
+  --cream:        #F4F0E8;  /* page background */
+  --card:         #FBF9F4;  /* cards and panels — lifts off cream without a shadow */
+  --choco:        #3A2A20;  /* hero, footer, logo field, and all primary text */
+  --choco-deep:   #2A1E17;  /* footer, and the hover state for chocolate buttons */
+
+  /* ---------- TEXT ---------- */
+  --ink:          #3A2A20;  /* primary text — same value as --choco, named for its job */
+  --ink-soft:     #6E5A4B;  /* ALL secondary text: metadata, counts, timestamps */
+  /* Deliberately only two text colours. Build further hierarchy with
+     size and weight. A third, lighter grey is where contrast quietly fails. */
+
+  /* ---------- LINES ---------- */
+  --hair:         #E0D8CA;  /* dividers and card edges — decorative only */
+  --line-control: #8C7C68;  /* borders on anything clickable: chips, inputs, selects */
+
+  /* ---------- BLUE — the action colour ---------- */
+  --blue:         #35648F;  /* buttons, active chips, map pins */
+  --blue-deep:    #2C5378;  /* hover, pressed, and link text */
+  --powder:       #A9C8E8;  /* accents on dark backgrounds, map water, link underlines */
+  --powder-lt:    #DCE8F4;  /* badge fills, with --blue-deep text on top */
+
+  /* ---------- AVAILABILITY ---------- */
+  --pine:         #3F5F33;  /* 4 or more beds */
+  --rust:         #A5560E;  /* 1 to 3 beds */
+  --burgundy:     #6B2230;  /* full */
+  /* These three sit at similar lightness, so they cannot carry meaning
+     on their own. The gauge shape (filled / half / empty) and the number
+     do the work; colour only confirms. */
+
+  /* ---------- TYPEFACES ---------- */
+  --font-display: 'Fraunces Variable', Georgia, serif;
+  --font-ui:      'Figtree Variable', system-ui, -apple-system, sans-serif;
+
+  /* Fraunces axis presets. Apply with font-variation-settings.
+     opsz  — optical size, should roughly match the px size you're setting
+     SOFT  — how rounded the terminals are (0 sharp, 100 soft)
+     WONK  — the wobble. 0 is upright, 1 tilts and swells the letterforms. */
+  --fr-hero: 'opsz' 144, 'SOFT' 75, 'WONK' 1;   /* hero headline only */
+  --fr-head: 'opsz'  48, 'SOFT' 75, 'WONK' 0;   /* section headings */
+  --fr-name: 'opsz'  36, 'SOFT' 75, 'WONK' 0;   /* hut names */
+  --fr-mark: 'opsz'  96, 'SOFT' 100, 'WONK' 1;  /* the wordmark */
+
+  /* ---------- TYPE SCALE ---------- */
+  --t-hero:    74px;  --lh-hero:    1.00;
+  --t-section: 34px;  --lh-section: 1.10;
+  --t-name:    28px;  --lh-name:    1.12;
+  --t-body:    16px;  --lh-body:    1.65;
+  --t-meta:  14.5px;  --lh-meta:    1.50;
+  --t-label:   13px;  --lh-label:   1.30;
+
+  /* ---------- SPACING ---------- */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 76px;
+
+  /* ---------- SHAPE AND MOTION ---------- */
+  --radius:  4px;
+  --radius-pill: 100px;
+  --dur:  150ms;
+  --ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--t-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* No tabular figures anywhere. Figtree's tabular width is generous and
+   makes numbers look stretched. Column alignment comes from the layout
+   (a fixed-width, right-aligned span), not from the font. */
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 450;
+  margin: 0;
+}
+
+h1 { font-size: var(--t-hero);    line-height: var(--lh-hero);    font-variation-settings: var(--fr-hero); letter-spacing: -.015em; }
+h2 { font-size: var(--t-section); line-height: var(--lh-section); font-variation-settings: var(--fr-head); }
+h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation-settings: var(--fr-name); }
+
+/* One focus ring for the whole app. Replaces the browser's default blue,
+   which would clash with everything. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--blue-deep);
+  outline-offset: 3px;
+}
+
+/* Respect the system setting for people who get motion sick. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+
+.hf-btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 13px 24px;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+.hf-btn:hover { background: var(--blue-deep); }
+
+.hf-link {
+  color: var(--blue-deep);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--powder);
+}
+.hf-link:hover { border-bottom-color: var(--blue-deep); }
+
+.hf-chip {
+  font-family: var(--font-ui);
+  font-size: var(--t-meta);
+  font-weight: 500;
+  padding: 8px 15px;
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease),
+              border-color var(--dur) var(--ease),
+              color var(--dur) var(--ease);
+}
+.hf-chip:hover { background: #EAE4D8; }
+.hf-chip[aria-pressed="true"] {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  font-weight: 600;
+}
+
+.hf-card {
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  padding: 26px 28px 28px;
+  transition: border-color var(--dur) var(--ease);
+}
+.hf-card:hover { border-color: var(--line-control); }
+
+.hf-badge {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 3px;
+  background: #EDE6D9;
+  color: var(--ink);
+}
+.hf-badge--club {
+  background: var(--powder-lt);
+  color: var(--blue-deep);
+}
+
+/* Availability row. The count is right-aligned in a fixed-width span,
+   which is what keeps the column straight without tabular figures. */
+.hf-bedrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 15px;
+}
+.hf-bedrow__label { flex: 1; color: var(--ink-soft); }
+.hf-bedrow__count {
+  font-weight: 700;
+  font-size: 17px;
+  min-width: 34px;
+  text-align: right;
+}
+.hf-gauge { width: 13px; height: 13px; flex: none; display: block; }
+
+.hf-count--many { color: var(--pine); }
+.hf-count--few  { color: var(--rust); }
+.hf-count--none { color: var(--burgundy); }
+
+
+/* ============================================================
+   FONT LOADING — do this in src/main.jsx, above your other imports:
+
+     import '@fontsource-variable/fraunces/full.css'
+     import '@fontsource-variable/figtree'
+     import './tokens.css'
+
+   The '/full.css' on Fraunces matters. The default import gives you
+   the weight axis only, and every SOFT and WONK setting in this file
+   would silently do nothing.
+   ============================================================ */

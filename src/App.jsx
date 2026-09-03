@@ -66,9 +66,9 @@ function isNumber(v) {
 
 // traffic light for free beds: red = full, amber = nearly full (1–3), green = space (4+)
 function bedColor(n) {
-  if (n <= 0) return "#c0392b";
-  if (n <= 3) return "#c98a00";
-  return "#1a7f4b";
+  if (n <= 0) return "var(--burgundy)";
+  if (n <= 3) return "var(--rust)";
+  return "var(--pine)";
 }
 
 function fmtISO(s) {
@@ -122,19 +122,17 @@ function nightsBetween(from, to) {
   return list;
 }
 
-function Dot({ color }) {
+function Dot({ n, color }) {
+  const c = color || bedColor(n);
+  const lvl = n <= 0 ? "empty" : n <= 3 ? "half" : "full";
   return (
-    <span
-      style={{
-        display: "inline-block",
-        width: 9,
-        height: 9,
-        borderRadius: 9,
-        background: color,
-        marginRight: 6,
-        verticalAlign: "middle",
-      }}
-    />
+    <svg width="11" height="11" viewBox="0 0 20 20" aria-hidden="true"
+      style={{ display: "inline-block", marginRight: 6, verticalAlign: "-1px" }}>
+      {lvl === "full" ? <circle cx="10" cy="10" r="8" fill={c} /> : null}
+      {lvl === "half" ? <circle cx="10" cy="10" r="8" fill="none" stroke={c} strokeWidth="2.8" /> : null}
+      {lvl === "half" ? <path d="M10 2a8 8 0 0 1 0 16z" fill={c} /> : null}
+      {lvl === "empty" ? <circle cx="10" cy="10" r="8" fill="none" stroke={c} strokeWidth="2.8" /> : null}
+    </svg>
   );
 }
 
@@ -143,9 +141,9 @@ function Pill({ active, onClick, label, count }) {
     <button
       onClick={onClick}
       style={{
-        border: active ? "1px solid #1a1a1a" : "1px solid #dcdcdc",
-        background: active ? "#1a1a1a" : "#fff",
-        color: active ? "#fff" : "#333",
+        border: active ? "1px solid var(--ink)" : "1px solid var(--hair)",
+        background: active ? "var(--blue)" : "var(--card)",
+        color: active ? "#fff" : "var(--ink)",
         borderRadius: 999,
         padding: "0.32rem 0.72rem",
         marginRight: "0.4rem",
@@ -171,7 +169,7 @@ function FilterGroup({ label, children }) {
           fontSize: "0.7rem",
           letterSpacing: "0.08em",
           textTransform: "uppercase",
-          color: "#999",
+          color: "var(--ink-soft)",
           marginBottom: "0.45rem",
         }}
       >
@@ -270,14 +268,14 @@ export default function App() {
     return (
       <>
         <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>{hut.name}</div>
-        <div style={{ color: "#555", fontSize: "0.9rem", marginTop: "0.2rem" }}>
+        <div style={{ color: "var(--ink-soft)", fontSize: "0.9rem", marginTop: "0.2rem" }}>
           {TYPE_LABEL[hut.type] || hut.type}
           {hut.region ? ` · ${hut.region}` : ""}
           {isNumber(hut.elevation)
             ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
             : ""}
         </div>
-        <div style={{ color: "#777", fontSize: "0.85rem", marginTop: "0.35rem" }}>
+        <div style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.35rem" }}>
           {isNumber(hut.hr_capacity)
             ? `${hut.hr_capacity} beds`
             : hut.sleeping > 0
@@ -294,7 +292,7 @@ export default function App() {
           {hut.website ? (
             <>
               {" · "}
-              <a href={hut.website} target="_blank" rel="noreferrer">
+              <a href={hut.website} target="_blank" rel="noreferrer" style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}>
                 website
               </a>
             </>
@@ -306,9 +304,9 @@ export default function App() {
             style={{
               marginTop: "0.6rem",
               paddingTop: "0.55rem",
-              borderTop: "1px solid #eee",
+              borderTop: "1px solid var(--hair)",
               fontSize: "0.85rem",
-              color: "#555",
+              color: "var(--ink-soft)",
             }}
           >
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.55rem" }}>
@@ -317,11 +315,11 @@ export default function App() {
                 target="_blank"
                 rel="noreferrer"
                 style={{
-                  background: "#1a7f4b",
+                  background: "var(--blue)",
                   color: "#fff",
                   textDecoration: "none",
                   padding: "0.3rem 0.65rem",
-                  borderRadius: 6,
+                  borderRadius: "var(--radius)",
                   fontWeight: 600,
                   fontSize: "0.82rem",
                   whiteSpace: "nowrap",
@@ -335,7 +333,7 @@ export default function App() {
                 {hut.hr_dogs === true ? " · dogs welcome" : hut.hr_dogs === false ? " · no dogs" : ""}
               </span>
               {hut.hr_price_pdf ? (
-                <a href={hut.hr_price_pdf} target="_blank" rel="noreferrer" style={{ color: "#888" }}>
+                <a href={hut.hr_price_pdf} target="_blank" rel="noreferrer" style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}>
                   price list
                 </a>
               ) : null}
@@ -345,7 +343,7 @@ export default function App() {
               <div style={{ marginTop: "0.5rem" }}>
                 {nights.length && mins && rec && rec.caps ? (
                   <>
-                    <div style={{ color: "#888", fontSize: "0.78rem", marginBottom: "0.25rem" }}>
+                    <div style={{ color: "var(--ink-soft)", fontSize: "0.78rem", marginBottom: "0.25rem" }}>
                       Free {rangeLabel}
                       {nights.length > 1 ? " · fewest across your nights" : ""}
                     </div>
@@ -363,24 +361,24 @@ export default function App() {
                             padding: "1px 0",
                           }}
                         >
-                          <span style={{ color: "#666" }}>
-                            <Dot color={bedColor(n)} />
+                          <span style={{ color: "var(--ink-soft)" }}>
+                            <Dot n={n} />
                             {BUCKET_LABEL[k]}
                           </span>
-                          <span style={{ color: n > 0 ? "#1a1a1a" : "#bbb", fontWeight: 500 }}>
-                            {n} {n === 1 ? "bed" : "beds"}
+                          <span style={{ color: bedColor(n), fontWeight: 700 }}>
+                            {n > 0 ? `${n} ${n === 1 ? "bed" : "beds"}` : "Full"}
                           </span>
                         </div>
                       );
                     })}
                   </>
                 ) : nf ? (
-                  <span style={{ color: "#666" }}>
-                    <Dot color="#1a7f4b" />
+                  <span style={{ color: "var(--ink-soft)" }}>
+                    <Dot n={nf.free} />
                     Next free: {fmtISO(nf.date)} ({nf.free} beds)
                   </span>
                 ) : rec ? (
-                  <span style={{ color: "#aaa" }}>No open dates in the next months</span>
+                  <span style={{ color: "var(--ink-soft)" }}>No open dates in the next months</span>
                 ) : null}
               </div>
             ) : null}
@@ -510,18 +508,24 @@ export default function App() {
       : "";
 
   return (
-    <div style={{ background: "#fff", color: "#1a1a1a", minHeight: "100vh", width: "100%" }}>
+    <div style={{ background: "var(--cream)", color: "var(--ink)", minHeight: "100vh", width: "100%" }}>
       <div
         style={{
           maxWidth: 720,
           margin: "0 auto",
           padding: "2rem 1rem",
-          fontFamily: "system-ui, sans-serif",
+          fontFamily: "var(--font-ui)",
           textAlign: "left",
         }}
       >
-        <h1 style={{ fontSize: "1.6rem", marginBottom: "0.25rem" }}>Hüttenfinder</h1>
-        <p style={{ color: "#666", marginTop: 0 }}>
+        <h1 style={{ margin: "0 0 0.5rem" }}>
+          <img
+            src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
+            alt="Hüttenfinder"
+            style={{ height: 30, display: "block" }}
+          />
+        </h1>
+        <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>
           {status === "ready"
             ? nights.length
               ? `${filtered.length} huts with space ${rangeLabel}`
@@ -531,7 +535,7 @@ export default function App() {
 
         {status === "loading" && <p>Loading huts…</p>}
         {status === "error" && (
-          <p style={{ color: "#c00" }}>
+          <p style={{ color: "var(--burgundy)" }}>
             Couldn't load huts.json — check it's in the <code>public</code> folder.
           </p>
         )}
@@ -553,7 +557,7 @@ export default function App() {
             />
 
             <FilterGroup label="Available (nights)">
-              <label style={{ fontSize: "0.8rem", color: "#777", marginRight: "0.35rem" }}>
+              <label style={{ fontSize: "0.8rem", color: "var(--ink-soft)", marginRight: "0.35rem" }}>
                 Check in
               </label>
               <input
@@ -567,12 +571,12 @@ export default function App() {
                 style={{
                   padding: "0.45rem 0.55rem",
                   fontSize: "0.95rem",
-                  border: "1px solid #cdd8d2",
+                  border: "1px solid var(--hair)",
                   borderRadius: 6,
                   marginRight: "0.6rem",
                 }}
               />
-              <label style={{ fontSize: "0.8rem", color: "#777", marginRight: "0.35rem" }}>
+              <label style={{ fontSize: "0.8rem", color: "var(--ink-soft)", marginRight: "0.35rem" }}>
                 Check out
               </label>
               <input
@@ -584,7 +588,7 @@ export default function App() {
                 style={{
                   padding: "0.45rem 0.55rem",
                   fontSize: "0.95rem",
-                  border: "1px solid #cdd8d2",
+                  border: "1px solid var(--hair)",
                   borderRadius: 6,
                   marginRight: "0.5rem",
                   opacity: from ? 1 : 0.5,
@@ -599,7 +603,7 @@ export default function App() {
                   style={{
                     border: "none",
                     background: "none",
-                    color: "#777",
+                    color: "var(--ink-soft)",
                     textDecoration: "underline",
                     cursor: "pointer",
                     fontSize: "0.85rem",
@@ -609,12 +613,12 @@ export default function App() {
                 </button>
               )}
               {from && !avail && (
-                <span style={{ color: "#c0392b", fontSize: "0.8rem", marginLeft: "0.5rem" }}>
+                <span style={{ color: "var(--burgundy)", fontSize: "0.8rem", marginLeft: "0.5rem" }}>
                   availability.json didn’t load — run fetch_availability.py
                 </span>
               )}
               {generated && (
-                <div style={{ color: "#aaa", fontSize: "0.72rem", marginTop: "0.35rem", width: "100%" }}>
+                <div style={{ color: "var(--ink-soft)", fontSize: "0.72rem", marginTop: "0.35rem", width: "100%" }}>
                   {nights.length > 1 ? `${nights.length} nights · ` : ""}availability as of {generated}
                 </div>
               )}
@@ -742,7 +746,7 @@ export default function App() {
                 style={{
                   border: "none",
                   background: "none",
-                  color: "#777",
+                  color: "var(--ink-soft)",
                   textDecoration: "underline",
                   cursor: "pointer",
                   fontSize: "0.85rem",
@@ -764,9 +768,9 @@ export default function App() {
                     key={k}
                     onClick={() => setView(k)}
                     style={{
-                      border: "1px solid #e2e2e2",
-                      background: view === k ? "#1a1a1a" : "transparent",
-                      color: view === k ? "#fff" : "#777",
+                      border: "1px solid var(--hair)",
+                      background: view === k ? "var(--ink)" : "transparent",
+                      color: view === k ? "#fff" : "var(--ink-soft)",
                       borderRadius: 6,
                       padding: "0.3rem 0.8rem",
                       fontSize: "0.82rem",
@@ -790,7 +794,7 @@ export default function App() {
             >
               <div style={{ flex: 1, minWidth: 0, width: "100%", display: showList ? "block" : "none" }}>
             {filtered.length === 0 ? (
-              <p style={{ color: "#777", marginTop: "1.5rem" }}>
+              <p style={{ color: "var(--ink-soft)", marginTop: "1.5rem" }}>
                 {nights.length
                   ? `No bookable huts with space ${rangeLabel} match these filters.`
                   : "No huts match these filters."}{" "}
@@ -799,7 +803,7 @@ export default function App() {
                   style={{
                     border: "none",
                     background: "none",
-                    color: "#1a1a1a",
+                    color: "var(--ink)",
                     textDecoration: "underline",
                     cursor: "pointer",
                     fontSize: "inherit",
@@ -816,7 +820,7 @@ export default function App() {
                   <li
                     key={hut.id}
                     style={{
-                      border: "1px solid #e2e2e2",
+                      border: "1px solid var(--hair)",
                       borderRadius: 8,
                       padding: "0.9rem 1rem",
                       marginBottom: "0.75rem",
@@ -829,12 +833,12 @@ export default function App() {
             )}
 
             {hiddenCount > 0 && (
-              <p style={{ color: "#999", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+              <p style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
                 Showing the first {RESULT_LIMIT} — narrow the filters to see the other {hiddenCount}.
               </p>
             )}
 
-            <p style={{ color: "#bbb", fontSize: "0.75rem", marginTop: "1.5rem" }}>
+            <p style={{ color: "var(--ink-soft)", fontSize: "0.75rem", marginTop: "1.5rem" }}>
               * elevation estimated from coordinates
             </p>
                           </div>
@@ -847,7 +851,7 @@ export default function App() {
                     position: isNarrow ? "relative" : "sticky",
                     top: isNarrow ? undefined : "1rem",
                     height: isNarrow ? "48vh" : "74vh",
-                    border: "1px solid #e2e2e2",
+                    border: "1px solid var(--hair)",
                     borderRadius: 12,
                     overflow: "hidden",
                   }}
@@ -873,7 +877,7 @@ export default function App() {
                 <div
                   onClick={(e) => e.stopPropagation()}
                   style={{
-                    background: "#fff",
+                    background: "var(--card)",
                     borderRadius: 12,
                     padding: "1.25rem 1.4rem",
                     width: "100%",
@@ -892,7 +896,7 @@ export default function App() {
                       right: "0.7rem",
                       border: "none",
                       background: "none",
-                      color: "#999",
+                      color: "var(--ink-soft)",
                       fontSize: "1.3rem",
                       lineHeight: 1,
                       cursor: "pointer",
