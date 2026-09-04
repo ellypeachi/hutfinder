@@ -195,10 +195,10 @@ export default function App() {
   const [avail, setAvail] = useState(null);
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
-  const [region, setRegion] = useState(null);
-  const [type, setType] = useState(null);
+  const [region, setRegion] = useState([]); // MULTI_SELECT
+  const [type, setType] = useState([]); // MULTI_SELECT
   const [warden, setWarden] = useState(null);
-  const [elev, setElev] = useState(null);
+  const [elev, setElev] = useState([]); // MULTI_SELECT
   const [assoc, setAssoc] = useState(null);
   const [showerOnly, setShowerOnly] = useState(false);
   const [bookableOnly, setBookableOnly] = useState(false);
@@ -208,7 +208,9 @@ export default function App() {
   const [view, setView] = useState("split");
   const [selected, setSelected] = useState(null);
   const [showMore, setShowMore] = useState(false);
-  const moreCount = [bookableOnly, type, elev, warden, assoc, showerOnly].filter(Boolean).length;
+  const moreCount =
+    [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +
+    [type, elev].filter((a) => a.length).length;
     const isNarrow = useIsNarrow();
       useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setSelected(null);
@@ -396,10 +398,10 @@ export default function App() {
   const passes = (h, skip) => {
     if (skip !== "query" && query && !h.name.toLowerCase().includes(query.toLowerCase()))
       return false;
-    if (skip !== "region" && region && regionOf(h) !== region) return false;
-    if (skip !== "type" && type && h.type !== type) return false;
+    if (skip !== "region" && region.length && !region.includes(regionOf(h))) return false;
+    if (skip !== "type" && type.length && !type.includes(h.type)) return false;
     if (skip !== "warden" && warden && h.warden !== warden) return false;
-    if (skip !== "elev" && elev && bandOf(h) !== elev) return false;
+    if (skip !== "elev" && elev.length && !elev.includes(bandOf(h))) return false;
     if (skip !== "assoc" && assoc && h.association !== assoc) return false;
     if (skip !== "shower" && showerOnly && h.shower !== true) return false;
     if (skip !== "bookable" && bookableOnly && !h.hr_hut_id) return false;
@@ -485,14 +487,16 @@ export default function App() {
   );
 
   const anyFilter =
-    region || type || warden || elev || assoc || showerOnly || bookableOnly || from || roomType || query;
+    region.length || type.length || warden || elev.length || assoc || showerOnly || bookableOnly || from || roomType || query;
   const anyNonDate =
-    region || type || warden || elev || assoc || showerOnly || bookableOnly || roomType || query;
+    region.length || type.length || warden || elev.length || assoc || showerOnly || bookableOnly || roomType || query;
+  const toggle = (arr, setArr, v) =>
+    setArr(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   const clearAll = () => {
-    setRegion(null);
-    setType(null);
+    setRegion([]);
+    setType([]);
     setWarden(null);
-    setElev(null);
+    setElev([]);
     setAssoc(null);
     setShowerOnly(false);
     setBookableOnly(false);
@@ -503,17 +507,23 @@ export default function App() {
   const WARDEN_LABEL = { bewirtschaftet: "Serviced", selbstversorger: "Self-service" };
   const activeChips = [];
   if (query) activeChips.push({ k: "q", label: `“${query}”`, clear: () => setQuery("") });
-  if (region) activeChips.push({ k: "region", label: region, clear: () => setRegion(null) });
+  for (const r of region)
+    activeChips.push({ k: "region:" + r, label: r, clear: () => toggle(region, setRegion, r) });
   if (roomType)
     activeChips.push({ k: "roomType", label: BUCKET_LABEL[roomType] || roomType, clear: () => setRoomType(null) });
   if (bookableOnly)
     activeChips.push({ k: "bookable", label: "Bookable online", clear: () => setBookableOnly(false) });
-  if (type) activeChips.push({ k: "type", label: TYPE_LABEL[type] || type, clear: () => setType(null) });
+  for (const t of type)
+    activeChips.push({ k: "type:" + t, label: TYPE_LABEL[t] || t, clear: () => toggle(type, setType, t) });
   if (warden)
     activeChips.push({ k: "warden", label: WARDEN_LABEL[warden] || warden, clear: () => setWarden(null) });
-  if (elev) {
-    const band = ELEV_BANDS.find((b) => b.key === elev);
-    activeChips.push({ k: "elev", label: band ? band.label : "Elevation unknown", clear: () => setElev(null) });
+  for (const e of elev) {
+    const band = ELEV_BANDS.find((b) => b.key === e);
+    activeChips.push({
+      k: "elev:" + e,
+      label: band ? band.label : "Elevation unknown",
+      clear: () => toggle(elev, setElev, e),
+    });
   }
   if (assoc) activeChips.push({ k: "assoc", label: ASSOC_LABEL[assoc] || assoc, clear: () => setAssoc(null) });
   if (showerOnly) activeChips.push({ k: "shower", label: "Shower", clear: () => setShowerOnly(false) });
@@ -648,12 +658,12 @@ export default function App() {
 
 
             <FilterGroup label="Region">
-              <Pill active={!region} onClick={() => setRegion(null)} label="All" />
+              <Pill active={!region.length} onClick={() => setRegion([])} label="All" />
               {presentRegions.map((r) => (
                 <Pill
                   key={r}
-                  active={region === r}
-                  onClick={() => setRegion(region === r ? null : r)}
+                  active={region.includes(r)}
+                  onClick={() => toggle(region, setRegion, r)}
                   label={r}
                   count={regionCounts[r] || 0}
                 />
@@ -808,13 +818,13 @@ export default function App() {
             </FilterGroup>
 
             <FilterGroup label="Type">
-              <Pill active={!type} onClick={() => setType(null)} label="All" />
+              <Pill active={!type.length} onClick={() => setType([])} label="All" />
               {["schutzhuette", "alm", "jausenstation"].map((t) =>
-                typeCounts[t] > 0 || type === t ? (
+                typeCounts[t] > 0 || type.includes(t) ? (
                   <Pill
                     key={t}
-                    active={type === t}
-                    onClick={() => setType(type === t ? null : t)}
+                    active={type.includes(t)}
+                    onClick={() => toggle(type, setType, t)}
                     label={TYPE_LABEL[t] || t}
                     count={typeCounts[t] || 0}
                   />
@@ -823,22 +833,22 @@ export default function App() {
             </FilterGroup>
 
             <FilterGroup label="Elevation">
-              <Pill active={!elev} onClick={() => setElev(null)} label="All" />
+              <Pill active={!elev.length} onClick={() => setElev([])} label="All" />
               {ELEV_BANDS.map((b) =>
-                elevCounts[b.key] > 0 || elev === b.key ? (
+                elevCounts[b.key] > 0 || elev.includes(b.key) ? (
                   <Pill
                     key={b.key}
-                    active={elev === b.key}
-                    onClick={() => setElev(elev === b.key ? null : b.key)}
+                    active={elev.includes(b.key)}
+                    onClick={() => toggle(elev, setElev, b.key)}
                     label={b.label}
                     count={elevCounts[b.key] || 0}
                   />
                 ) : null
               )}
-              {elevCounts[ELEV_UNKNOWN] > 0 || elev === ELEV_UNKNOWN ? (
+              {elevCounts[ELEV_UNKNOWN] > 0 || elev.includes(ELEV_UNKNOWN) ? (
                 <Pill
-                  active={elev === ELEV_UNKNOWN}
-                  onClick={() => setElev(elev === ELEV_UNKNOWN ? null : ELEV_UNKNOWN)}
+                  active={elev.includes(ELEV_UNKNOWN)}
+                  onClick={() => toggle(elev, setElev, ELEV_UNKNOWN)}
                   label="Elevation unknown"
                   count={elevCounts[ELEV_UNKNOWN] || 0}
                 />

@@ -1,8 +1,9 @@
 """
 Hüttenfinder — multi-select filters.
 
-Region, type, warden, elevation and association become multi-select (OR
-within a category, AND across categories). Room type stays single-select
+Region, type and elevation become multi-select (OR within a category,
+AND across categories). Warden and association stay single-select — two
+options each, so multi-select adds nothing. Room type stays single too,
 because it drives the bed counts rather than just hiding rows.
 
 Run from the project folder:   python3 patch_multi.py
@@ -11,8 +12,7 @@ Backs up to src/App.jsx.premulti and refuses to run twice.
 import io, re, shutil, sys
 
 P = 'src/App.jsx'
-FIELDS = [('region', 'Region'), ('type', 'Type'), ('warden', 'Warden'),
-          ('elev', 'Elev'), ('assoc', 'Assoc')]
+FIELDS = [('region', 'Region'), ('type', 'Type'), ('elev', 'Elev')]
 
 try:
     s = io.open(P, encoding='utf-8').read()
@@ -77,8 +77,8 @@ m = re.search(r'const moreCount = \[[^\]]*\]\.filter\(Boolean\)\.length;', s)
 if m:
     s = s.replace(m.group(0),
                   'const moreCount =\n'
-                  '    [bookableOnly, showerOnly].filter(Boolean).length +\n'
-                  '    [type, elev, warden, assoc].filter((a) => a.length).length;', 1)
+                  '    [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +\n'
+                  '    [type, elev].filter((a) => a.length).length;', 1)
 else:
     problems.append('moreCount')
 
@@ -94,10 +94,6 @@ s = re.sub(r'  if \(type\) activeChips\.push\(\{ k: "type", label: TYPE_LABEL\[t
            '  for (const t of type)\n'
            '    activeChips.push({ k: "type:" + t, label: TYPE_LABEL[t] || t, clear: () => toggle(type, setType, t) });', s)
 
-s = re.sub(r'  if \(warden\)\n    activeChips\.push\(\{ k: "warden", label: WARDEN_LABEL\[warden\] \|\| warden, clear: \(\) => setWarden\(null\) \}\);',
-           '  for (const w of warden)\n'
-           '    activeChips.push({ k: "warden:" + w, label: WARDEN_LABEL[w] || w, clear: () => toggle(warden, setWarden, w) });', s)
-
 s = re.sub(r'  if \(elev\) \{\n.*?\n  \}\n',
            '  for (const e of elev) {\n'
            '    const band = ELEV_BANDS.find((b) => b.key === e);\n'
@@ -107,10 +103,6 @@ s = re.sub(r'  if \(elev\) \{\n.*?\n  \}\n',
            '      clear: () => toggle(elev, setElev, e),\n'
            '    });\n'
            '  }\n', s, count=1, flags=re.S)
-
-s = re.sub(r'  if \(assoc\) activeChips\.push\(\{ k: "assoc", label: ASSOC_LABEL\[assoc\] \|\| assoc, clear: \(\) => setAssoc\(null\) \}\);',
-           '  for (const a of assoc)\n'
-           '    activeChips.push({ k: "assoc:" + a, label: ASSOC_LABEL[a] || a, clear: () => toggle(assoc, setAssoc, a) });', s)
 
 # 8. the pills
 names = '|'.join(lo for lo, _ in FIELDS)
@@ -128,6 +120,6 @@ if problems:
 shutil.copy(P, P + '.premulti')
 io.open(P, 'w', encoding='utf-8').write(s)
 print('Patched src/App.jsx')
-print('  multi-select: region, type, warden, elevation, association')
-print('  single-select: room type (drives the bed counts)')
+print('  multi-select: region, type, elevation')
+print('  single-select: warden, association, room type')
 print('  backup: src/App.jsx.premulti')
