@@ -207,6 +207,8 @@ export default function App() {
   const [roomType, setRoomType] = useState(null); // "dorm" | "shared" | "priv" | null
   const [view, setView] = useState("split");
   const [selected, setSelected] = useState(null);
+  const [showMore, setShowMore] = useState(false);
+  const moreCount = [bookableOnly, type, elev, warden, assoc, showerOnly].filter(Boolean).length;
     const isNarrow = useIsNarrow();
       useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setSelected(null);
@@ -626,6 +628,20 @@ export default function App() {
               )}
             </FilterGroup>
 
+
+            <FilterGroup label="Region">
+              <Pill active={!region} onClick={() => setRegion(null)} label="All" />
+              {presentRegions.map((r) => (
+                <Pill
+                  key={r}
+                  active={region === r}
+                  onClick={() => setRegion(region === r ? null : r)}
+                  label={r}
+                  count={regionCounts[r] || 0}
+                />
+              ))}
+            </FilterGroup>
+
             {avail && (
               <FilterGroup label="Room type">
                 <Pill active={!roomType} onClick={() => setRoomType(null)} label="Any" />
@@ -643,6 +659,88 @@ export default function App() {
               </FilterGroup>
             )}
 
+            <button
+              onClick={() => setShowMore(true)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.45rem",
+                background: "transparent",
+                border: "1px solid var(--line-control)",
+                borderRadius: 100,
+                color: "var(--ink)",
+                padding: "0.45rem 0.95rem",
+                fontSize: "0.85rem",
+                fontWeight: 500,
+                cursor: "pointer",
+                marginBottom: "1rem",
+              }}
+            >
+              More filters
+              {moreCount > 0 ? (
+                <span
+                  style={{
+                    background: "var(--blue)",
+                    color: "#fff",
+                    borderRadius: 100,
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    padding: "0.08rem 0.42rem",
+                  }}
+                >
+                  {moreCount}
+                </span>
+              ) : null}
+            </button>
+
+            {/* MORE_FILTERS_PANEL */}
+            {showMore ? (
+              <div
+                style={
+                  isNarrow
+                    ? {
+                        position: "fixed",
+                        inset: 0,
+                        zIndex: 1000,
+                        background: "var(--cream)",
+                        overflowY: "auto",
+                        padding: "1rem 1rem 2rem",
+                      }
+                    : {
+                        border: "1px solid var(--hair)",
+                        borderRadius: "var(--radius)",
+                        background: "var(--card)",
+                        padding: "1rem 1rem 0.2rem",
+                        marginBottom: "1rem",
+                      }
+                }
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>More filters</span>
+                  <button
+                    onClick={() => setShowMore(false)}
+                    style={{
+                      background: "var(--blue)",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "var(--radius)",
+                      padding: "0.5rem 1.1rem",
+                      fontSize: "0.9rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Done
+                  </button>
+                </div>
+
             <FilterGroup label="Booking">
               <Pill
                 active={bookableOnly}
@@ -650,19 +748,6 @@ export default function App() {
                 label="Bookable online"
                 count={bookableCount}
               />
-            </FilterGroup>
-
-            <FilterGroup label="Region">
-              <Pill active={!region} onClick={() => setRegion(null)} label="All" />
-              {presentRegions.map((r) => (
-                <Pill
-                  key={r}
-                  active={region === r}
-                  onClick={() => setRegion(region === r ? null : r)}
-                  label={r}
-                  count={regionCounts[r] || 0}
-                />
-              ))}
             </FilterGroup>
 
             <FilterGroup label="Type">
@@ -741,6 +826,8 @@ export default function App() {
                 count={showerCount}
               />
             </FilterGroup>
+              </div>
+            ) : null}
 
             {anyFilter && (
               <button
