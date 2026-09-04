@@ -528,16 +528,31 @@ export default function App() {
   if (assoc) activeChips.push({ k: "assoc", label: ASSOC_LABEL[assoc] || assoc, clear: () => setAssoc(null) });
   if (showerOnly) activeChips.push({ k: "shower", label: "Shower", clear: () => setShowerOnly(false) });
 
+  // EMPTY_STATE
+  const shortenStay = () => {
+    if (!to) return;
+    const d = new Date(to + "T12:00:00Z");
+    d.setUTCDate(d.getUTCDate() - 1);
+    const iso = d.toISOString().slice(0, 10);
+    if (iso > from) setTo(iso);
+    else {
+      setFrom("");
+      setTo("");
+    }
+  };
+  const blockers = [];
+  if (nights.length)
+    blockers.push(nights.length === 1 ? "1 night" : nights.length + " consecutive nights");
+  for (const c of activeChips) blockers.push(c.label);
+
   const visible = filtered.slice(0, RESULT_LIMIT);
   const hiddenCount = filtered.length - visible.length;
   const generated = avail && avail.generated ? fmtGenerated(avail.generated) : null;
 
-  const rangeLabel =
-    nights.length === 1
-      ? `on ${fmtISO(nights[0])}`
-      : nights.length > 1
-      ? `every night ${fmtISO(nights[0])}–${fmtISO(nights[nights.length - 1])}`
-      : "";
+  const rangeLabel = from && to ? `${fmtISO(from)}–${fmtISO(to)}` : "";
+  const nightsLabel = nights.length
+    ? `${nights.length} ${nights.length === 1 ? "night" : "nights"}`
+    : "";
 
   return (
     <div style={{ background: "var(--cream)", color: "var(--ink)", minHeight: "100vh", width: "100%" }}>
@@ -560,7 +575,7 @@ export default function App() {
         <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>
           {status === "ready"
             ? nights.length
-              ? `${filtered.length} huts with space ${rangeLabel}`
+              ? `${filtered.length} huts with space, ${rangeLabel} · ${nightsLabel}`
               : `${filtered.length} of ${huts.length} huts`
             : ""}
         </p>
@@ -950,26 +965,57 @@ export default function App() {
             >
               <div style={{ flex: 1, minWidth: 0, width: "100%", display: showList ? "block" : "none" }}>
             {filtered.length === 0 ? (
-              <p style={{ color: "var(--ink-soft)", marginTop: "1.5rem" }}>
-                {nights.length
-                  ? `No bookable huts with space ${rangeLabel} match these filters.`
-                  : "No huts match these filters."}{" "}
-                <button
-                  onClick={clearAll}
-                  style={{
-                    border: "none",
-                    background: "none",
-                    color: "var(--ink)",
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                    fontSize: "inherit",
-                    padding: 0,
-                  }}
-                >
-                  Clear
-                </button>
-                .
-              </p>
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "1.5rem 1.35rem",
+                  border: "1px solid var(--hair)",
+                  borderRadius: "var(--radius)",
+                  background: "var(--card)",
+                }}
+              >
+                <p style={{ margin: 0, fontWeight: 700, fontSize: "1.05rem" }}>
+                  {from && !avail
+                    ? "Availability data didn't load"
+                    : nights.length > 1
+                    ? `Nothing free for all ${nights.length} nights`
+                    : nights.length === 1
+                    ? "Nothing free that night"
+                    : "No huts match"}
+                </p>
+                <p style={{ margin: "0.5rem 0 0", color: "var(--ink-soft)", fontSize: "0.9rem" }}>
+                  {from && !avail
+                    ? "The bed counts are missing, so nothing can be shown as available. This is a data problem, not an empty search."
+                    : blockers.length
+                    ? `Searching for: ${blockers.join(" · ")}`
+                    : "There is nothing to show."}
+                </p>
+                {from && !avail ? null : (
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.15rem" }}>
+                    {nights.length > 1 ? (
+                      <button onClick={shortenStay} style={{ background: "var(--blue)", color: "#fff", border: "none", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer" }}>
+                        {nights.length === 2 ? "Try 1 night" : `Try ${nights.length - 1} nights`}
+                      </button>
+                    ) : null}
+                    {anyNonDate ? (
+                      <button onClick={clearAll} style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
+                        Clear filters
+                      </button>
+                    ) : null}
+                    {from ? (
+                      <button
+                        onClick={() => {
+                          setFrom("");
+                          setTo("");
+                        }}
+                        style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}
+                      >
+                        Clear dates
+                      </button>
+                    ) : null}
+                  </div>
+                )}
+              </div>
             ) : (
               <ul style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
                 {visible.map((hut) => (
