@@ -343,9 +343,11 @@ export default function App() {
               <div style={{ marginTop: "0.5rem" }}>
                 {nights.length && mins && rec && rec.caps ? (
                   <>
-                    <div style={{ color: "var(--ink-soft)", fontSize: "0.78rem", marginBottom: "0.25rem" }}>
-                      Free {rangeLabel}
-                      {nights.length > 1 ? " · fewest across your nights" : ""}
+                    <div style={{ fontSize: "0.8rem", marginBottom: "0.45rem" }}>
+                      <span style={{ color: "var(--ink)", fontWeight: 700 }}>Free {rangeLabel}</span>
+                      {nights.length > 1 ? (
+                        <span style={{ color: "var(--ink-soft)" }}> · fewest across your nights</span>
+                      ) : null}
                     </div>
                     {BUCKET_ORDER.map((k) => {
                       const idx = BUCKET_IDX[k];
