@@ -486,6 +486,8 @@ export default function App() {
 
   const anyFilter =
     region || type || warden || elev || assoc || showerOnly || bookableOnly || from || roomType || query;
+  const anyNonDate =
+    region || type || warden || elev || assoc || showerOnly || bookableOnly || roomType || query;
   const clearAll = () => {
     setRegion(null);
     setType(null);
@@ -494,11 +496,27 @@ export default function App() {
     setAssoc(null);
     setShowerOnly(false);
     setBookableOnly(false);
-    setFrom("");
-    setTo("");
     setRoomType(null);
     setQuery("");
   };
+
+  const WARDEN_LABEL = { bewirtschaftet: "Serviced", selbstversorger: "Self-service" };
+  const activeChips = [];
+  if (query) activeChips.push({ k: "q", label: `“${query}”`, clear: () => setQuery("") });
+  if (region) activeChips.push({ k: "region", label: region, clear: () => setRegion(null) });
+  if (roomType)
+    activeChips.push({ k: "roomType", label: BUCKET_LABEL[roomType] || roomType, clear: () => setRoomType(null) });
+  if (bookableOnly)
+    activeChips.push({ k: "bookable", label: "Bookable online", clear: () => setBookableOnly(false) });
+  if (type) activeChips.push({ k: "type", label: TYPE_LABEL[type] || type, clear: () => setType(null) });
+  if (warden)
+    activeChips.push({ k: "warden", label: WARDEN_LABEL[warden] || warden, clear: () => setWarden(null) });
+  if (elev) {
+    const band = ELEV_BANDS.find((b) => b.key === elev);
+    activeChips.push({ k: "elev", label: band ? band.label : "Elevation unknown", clear: () => setElev(null) });
+  }
+  if (assoc) activeChips.push({ k: "assoc", label: ASSOC_LABEL[assoc] || assoc, clear: () => setAssoc(null) });
+  if (showerOnly) activeChips.push({ k: "shower", label: "Shower", clear: () => setShowerOnly(false) });
 
   const visible = filtered.slice(0, RESULT_LIMIT);
   const hiddenCount = filtered.length - visible.length;
@@ -693,6 +711,45 @@ export default function App() {
               ) : null}
             </button>
 
+            {/* ACTIVE_FILTER_CHIPS */}
+            {anyNonDate ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "0.4rem",
+                  alignItems: "center",
+                  marginBottom: "1rem",
+                }}
+              >
+                {activeChips.map((c) => (
+                  <button
+                    key={c.k}
+                    onClick={c.clear}
+                    aria-label={`Remove filter ${c.label}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.35rem",
+                      background: "var(--powder-lt)",
+                      border: "1px solid var(--powder)",
+                      borderRadius: 100,
+                      color: "var(--blue-deep)",
+                      padding: "0.3rem 0.7rem",
+                      fontSize: "0.8rem",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {c.label}
+                    <span aria-hidden="true" style={{ fontSize: "0.95rem", lineHeight: 1 }}>
+                      &times;
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+
             {/* MORE_FILTERS_PANEL */}
             {showMore ? (
               <div
@@ -843,7 +900,7 @@ export default function App() {
                   marginBottom: "1.25rem",
                 }}
               >
-                Clear all filters
+                Clear filters
               </button>
             )}
             {!isNarrow && (
