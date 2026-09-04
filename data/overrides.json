@@ -1,0 +1,18 @@
+{
+  "_readme": [
+    "Hand-verified corrections applied on top of the OSM import.",
+    "Keyed by hut id. Any field here overrides whatever the pipeline produced.",
+    "Keys starting with _ are notes and are never written to huts.json.",
+    "Run apply_overrides.py as the last step after rebuilding huts.json."
+  ],
+
+  "w699210996": {
+    "_name": "Eisenstädter Seehütte",
+    "_source": "seehuette.naturfreunde.at, naturfreunde-huetten.at",
+    "_checked": "2026-09-04",
+    "_note": "Two bedrooms, 10 + 4 places in bunk beds. Naturfreunde hut, not Alpenverein. Reachable only by rowing boat.",
+    "sleeping": 14,
+    "association": "naturfreunde",
+    "website": "https://seehuette.naturfreunde.at/"
+  }
+}

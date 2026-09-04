@@ -83,6 +83,7 @@ def fetch(query, attempts_per_endpoint=2):
 
 # --- normalisation --------------------------------------------------------
 # Operator strings that signal an alpine club (reciprocal member rates).
+NATURFREUNDE_RE = re.compile(r"naturfreund", re.I)
 ALPINE_CLUB_RE = re.compile(
     r"alpenverein|naturfreunde|touristenklub|touristenclub|alpine[\s-]*club"
     r"|\bDAV\b|\bÖAV\b|\bOEAV\b|\bAVS\b|\bÖTK\b|\bOETK\b|\bSAC\b|\bCAI\b|\bsektion\b",
@@ -97,6 +98,8 @@ def association_of(tags):
     op = (tags.get("operator") or "").strip()
     optype = (tags.get("operator:type") or "").strip().lower()
     if op:
+        if NATURFREUNDE_RE.search(op):
+            return "naturfreunde"
         if ALPINE_CLUB_RE.search(op) or optype == "club":
             return "alpine_club"
         return "private"           # a named operator that isn't a club

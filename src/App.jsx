@@ -13,6 +13,7 @@ const WARDEN_LABEL = {
 
 const ASSOC_LABEL = {
   alpine_club: "Alpine club",
+  naturfreunde: "Naturfreunde",
   private: "Private",
 };
 
@@ -285,7 +286,9 @@ export default function App() {
             ? `${hut.hr_capacity} beds`
             : hut.sleeping > 0
             ? `${hut.sleeping} beds`
-            : "no overnight"}
+            : hut.sleeping === 0
+            ? "no overnight"
+            : "beds unknown"}
           {" · "}
           {hut.warden === "bewirtschaftet"
             ? "serviced"

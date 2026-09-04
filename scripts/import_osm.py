@@ -155,7 +155,7 @@ def to_record(el):
         "open_from": None,                     # OSM opening data unreliable; fill later
         "open_to": None,
         "warden": warden_of(tags),
-        "sleeping": int(beds) if beds else 0,
+        "sleeping": int(beds) if beds else None,   # None = OSM said nothing
         "winterraum": tags.get("winter_room") == "yes",
         "phone": tags.get("phone") or tags.get("contact:phone"),
         "website": tags.get("website") or tags.get("contact:website"),
