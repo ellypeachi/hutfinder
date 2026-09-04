@@ -137,13 +137,14 @@ function Dot({ n, color }) {
 }
 
 function Pill({ active, onClick, label, count }) {
+  const empty = count === 0 && !active; // ZERO_STATE_PILLS
   return (
     <button
       onClick={onClick}
       style={{
         border: active ? "1px solid var(--ink)" : "1px solid var(--hair)",
-        background: active ? "var(--blue)" : "var(--card)",
-        color: active ? "#fff" : "var(--ink)",
+        background: active ? "var(--blue)" : empty ? "transparent" : "var(--card)",
+        color: active ? "#fff" : empty ? "var(--ink-soft)" : "var(--ink)",
         borderRadius: 999,
         padding: "0.32rem 0.72rem",
         marginRight: "0.4rem",
@@ -480,10 +481,9 @@ export default function App() {
     }
   }
 
-  const presentRegions = REGION_ORDER.filter((r) => regionCounts[r] > 0).concat(
-    Object.keys(regionCounts)
-      .filter((r) => !REGION_ORDER.includes(r) && regionCounts[r] > 0)
-      .sort()
+  const allRegionKeys = Array.from(new Set(huts.map(regionOf)));
+  const presentRegions = REGION_ORDER.filter((r) => allRegionKeys.includes(r)).concat(
+    allRegionKeys.filter((r) => !REGION_ORDER.includes(r)).sort()
   );
 
   const anyFilter =
@@ -674,7 +674,7 @@ export default function App() {
               <FilterGroup label="Room type">
                 <Pill active={!roomType} onClick={() => setRoomType(null)} label="Any" />
                 {BUCKET_ORDER.map((k) =>
-                  roomTypeCounts[k] > 0 || roomType === k ? (
+                  true ? (
                     <Pill
                       key={k}
                       active={roomType === k}
@@ -820,7 +820,7 @@ export default function App() {
             <FilterGroup label="Type">
               <Pill active={!type.length} onClick={() => setType([])} label="All" />
               {["schutzhuette", "alm", "jausenstation"].map((t) =>
-                typeCounts[t] > 0 || type.includes(t) ? (
+                true ? (
                   <Pill
                     key={t}
                     active={type.includes(t)}
@@ -835,7 +835,7 @@ export default function App() {
             <FilterGroup label="Elevation">
               <Pill active={!elev.length} onClick={() => setElev([])} label="All" />
               {ELEV_BANDS.map((b) =>
-                elevCounts[b.key] > 0 || elev.includes(b.key) ? (
+                true ? (
                   <Pill
                     key={b.key}
                     active={elev.includes(b.key)}
@@ -845,7 +845,7 @@ export default function App() {
                   />
                 ) : null
               )}
-              {elevCounts[ELEV_UNKNOWN] > 0 || elev.includes(ELEV_UNKNOWN) ? (
+              {true ? (
                 <Pill
                   active={elev.includes(ELEV_UNKNOWN)}
                   onClick={() => toggle(elev, setElev, ELEV_UNKNOWN)}
@@ -858,7 +858,7 @@ export default function App() {
             <FilterGroup label="Warden">
               <Pill active={!warden} onClick={() => setWarden(null)} label="All" />
               {["bewirtschaftet", "selbstversorger"].map((w) =>
-                wardenCounts[w] > 0 || warden === w ? (
+                true ? (
                   <Pill
                     key={w}
                     active={warden === w}
@@ -873,7 +873,7 @@ export default function App() {
             <FilterGroup label="Association">
               <Pill active={!assoc} onClick={() => setAssoc(null)} label="All" />
               {["alpine_club", "private"].map((a) =>
-                assocCounts[a] > 0 || assoc === a ? (
+                true ? (
                   <Pill
                     key={a}
                     active={assoc === a}
