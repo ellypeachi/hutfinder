@@ -209,6 +209,7 @@ export default function App() {
   const [roomType, setRoomType] = useState(null); // "dorm" | "shared" | "priv" | null
   const [view, setView] = useState("split");
   const [selected, setSelected] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const moreCount =
     [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +
@@ -1079,11 +1080,19 @@ export default function App() {
                 {visible.map((hut) => (
                   <li
                     key={hut.id}
+                    onMouseEnter={() => setHoveredId(hut.id)}
+                    onMouseLeave={() => setHoveredId(null)}
                     style={{
-                      border: "1px solid var(--hair)",
+                      border:
+                        hoveredId === hut.id
+                          ? "1px solid var(--blue)"
+                          : "1px solid var(--hair)",
                       borderRadius: 8,
                       padding: "0.9rem 1rem",
                       marginBottom: "0.75rem",
+                      background:
+                        hoveredId === hut.id ? "var(--card)" : "transparent",
+                      transition: "border-color 150ms ease, background 150ms ease",
                     }}
                   >
                     {hutCardBody(hut)}
@@ -1116,7 +1125,13 @@ export default function App() {
                     overflow: "hidden",
                   }}
                 >
-                  <MapPanel huts={filtered} onSelect={setSelected} />
+                  <MapPanel
+                    huts={filtered}
+                    onSelect={setSelected}
+                    selectedId={selected?.id ?? null}
+                    hoveredId={hoveredId}
+                    onHover={setHoveredId}
+                  />
                 </div>
               )}
             </div>
