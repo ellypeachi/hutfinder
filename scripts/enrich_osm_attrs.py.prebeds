@@ -137,49 +137,6 @@ def pets_of(tags):
     return None
 
 
-def _num(v):
-    try:
-        return int(str(v).strip())
-    except (TypeError, ValueError):
-        return None
-
-
-# Most specific first. Bare `capacity` is last because on a hut that also
-# serves food it sometimes means restaurant seats rather than beds.
-BED_TAGS = (
-    "capacity:beds",
-    "capacity:overnight",
-    "capacity:dormitory",
-    "beds",
-    "capacity:persons",
-    "capacity",
-)
-
-# Deliberately NOT merged into `sleeping`. A winter room is an unstaffed
-# emergency shelter, usually locked and needing an AV key — not a bed you
-# can turn up and sleep in.
-WINTER_TAGS = ("capacity:winter_room", "winter_room:capacity", "capacity:bivac")
-
-# `rooms` is deliberately absent. It counts rooms, not beds; a hut with
-# four rooms might sleep eight or forty.
-
-
-def beds_of(tags):
-    for key in BED_TAGS:
-        n = _num(tags.get(key))
-        if n is not None:
-            return n
-    return None
-
-
-def winter_beds_of(tags):
-    for key in WINTER_TAGS:
-        n = _num(tags.get(key))
-        if n is not None:
-            return n
-    return None
-
-
 def main():
     huts = json.loads(HUTS_PATH.read_text(encoding="utf-8"))
     print(f"{len(huts)} huts loaded from {HUTS_PATH}")
@@ -191,7 +148,6 @@ def main():
     tags_by_id = {f'{el["type"][0]}{el["id"]}': el.get("tags", {}) for el in elements}
 
     matched = 0
-    filled = 0
     for h in huts:
         tags = tags_by_id.get(h["id"])
         if tags is None:
@@ -199,24 +155,13 @@ def main():
             h["association"] = h.get("association")
             h["shower"] = h.get("shower")
             h["pets"] = h.get("pets")
-            h["winterraum_beds"] = h.get("winterraum_beds")
             continue
         matched += 1
         h["association"] = association_of(tags)
         h["shower"] = shower_of(tags)
         h["pets"] = pets_of(tags)
-        h["winterraum_beds"] = winter_beds_of(tags)
-        if h.get("sleeping") is None:
-            b = beds_of(tags)
-            if b is not None:
-                h["sleeping"] = b
-                filled += 1
 
     print(f"\nMatched {matched}/{len(huts)} huts to an OSM element")
-    print(f"  beds backfilled from OSM: {filled}")
-    print("  beds known now:", sum(1 for h in huts if h.get("sleeping")))
-    print("  winter-room capacity known:",
-          sum(1 for h in huts if h.get("winterraum_beds")))
     print("  association:", dict(Counter(h.get("association") for h in huts)))
     print("  shower:     ", dict(Counter(h.get("shower") for h in huts)))
     print("  pets:       ", dict(Counter(h.get("pets") for h in huts)))

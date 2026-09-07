@@ -143,7 +143,14 @@ def to_record(el):
     if lat is None or lng is None:
         return None
 
-    beds = num(tags.get("beds")) or num(tags.get("capacity"))
+    beds = (
+        num(tags.get("capacity:beds"))
+        or num(tags.get("capacity:overnight"))
+        or num(tags.get("capacity:dormitory"))
+        or num(tags.get("beds"))
+        or num(tags.get("capacity:persons"))
+        or num(tags.get("capacity"))
+    )
     return {
         "id": f'{el["type"][0]}{el["id"]}',   # n123456 / w123456 — stable OSM id
         "name": name,
