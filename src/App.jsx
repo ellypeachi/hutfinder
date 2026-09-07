@@ -291,7 +291,11 @@ export default function App() {
             : "beds unknown"}
           {" · "}
           {hut.warden === "bewirtschaftet"
-            ? "serviced"
+            ? hut.warden_source === "inferred"
+              ? "usually serviced"
+              : "serviced"
+            : hut.warden === "bewartet"
+            ? "attended"
             : hut.warden === "selbstversorger"
             ? "self-service"
             : "warden unknown"}
@@ -507,7 +511,7 @@ export default function App() {
     setQuery("");
   };
 
-  const WARDEN_LABEL = { bewirtschaftet: "Serviced", selbstversorger: "Self-service" };
+  const WARDEN_LABEL = { bewirtschaftet: "Serviced", bewartet: "Attended", selbstversorger: "Self-service" };
   const activeChips = [];
   if (query) activeChips.push({ k: "q", label: `“${query}”`, clear: () => setQuery("") });
   for (const r of region)

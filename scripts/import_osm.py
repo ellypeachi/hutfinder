@@ -162,6 +162,10 @@ def to_record(el):
         "open_from": None,                     # OSM opening data unreliable; fill later
         "open_to": None,
         "warden": warden_of(tags),
+        # "inferred" means alpine_hut implied it, nobody confirmed it.
+        # The card shows those as "usually serviced".
+        "warden_source": ("osm_type" if tags.get("tourism") == "wilderness_hut"
+                          else "inferred"),
         "sleeping": int(beds) if beds else None,   # None = OSM said nothing
         "winterraum": tags.get("winter_room") == "yes",
         "phone": tags.get("phone") or tags.get("contact:phone"),
