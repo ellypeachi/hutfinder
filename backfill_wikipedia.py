@@ -113,10 +113,13 @@ if limit:
     print(f'  limited to {len(targets)}')
 
 # -------------------------------------------------------- parse infoboxes
+# de.wikipedia uses {{Infobox Schutzhuette}} with BEHERBERGUNG- prefixed
+# parameters. The optional prefix keeps this working if a page uses the
+# bare form instead.
 FIELD = lambda name: re.compile(
-    r'\|\s*' + name + r'\s*=\s*([^\n|}]*)', re.I)
-BETTEN, LAGER, NOTLAGER, WINTER = (FIELD('Betten'), FIELD('Lager'),
-                                   FIELD('Notlager'), FIELD('Winterraum'))
+    r'\|\s*(?:BEHERBERGUNG-)?' + name + r'\s*=\s*([^\n|}]*)', re.I)
+BETTEN, LAGER, NOTLAGER, WINTER = (FIELD('BETTEN'), FIELD('LAGER'),
+                                   FIELD('NOTLAGER'), FIELD('WINTERRAUM'))
 
 
 def first_int(text):
@@ -124,6 +127,7 @@ def first_int(text):
         return None
     # ignore references and templates before looking for a number
     text = re.sub(r'<ref.*?(/>|</ref>)', '', text, flags=re.S)
+    text = re.sub(r'<!--.*?-->', '', text, flags=re.S)
     m = re.search(r'\d+', text.replace('.', ''))
     return int(m.group(0)) if m else None
 

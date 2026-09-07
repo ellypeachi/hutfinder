@@ -258,7 +258,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 57,
     "winterraum": false,
     "phone": "+43 720 702724",
     "website": null,
@@ -267,7 +267,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w85134310",
@@ -1622,7 +1623,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 56,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -1631,7 +1632,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w78158759",
@@ -1972,7 +1974,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 4,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -1981,7 +1983,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w25549302",
@@ -2672,7 +2675,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 25,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -2681,7 +2684,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n389785723",
@@ -3241,7 +3245,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 44,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -3250,7 +3254,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n389785715",
@@ -3566,7 +3571,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 80,
     "winterraum": false,
     "phone": "+43 5245 214",
     "website": "https://www.binsalm.at/",
@@ -3575,7 +3580,8 @@
     "association": null,
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n1331424460",
@@ -4097,7 +4103,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 20,
     "winterraum": false,
     "phone": "+43 660 9941605",
     "website": "https://bregenzerhuette.naturfreunde.at/",
@@ -4106,7 +4112,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w81020564",
@@ -4489,7 +4496,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 34,
     "winterraum": false,
     "phone": "+43 664 1234206",
     "website": "http://brunnenkogel.schutz.haus",
@@ -4498,7 +4505,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n13886901229",
@@ -4643,7 +4651,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 50,
     "winterraum": false,
     "phone": null,
     "website": "https://buchsteinhaus.naturfreunde.at/",
@@ -4652,7 +4660,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n7529552270",
@@ -4985,7 +4994,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 45,
     "winterraum": false,
     "phone": "+43 664 9127898",
     "website": null,
@@ -4994,7 +5003,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w1502438286",
@@ -5341,7 +5351,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 60,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -5350,7 +5360,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w124046721",
@@ -5363,7 +5374,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 37,
     "winterraum": false,
     "phone": "+43 664 91 59 807",
     "website": "http://www.dalfazalm.at/",
@@ -5372,7 +5383,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w160560601",
@@ -5385,7 +5397,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 65,
     "winterraum": false,
     "phone": "+43 2636 2259",
     "website": "https://www.damboeckhaus.at/",
@@ -5394,7 +5406,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w86434378",
@@ -5457,7 +5470,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 72,
     "winterraum": false,
     "phone": null,
     "website": "http://defregger.schutz.haus/",
@@ -5466,7 +5479,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 12,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w717670164",
@@ -5815,7 +5829,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 22,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -5824,7 +5838,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n390190224",
@@ -5837,7 +5852,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 28,
     "winterraum": false,
     "phone": "+43 664 9236365",
     "website": "https://www.alpenverein.at/drottokorenhuette/",
@@ -5846,7 +5861,8 @@
     "association": "alpine_club",
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 4,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w135548351",
@@ -6831,7 +6847,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 45,
     "winterraum": false,
     "phone": "+43 680 2041698",
     "website": "https://www.eisseehuette.at/index.php",
@@ -6840,7 +6856,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n301262877",
@@ -6907,7 +6924,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 50,
     "winterraum": false,
     "phone": "+43 5226 2818",
     "website": "http://www.elferhuette.at/",
@@ -6916,7 +6933,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w127788419",
@@ -6974,7 +6992,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 28,
     "winterraum": false,
     "phone": "+43 664 1349319",
     "website": "https://emserhuette.naturfreunde.at/",
@@ -6983,7 +7001,8 @@
     "association": "naturfreunde",
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w532352348",
@@ -7249,7 +7268,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 18,
     "winterraum": false,
     "phone": "+436649379033",
     "website": "https://www.eppzirleralm.at/",
@@ -7258,7 +7277,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w95667789",
@@ -7516,7 +7536,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 130,
     "winterraum": false,
     "phone": "+43 4876 8500",
     "website": "https://www.erzherzog-johann-huette.at/",
@@ -7525,7 +7545,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n389785832",
@@ -8267,7 +8288,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 53,
     "winterraum": true,
     "phone": "+43 2636 2313",
     "website": "https://www.fischer-huette.at/",
@@ -8276,7 +8297,8 @@
     "association": "alpine_club",
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 1,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w149936413",
@@ -8541,7 +8563,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 110,
     "winterraum": false,
     "phone": "+4364677566",
     "website": "https://www.matrashaus.at/",
@@ -8550,7 +8572,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 8,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w168866551",
@@ -9067,7 +9090,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 45,
     "winterraum": false,
     "phone": "+436648638935",
     "website": "https://www.frischmannhuette.at/",
@@ -9076,7 +9099,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w127882802",
@@ -9989,7 +10013,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": "+43 664 2188034",
     "website": "https://gauertalhaus.naturfreunde.at",
@@ -9998,7 +10022,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w306384833",
@@ -10582,7 +10607,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 100,
     "winterraum": false,
     "phone": "+43 6131 596",
     "website": "http://www.gjaid.at/",
@@ -10591,7 +10616,8 @@
     "association": null,
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w422396886",
@@ -11497,7 +11523,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 56,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -11506,7 +11532,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 2,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w120196166",
@@ -11889,7 +11916,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 20,
     "winterraum": false,
     "phone": "+43 676 331 94 98",
     "website": "https://www.grimminghuette.naturfreunde.at/",
@@ -11898,7 +11925,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w242248632",
@@ -12807,7 +12835,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 26,
     "winterraum": false,
     "phone": null,
     "website": "https://goetznerhaus.naturfreunde.at",
@@ -12816,7 +12844,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w85131471",
@@ -13253,7 +13282,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 68,
     "winterraum": false,
     "phone": "+436641055955",
     "website": "https://www.halleranger-alm.at/",
@@ -13262,7 +13291,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w119196451",
@@ -13603,7 +13633,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 58,
     "winterraum": false,
     "phone": "+43 5372 62575",
     "website": "https://bergsteigerschule.at/",
@@ -13612,7 +13642,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w92809625",
@@ -15071,7 +15102,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 51,
     "winterraum": false,
     "phone": null,
     "website": "http://hocheck.schutz.haus",
@@ -15080,7 +15111,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w228963415",
@@ -15301,7 +15333,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 50,
     "winterraum": false,
     "phone": null,
     "website": "https://www.hochmoelbinghuette.at/",
@@ -15310,7 +15342,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w266358077",
@@ -15439,7 +15472,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 52,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -15448,7 +15481,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w195336966",
@@ -15911,7 +15945,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 72,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -15920,7 +15954,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n325196560",
@@ -17463,7 +17498,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 46,
     "winterraum": false,
     "phone": "+49 174 8067449",
     "website": "http://www.kaindlhuette.com/",
@@ -17472,7 +17507,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w37977668",
@@ -17992,7 +18028,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 53,
     "winterraum": false,
     "phone": "+43 2665 380",
     "website": "https://schutz.haus/de/hut/karl-ludwig-haus/13538854/",
@@ -18001,7 +18037,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w114236747",
@@ -18575,7 +18612,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 42,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -18584,7 +18621,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w166439527",
@@ -18710,7 +18748,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": null,
     "website": "http://www.kienthaler.at",
@@ -18719,7 +18757,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w136912392",
@@ -19215,7 +19254,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 31,
     "winterraum": false,
     "phone": "+43 664 1008364",
     "website": null,
@@ -19224,7 +19263,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w85804224",
@@ -21000,7 +21040,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 26,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -21009,7 +21049,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w325783875",
@@ -21116,7 +21157,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 129,
     "winterraum": false,
     "phone": "+43 6624 31635",
     "website": "https://www.leopoldhappischhaus.at/",
@@ -21125,7 +21166,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 9,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w178843525",
@@ -22308,7 +22350,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 84,
     "winterraum": false,
     "phone": "+43 650 721 2010",
     "website": "https://www.madlenerhaus-silvretta.com/",
@@ -22317,7 +22359,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w253330883",
@@ -23734,7 +23777,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 50,
     "winterraum": true,
     "phone": "+43 3842 82614",
     "website": "http://www.mugelschutzhaus.at",
@@ -23743,7 +23786,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w315423411",
@@ -24220,7 +24264,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 39,
     "winterraum": false,
     "phone": "+43 5522 77979",
     "website": "https://feldkircherhuette.naturfreunde.at/",
@@ -24229,7 +24273,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w328514955",
@@ -24286,7 +24331,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 36,
     "winterraum": false,
     "phone": "+43 6544 8103",
     "website": "https://www.sonnblickbasis.at",
@@ -24295,7 +24340,8 @@
     "association": "naturfreunde",
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w126233467",
@@ -24308,7 +24354,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 44,
     "winterraum": false,
     "phone": "+43 6544 8181",
     "website": "https://www.schutzhaus-neubau.at/",
@@ -24317,7 +24363,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w253342814",
@@ -25315,7 +25362,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 29,
     "winterraum": false,
     "phone": null,
     "website": "https://neunkirchen.naturfreunde.at/",
@@ -25324,7 +25371,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w147165155",
@@ -25485,7 +25533,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": "+43 676 9563288",
     "website": "http://nilljochhuette.at/",
@@ -25494,7 +25542,8 @@
     "association": null,
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n11343582406",
@@ -26696,7 +26745,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 60,
     "winterraum": false,
     "phone": null,
     "website": "https://www.padasterjochhaus.at/",
@@ -26705,7 +26754,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 6,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w151876514",
@@ -26811,7 +26861,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 31,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -26820,7 +26870,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": 1,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w126202066",
@@ -27421,7 +27472,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 46,
     "winterraum": false,
     "phone": "+43 6549 7861",
     "website": "https://www.pinzgauer-huette.at/",
@@ -27430,7 +27481,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w81366091",
@@ -27546,7 +27598,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 35,
     "winterraum": false,
     "phone": "+43 664 9158792",
     "website": null,
@@ -27555,7 +27607,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w130664722",
@@ -27640,7 +27693,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 49,
     "winterraum": false,
     "phone": "+43 5243 5487",
     "website": "https://www.plumsjochhuette.com/",
@@ -27649,7 +27702,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n837805909",
@@ -28019,7 +28073,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 40,
     "winterraum": false,
     "phone": null,
     "website": "https://www.pottschacherhuette.at/",
@@ -28028,7 +28082,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w969848674",
@@ -29041,7 +29096,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 10,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -29050,7 +29105,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w235508796",
@@ -29595,7 +29651,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 35,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -29604,7 +29660,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w91232482",
@@ -29771,7 +29828,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 49,
     "winterraum": false,
     "phone": "+43 7563 660",
     "website": "https://www.rohrauerhaus.at/",
@@ -29780,7 +29837,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w165758926",
@@ -30468,7 +30526,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 50,
     "winterraum": false,
     "phone": "+43 664 5454460",
     "website": "https://www.sajathuette.at/",
@@ -30477,7 +30535,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w724669146",
@@ -31129,7 +31188,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 10,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -31140,7 +31199,8 @@
     "pets": null,
     "winterraum_beds": 0,
     "av_nr": 201,
-    "winterraum_heated": false
+    "winterraum_heated": false,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w109225863",
@@ -32895,7 +32955,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -32904,7 +32964,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w263255817",
@@ -33577,7 +33638,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 17,
     "winterraum": false,
     "phone": null,
     "website": "https://www.alpenverein-muenchen-oberland.de/sonnleitnerhuette",
@@ -33586,7 +33647,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w86141335",
@@ -33675,7 +33737,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 8,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -33684,7 +33746,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w95534520",
@@ -33769,7 +33832,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": "+43 2664 21096",
     "website": "https://www.die-speckbacher.at/",
@@ -33778,7 +33841,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w151241832",
@@ -36019,7 +36083,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 45,
     "winterraum": false,
     "phone": "+43 699 11149009",
     "website": null,
@@ -36028,7 +36092,8 @@
     "association": "naturfreunde",
     "shower": true,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w301651429",
@@ -36597,7 +36662,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 43,
     "winterraum": false,
     "phone": "+43 699 12045560",
     "website": "http://www.traunsteinhaus.at/",
@@ -36606,7 +36671,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w136775282",
@@ -36641,7 +36707,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 36,
     "winterraum": false,
     "phone": "+43 5276 252; +43 664 4050951",
     "website": "https://www.tribulaunhuette.at/",
@@ -36650,7 +36716,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w187294428",
@@ -36873,7 +36940,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 41,
     "winterraum": false,
     "phone": "+43 5287 87216",
     "website": null,
@@ -36882,7 +36949,8 @@
     "association": "private",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w100510700",
@@ -37796,7 +37864,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 30,
     "winterraum": false,
     "phone": "+436649757447",
     "website": "https://www.voldertalhuette.at/",
@@ -37805,7 +37873,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n1635114705",
@@ -38212,7 +38281,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 24,
     "winterraum": false,
     "phone": "+43 688 8682827",
     "website": "https://www.alpenvereinaktiv.com/de/private-huette/waldburgangerhuette-am-gahns/9850197/",
@@ -38221,7 +38290,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w122669293",
@@ -38542,7 +38612,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 62,
     "winterraum": false,
     "phone": "+43 2665 237",
     "website": "http://www.waxriegelhaus.at/",
@@ -38551,7 +38621,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w87608952",
@@ -38564,7 +38635,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 71,
     "winterraum": false,
     "phone": null,
     "website": "https://www.weichtalhaus.at/",
@@ -38573,7 +38644,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w120467198",
@@ -38662,7 +38734,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 26,
     "winterraum": false,
     "phone": "+43 5372 65148",
     "website": "http://www.weinbergerhaus.at/",
@@ -38671,7 +38743,8 @@
     "association": null,
     "shower": false,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n389786547",
@@ -38915,7 +38988,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 45,
     "winterraum": false,
     "phone": null,
     "website": "https://werfener.schutz.haus/",
@@ -38924,7 +38997,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w129552794",
@@ -39215,7 +39289,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 34,
     "winterraum": false,
     "phone": "+43 676 730 44 05",
     "website": "https://wiener-neustaedter.com/",
@@ -39224,7 +39298,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w85800219",
@@ -39700,7 +39775,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "selbstversorger",
-    "sleeping": null,
+    "sleeping": 6,
     "winterraum": false,
     "phone": null,
     "website": null,
@@ -39709,7 +39784,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n12152427764",
@@ -39888,7 +39964,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 37,
     "winterraum": false,
     "phone": "+43 3578 8210",
     "website": "https://www.winterleiten.com/",
@@ -39897,7 +39973,8 @@
     "association": "naturfreunde",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w172653739",
@@ -40881,7 +40958,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 20,
     "winterraum": false,
     "phone": "+43 664 91 40 283",
     "website": "https://schutz.haus/de/hut/helmut-erd-schutzhaus/13538866/",
@@ -40890,7 +40967,8 @@
     "association": "alpine_club",
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "w99991612",
@@ -41237,7 +41315,7 @@
     "open_from": null,
     "open_to": null,
     "warden": "bewirtschaftet",
-    "sleeping": null,
+    "sleeping": 47,
     "winterraum": false,
     "phone": "+43 7480 5249",
     "website": null,
@@ -41246,7 +41324,8 @@
     "association": null,
     "shower": null,
     "pets": null,
-    "winterraum_beds": null
+    "winterraum_beds": null,
+    "sleeping_source": "wikipedia"
   },
   {
     "id": "n3014349312",
