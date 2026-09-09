@@ -172,10 +172,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   Sheet scrollbar
-   The default translucent grey is invisible against cream. Firefox and Safari
-   read scrollbar-color; Chromium needs the webkit pseudo-elements, so both are
-   here deliberately.
+   Page scrollbar
+   The list scrolls with the page rather than in its own container, so this
+   targets the document. The default translucent grey is invisible against
+   cream. Firefox reads scrollbar-color; Chromium needs the webkit
+   pseudo-elements, so both are here deliberately.
    -------------------------------------------------------------------------- */
 
 .sheet-scroll {

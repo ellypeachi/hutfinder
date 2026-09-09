@@ -1011,15 +1011,11 @@ export default function App() {
 
             <div
               style={{
-                display: isNarrow ? "block" : "flex",
-                flexDirection: isNarrow ? "column-reverse" : "row",
+                display: "flex",
+                flexDirection: isNarrow ? "column" : "row",
                 gap: isNarrow ? "0.75rem" : "1.5rem",
                 alignItems: "flex-start",
                 marginTop: "1rem",
-                /* On mobile this is the stage the sheet is dragged over.
-                   Tune the height here — it is the only place it is set. */
-                position: isNarrow ? "relative" : undefined,
-                height: isNarrow ? "78dvh" : undefined,
               }}
             >
               <BottomSheet enabled={isNarrow}>
@@ -1121,24 +1117,19 @@ export default function App() {
 
               {showMap && (
                 <div
+                  data-map-stage
                   style={{
                     flex: isNarrow ? "none" : "0 0 44%",
                     width: "100%",
-                    position: isNarrow ? "absolute" : "sticky",
-                    /* Four sides written out: React does not reliably expand
-                       the `inset` shorthand, so the wrapper was collapsing to
-                       the height of the legend. */
-                    left: isNarrow ? 0 : undefined,
-                    right: isNarrow ? 0 : undefined,
-                    /* No bottom anchor: the map is a fixed-height card at the
-                       top of the stage, not a full-stage fill. The sheet rests
-                       just below it, so the whole card is visible at rest. */
+                    /* order moves the map above the list visually while leaving
+                       DOM order alone. Replaces column-reverse, which broke
+                       sticky positioning. */
+                    order: isNarrow ? -1 : 0,
+                    position: "sticky",
                     top: isNarrow ? 0 : "1rem",
-                    /* Own stacking context. Leaflet's control container sits at
-                       z-index 1000 internally; without this it punches through
-                       the sheet. Contained here, its numbers only compete with
-                       each other. */
                     zIndex: isNarrow ? 0 : undefined,
+                    background: isNarrow ? "var(--cream)" : undefined,
+                    paddingBottom: isNarrow ? "0.4rem" : undefined,
                     display: "flex",
                     flexDirection: "column",
                     gap: "0.45rem",

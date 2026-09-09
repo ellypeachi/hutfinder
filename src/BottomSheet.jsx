@@ -3,53 +3,42 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /* ==========================================================================
    BottomSheet
 
-   A draggable sheet that sits over the map on narrow screens. Drag the handle
-   to trade map for list. Snap points are fractions of the container height,
-   measured from the top: 0.15 means the sheet top sits 15% down, so the sheet
-   covers 85% of the screen.
+   Mobile only. The page scrolls normally until the map reaches the top of the
+   viewport and pins there. From that point the list becomes draggable: pull the
+   handle up to cover the map, down to reveal it.
 
-   Design notes:
+   Once engaged it stays engaged. Releasing it again on scroll-up was considered
+   and rejected — the page starting to move when you expected the sheet to move
+   is disorienting.
 
-   - Dragging is restricted to the handle. Letting the whole sheet initiate a
-     drag conflicts with scrolling the list — the browser cannot tell whether a
-     downward swipe means "scroll up" or "close the sheet", and every solution
-     to that is fragile. A dedicated handle is unambiguous.
+   Mechanism: the map wrapper is position:sticky (set in App.jsx, marked with
+   data-map-stage). This component measures that element to know both when it
+   has pinned and how far the list must travel to cover it. The list sits at a
+   higher z-index and moves with a transform, which is cheap to animate and
+   doesn't trigger layout.
 
-   - Release picks a snap point by position, unless the gesture was a flick, in
-     which case direction wins. Without that, a fast short flick feels stuck.
-
-   - The handle is a real <button>. Arrow keys and Enter move between snaps, so
-     the sheet is operable without touch. A drag-only sheet is unreachable by
-     keyboard and invisible to screen readers.
-
-   - Rendering is skipped entirely when `enabled` is false, so the desktop
-     layout is untouched.
+   The handle is a real <button>: arrow keys and Enter move it, so the sheet
+   works without touch and is reachable by screen readers.
    ========================================================================== */
 
-/* Sheet top as a fraction of the stage height (78dvh, set in App.jsx).
+/* px per ms. Above this the gesture counts as a flick and its direction wins,
+   regardless of how far the sheet actually travelled. Roughly: a deliberate
+   flick clears it, a slow drag does not. */
+const FLICK_VELOCITY = 0.4;
 
-   The largest value rests just below the map card: the card is 48vh plus a
-   legend line, which on a 78dvh stage lands at roughly 0.68. That is the
-   default, so at rest the layout matches the pre-sheet design — full map card,
-   list beneath. Dragging up covers the map. */
-const SNAPS = [0.18, 0.42, 0.68];
-const FLICK_VELOCITY = 0.45; // px per ms — above this, direction beats position
-
-export default function BottomSheet({
-  children,
-  enabled = true,
-  initialSnap = 2,
-  label = "Hut list",
-}) {
-  const [snap, setSnap] = useState(initialSnap);
-  const [dragTop, setDragTop] = useState(null); // px while dragging, else null
+export default function BottomSheet({ children, enabled = true, label = "Hut list" }) {
+  const [engaged, setEngaged] = useState(false);
+  const [lift, setLift] = useState(0); // negative px; 0 = at rest, -max = covering
+  const [dragging, setDragging] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const [scrollH, setScrollH] = useState(null); // px height of the inner scroller
 
   const wrapRef = useRef(null);
   const drag = useRef(null);
+  const maxLift = useRef(0);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return undefined;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduced(mq.matches);
     const on = (e) => setReduced(e.matches);
@@ -57,150 +46,167 @@ export default function BottomSheet({
     return () => mq.removeEventListener("change", on);
   }, []);
 
-  const containerHeight = useCallback(() => {
-    const el = wrapRef.current?.parentElement;
-    return el ? el.getBoundingClientRect().height : 0;
-  }, []);
+  const findStage = useCallback(
+    () => wrapRef.current?.parentElement?.querySelector("[data-map-stage]") ?? null,
+    []
+  );
+
+  useEffect(() => {
+    if (!enabled) return undefined;
+
+    const measure = () => {
+      const stage = findStage();
+      if (!stage) return;
+      const r = stage.getBoundingClientRect();
+      maxLift.current = r.height;
+
+      /* Latched deliberately: once true it never goes back to false. */
+      if (r.top <= 1) setEngaged(true);
+
+      /* The list fills from the bottom of the sticky map to the bottom of the
+         viewport. Recomputed on every scroll, so when the map pins the page has
+         exactly run out of scroll and the handover moves nothing — no jump, and
+         scrolling back up chains out of the list into the page natively. */
+      const vh = window.innerHeight;
+      setScrollH(Math.max(120, vh - r.bottom - lift));
+    };
+
+    measure();
+    window.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [enabled, findStage, lift]);
 
   const onPointerDown = useCallback(
     (e) => {
-      const h = containerHeight();
-      if (!h) return;
+      if (!engaged) return;
       e.currentTarget.setPointerCapture(e.pointerId);
       drag.current = {
         startY: e.clientY,
-        startTop: SNAPS[snap] * h,
-        height: h,
+        startLift: lift,
         lastY: e.clientY,
         lastT: performance.now(),
         velocity: 0,
       };
-      setDragTop(SNAPS[snap] * h);
+      setDragging(true);
     },
-    [snap, containerHeight]
+    [engaged, lift]
   );
 
   const onPointerMove = useCallback((e) => {
     const d = drag.current;
     if (!d) return;
+
     const now = performance.now();
     const dt = now - d.lastT;
     if (dt > 0) d.velocity = (e.clientY - d.lastY) / dt;
     d.lastY = e.clientY;
     d.lastT = now;
 
-    const min = SNAPS[0] * d.height;
-    const max = SNAPS[SNAPS.length - 1] * d.height;
-    const next = Math.min(max, Math.max(min, d.startTop + (e.clientY - d.startY)));
-    setDragTop(next);
+    const next = d.startLift + (e.clientY - d.startY);
+    setLift(Math.max(-maxLift.current, Math.min(0, next)));
   }, []);
 
   const onPointerUp = useCallback(() => {
     const d = drag.current;
     if (!d) return;
-    const fraction = (dragTop ?? d.startTop) / d.height;
-
-    let target;
-    if (Math.abs(d.velocity) > FLICK_VELOCITY) {
-      /* A flick moves one step in the direction of travel rather than snapping
-         to whatever happens to be nearest. */
-      const current = SNAPS.reduce(
-        (best, p, i) =>
-          Math.abs(p - d.startTop / d.height) < Math.abs(SNAPS[best] - d.startTop / d.height)
-            ? i
-            : best,
-        0
-      );
-      target = d.velocity > 0 ? Math.min(SNAPS.length - 1, current + 1) : Math.max(0, current - 1);
-    } else {
-      target = SNAPS.reduce(
-        (best, p, i) => (Math.abs(p - fraction) < Math.abs(SNAPS[best] - fraction) ? i : best),
-        0
-      );
-    }
-
+    const v = d.velocity;
     drag.current = null;
-    setDragTop(null);
-    setSnap(target);
-  }, [dragTop]);
+    setDragging(false);
 
-  const onKeyDown = useCallback((e) => {
-    if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setSnap((s) => Math.max(0, s - 1));
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setSnap((s) => Math.min(SNAPS.length - 1, s + 1));
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      setSnap((s) => (s + 1) % SNAPS.length);
+    if (Math.abs(v) > FLICK_VELOCITY) {
+      /* Flick: direction wins. A hard swipe down drops the sheet all the way
+         back below the map even from near the top. */
+      setLift(v > 0 ? 0 : -maxLift.current);
+    } else {
+      /* Slow drag: past halfway commits to the nearer end. */
+      setLift((l) => (l < -maxLift.current / 2 ? -maxLift.current : 0));
     }
   }, []);
 
-  if (!enabled) return <>{children}</>;
+  const onKeyDown = useCallback(
+    (e) => {
+      if (!engaged) return;
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setLift(-maxLift.current);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setLift(0);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setLift((l) => (l === 0 ? -maxLift.current : 0));
+      }
+    },
+    [engaged]
+  );
 
-  const top = dragTop != null ? `${dragTop}px` : `${SNAPS[snap] * 100}%`;
+  if (!enabled) return <>{children}</>;
 
   return (
     <div
       ref={wrapRef}
       style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top,
-        bottom: 0,
+        position: "relative",
+        zIndex: 3,
         background: "var(--cream)",
-        borderTop: "1px solid var(--hair)",
-        borderRadius: "14px 14px 0 0",
-        boxShadow: "0 -3px 16px rgba(58, 42, 32, 0.12)",
-        display: "flex",
-        flexDirection: "column",
-        transition: dragTop != null || reduced ? "none" : "top 220ms cubic-bezier(.22,.61,.36,1)",
-        /* Above Leaflet's controls, which sit at 800. Otherwise the
-           attribution and zoom buttons paint over the sheet when it is
-           dragged up past them. */
-        zIndex: 900,
+        borderRadius: engaged ? "14px 14px 0 0" : 0,
+        boxShadow: engaged && lift < 0 ? "0 -3px 16px rgba(58, 42, 32, 0.12)" : "none",
+        transform: `translateY(${lift}px)`,
+        transition:
+          dragging || reduced ? "none" : "transform 200ms cubic-bezier(.22,.61,.36,1)",
+        width: "100%",
       }}
     >
-      <button
-        type="button"
-        aria-label={`${label} — drag, or use arrow keys, to resize`}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onKeyDown={onKeyDown}
-        style={{
-          all: "unset",
-          display: "block",
-          padding: "0.65rem 0 0.5rem",
-          cursor: "grab",
-          touchAction: "none",
-          flex: "none",
-        }}
-      >
-        <span
+      {engaged && (
+        <button
+          type="button"
+          aria-label={`${label} — drag, or use arrow keys, to cover or reveal the map`}
+          aria-expanded={lift < 0}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onKeyDown={onKeyDown}
           style={{
+            all: "unset",
             display: "block",
-            width: 38,
-            height: 4,
-            borderRadius: 2,
-            background: "var(--hair)",
-            margin: "0 auto",
+            width: "100%",
+            padding: "0.6rem 0 0.45rem",
+            cursor: "grab",
+            touchAction: "none",
           }}
-        />
-      </button>
+        >
+          <span
+            style={{
+              display: "block",
+              width: 38,
+              height: 4,
+              borderRadius: 2,
+              background: "var(--hair)",
+              margin: "0 auto",
+            }}
+          />
+        </button>
+      )}
 
       <div
         className="sheet-scroll"
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          overscrollBehavior: "contain",
-          WebkitOverflowScrolling: "touch",
-          padding: "0 1rem 1rem",
-        }}
+        style={
+          engaged && scrollH != null
+            ? {
+                height: `${scrollH}px`,
+                overflowY: "auto",
+                /* No overscroll-behavior: contain here. Letting the scroll
+                   chain to the page is exactly what makes the handover
+                   smooth in both directions. */
+                WebkitOverflowScrolling: "touch",
+              }
+            : undefined
+        }
       >
         {children}
       </div>
