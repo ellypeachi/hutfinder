@@ -26,13 +26,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
      layout is untouched.
    ========================================================================== */
 
-const SNAPS = [0.12, 0.55, 0.86]; // sheet top as a fraction of container height
+/* Sheet top as a fraction of the stage height (78dvh, set in App.jsx).
+
+   The largest value rests just below the map card: the card is 48vh plus a
+   legend line, which on a 78dvh stage lands at roughly 0.68. That is the
+   default, so at rest the layout matches the pre-sheet design — full map card,
+   list beneath. Dragging up covers the map. */
+const SNAPS = [0.18, 0.42, 0.68];
 const FLICK_VELOCITY = 0.45; // px per ms — above this, direction beats position
 
 export default function BottomSheet({
   children,
   enabled = true,
-  initialSnap = 1,
+  initialSnap = 2,
   label = "Hut list",
 }) {
   const [snap, setSnap] = useState(initialSnap);
@@ -151,7 +157,10 @@ export default function BottomSheet({
         display: "flex",
         flexDirection: "column",
         transition: dragTop != null || reduced ? "none" : "top 220ms cubic-bezier(.22,.61,.36,1)",
-        zIndex: 500,
+        /* Above Leaflet's controls, which sit at 800. Otherwise the
+           attribution and zoom buttons paint over the sheet when it is
+           dragged up past them. */
+        zIndex: 900,
       }}
     >
       <button
@@ -184,6 +193,7 @@ export default function BottomSheet({
       </button>
 
       <div
+        className="sheet-scroll"
         style={{
           flex: 1,
           overflowY: "auto",
