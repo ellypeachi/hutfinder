@@ -1119,57 +1119,12 @@ export default function App() {
                     width: "100%",
                     position: isNarrow ? "relative" : "sticky",
                     top: isNarrow ? undefined : "1rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.45rem",
+                    height: isNarrow ? "48vh" : "74vh",
+                    border: "1px solid var(--hair)",
+                    borderRadius: 12,
+                    overflow: "hidden",
                   }}
                 >
-                  <p
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "1rem",
-                      flexWrap: "wrap",
-                      margin: 0,
-                      fontSize: "0.78rem",
-                      color: "var(--ink-soft)",
-                    }}
-                  >
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-                      <span
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          background: "var(--blue)",
-                          border: "1px solid #fff",
-                          boxShadow: "0 0 0 1px var(--hair)",
-                        }}
-                      />
-                      bookable online
-                    </span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-                      <span
-                        style={{
-                          width: 9,
-                          height: 9,
-                          borderRadius: "50%",
-                          background: "var(--map-pin-muted)",
-                          opacity: 0.75,
-                        }}
-                      />
-                      contact the hut directly
-                    </span>
-                  </p>
-
-                  <div
-                    style={{
-                      height: isNarrow ? "48vh" : "74vh",
-                      border: "1px solid var(--hair)",
-                      borderRadius: 12,
-                      overflow: "hidden",
-                    }}
-                  >
                   <MapPanel
                     huts={filtered}
                     onSelect={setSelected}
@@ -1177,7 +1132,6 @@ export default function App() {
                     hoveredId={hoveredId}
                     onHover={setHoveredId}
                   />
-                  </div>
                 </div>
               )}
             </div>

@@ -130,13 +130,18 @@ export default function MapPanel({
   const palette = useMemo(
     () => ({
       pin: token("--map-pin", "#35648F"),
-      muted: token("--map-pin-muted", "#9C8B7D"),
+      muted: token("--map-pin-muted", "#C6BAAC"),
       ring: token("--map-ring", "#FFFFFF"),
       ink: token("--ink", "#3A2A20"),
       weight: Number(token("--map-ring-w", "1")) || 1,
       weightSel: Number(token("--map-ring-w-sel", "2")) || 2,
     }),
     []
+  );
+
+  const selectedHut = useMemo(
+    () => (selectedId == null ? null : pins.find((h) => h.id === selectedId)),
+    [pins, selectedId]
   );
 
   /* Draw order is deliberately stable. Sorting the array to put the hovered
@@ -163,12 +168,27 @@ export default function MapPanel({
       <FitToHuts huts={pins} />
       <PanToHovered huts={pins} hoveredId={hoveredId} />
 
+      {/* Halo under the selected pin. Drawn before the pins so it sits beneath
+          them, and non-interactive so it never steals the click. */}
+      {selectedHut && (
+        <CircleMarker
+          center={[selectedHut.lat, selectedHut.lng]}
+          radius={18}
+          interactive={false}
+          pathOptions={{
+            stroke: false,
+            fillColor: palette.pin,
+            fillOpacity: 0.2,
+          }}
+        />
+      )}
+
       {pins.map((hut) => {
         const bookable = Boolean(hut.hr_hut_id);
         const isSelected = selectedId != null && hut.id === selectedId;
         const isHovered = hoveredId != null && hut.id === hoveredId;
 
-        const radius = isSelected ? 8 : isHovered ? 7 : bookable ? 5.5 : 4.5;
+        const radius = isSelected ? 9 : isHovered ? 7 : bookable ? 5.5 : 4.5;
 
         return (
           <CircleMarker

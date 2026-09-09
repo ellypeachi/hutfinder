@@ -14,10 +14,11 @@
      token system rather than being hardcoded in JS. */
   --map-pin:        var(--blue, #35648F);   /* bookable hut */
   --map-pin-muted:  #9C8B7D;                /* stone — not bookable online */
+  --map-pin-halo:   #35648F;                /* selected-pin halo */
   --map-ring:       #FFFFFF;                /* marker ring */
   --map-ring-w:     1;                      /* ring weight, px, unitless */
   --map-ring-w-sel: 2;                      /* ring weight when selected */
-  --map-void:       #F2EFE9;                /* outside Austria + tiles loading */
+  --map-void:       #EDE7DC;                /* outside Austria + tiles loading */
 }
 
 /* --------------------------------------------------------------------------
