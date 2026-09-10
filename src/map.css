@@ -172,10 +172,10 @@
 }
 
 /* --------------------------------------------------------------------------
-   Page scrollbar
-   The list scrolls with the page rather than in its own container, so this
-   targets the document. The default translucent grey is invisible against
-   cream. Firefox reads scrollbar-color; Chromium needs the webkit
+   Sheet scrollbar
+   Targets the scroller inside BottomSheet (className="sheet-scroll"), which
+   takes over once the map pins. The default translucent grey is invisible
+   against cream. Firefox reads scrollbar-color; Chromium needs the webkit
    pseudo-elements, so both are here deliberately.
    -------------------------------------------------------------------------- */
 
