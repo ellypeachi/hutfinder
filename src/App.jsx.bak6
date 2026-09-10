@@ -1084,15 +1084,6 @@ export default function App() {
                     key={hut.id}
                     onMouseEnter={() => setHoveredId(hut.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    onClick={() => setSelected(hut)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelected(hut);
-                      }
-                    }}
-                    tabIndex={0}
-                    role="button"
                     style={{
                       border:
                         hoveredId === hut.id
@@ -1101,7 +1092,6 @@ export default function App() {
                       borderRadius: 8,
                       padding: "0.9rem 1rem",
                       marginBottom: "0.75rem",
-                      cursor: "pointer",
                       background:
                         hoveredId === hut.id ? "var(--card)" : "transparent",
                       transition: "border-color 150ms ease, background 150ms ease",

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -82,18 +82,14 @@ function FitToHuts({ huts }) {
   return null;
 }
 
-/* Brings a hut into view, but only when it is off-screen — focusing a pin you
-   can already see must never move the map under your cursor. The delay stops a
-   fast scan down the list firing a pan per card.
-
-   Rendered twice: once for hover, once for selection. Hover does not exist on
-   touch, so without the selection instance tapping a card on a phone would
-   never bring its pin into view. */
-function PanToFocus({ huts, focusId }) {
+/* Brings a hovered hut into view, but only when it is off-screen — hovering a
+   pin you can already see must never move the map under your cursor. The delay
+   stops a fast scan down the list firing a pan per card. */
+function PanToHovered({ huts, hoveredId }) {
   const map = useMap();
   useEffect(() => {
-    if (focusId == null) return;
-    const hut = huts.find((h) => h.id === focusId);
+    if (hoveredId == null) return;
+    const hut = huts.find((h) => h.id === hoveredId);
     if (!hut) return;
 
     const point = [hut.lat, hut.lng];
@@ -109,35 +105,7 @@ function PanToFocus({ huts, focusId }) {
       map.panTo(point, { animate: !reduce, duration: 0.4 });
     }, 180);
     return () => clearTimeout(t);
-  }, [map, huts, focusId]);
-  return null;
-}
-
-/* Zooms to the selected hut. Closing the card leaves the map where it is —
-   you stay looking at the hut you just opened rather than being thrown back
-   to the overview.
-
-   Math.max keeps it from zooming *out*: if you are already closer than 13,
-   selecting a hut leaves your zoom alone. */
-function ZoomToSelected({ huts, selectedId }) {
-  const map = useMap();
-
-  useEffect(() => {
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (selectedId == null) return;
-
-    const hut = huts.find((h) => h.id === selectedId);
-    if (!hut) return;
-
-    const target = [hut.lat, hut.lng];
-    const zoom = Math.max(map.getZoom(), 13);
-    if (reduce) map.setView(target, zoom);
-    else map.flyTo(target, zoom, { duration: 0.6 });
-  }, [map, huts, selectedId]);
-
+  }, [map, huts, hoveredId]);
   return null;
 }
 
@@ -198,20 +166,19 @@ export default function MapPanel({
         bounds={AT_BOUNDS}
       />
       <FitToHuts huts={pins} />
-      <PanToFocus huts={pins} focusId={hoveredId} />
-      <ZoomToSelected huts={pins} selectedId={selectedId} />
+      <PanToHovered huts={pins} hoveredId={hoveredId} />
 
       {/* Halo under the selected pin. Drawn before the pins so it sits beneath
           them, and non-interactive so it never steals the click. */}
       {selectedHut && (
         <CircleMarker
           center={[selectedHut.lat, selectedHut.lng]}
-          radius={24}
+          radius={18}
           interactive={false}
           pathOptions={{
             stroke: false,
             fillColor: palette.pin,
-            fillOpacity: 0.32,
+            fillOpacity: 0.2,
           }}
         />
       )}
