@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page not found — Hüttenfinder</title>
+
+<!--
+  Wire-up (Vite multi-page entry):
+
+  1. This file goes at the project root, next to index.html.
+  2. vite.config.js, inside defineConfig({...}):
+       build: {
+         rollupOptions: {
+           input: {
+             main:     fileURLToPath(new URL('./index.html', import.meta.url)),
+             notfound: fileURLToPath(new URL('./404.html',   import.meta.url)),
+           },
+         },
+       },
+     with  import { fileURLToPath, URL } from 'node:url'  at the top.
+  3. Uncomment the script below; create src/notfound.js holding the same
+     font + tokens.css imports main.jsx uses. No React needed.
+
+  Fallback values are kept so the file previews standalone before step 3.
+  Once wired, tokens.css supplies everything.
+-->
+
+<script type="module" src="/src/notfound.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body { margin: 0; min-height: 100%; }
+
+  body {
+    background: var(--cream, #F4F0E8);
+    color: var(--ink, #3A2A20);
+    font-family: var(--font-ui, system-ui, -apple-system, sans-serif);
+    font-size: var(--t-body, 16px);
+    line-height: var(--lh-body, 1.65);
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding: var(--s-5, 24px);
+  }
+
+  /* Placeholder for the outlined wordmark SVG — swap the text node for the paths. */
+  .masthead {
+    font-family: var(--font-display, Georgia, serif);
+    font-variation-settings: var(--fr-mark, 'opsz' 96, 'SOFT' 100, 'WONK' 1);
+    font-weight: 600;
+    font-size: var(--t-name, 28px);
+    line-height: var(--lh-name, 1.12);
+    color: var(--ink, #3A2A20);
+    text-decoration: none;
+  }
+
+  .stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: var(--s-7, 48px) 0;
+  }
+
+  .panel {
+    background: var(--card, #FBF9F4);
+    border: 1px solid var(--hair, #E0D8CA);
+    border-radius: var(--radius, 4px);
+    padding: var(--s-6, 32px);
+    max-width: 34rem;
+  }
+
+  .panel h1 {
+    font-family: var(--font-display, Georgia, serif);
+    font-variation-settings: var(--fr-head, 'opsz' 48, 'SOFT' 75, 'WONK' 0);
+    font-weight: 450;
+    font-size: var(--t-section, 34px);
+    line-height: var(--lh-section, 1.10);
+    margin: 0 0 var(--s-4, 16px);
+  }
+
+  .panel p {
+    margin: 0 0 var(--s-6, 32px);
+    max-width: 44ch;
+  }
+
+  .action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 var(--s-5, 24px);
+    background: var(--blue, #35648F);
+    color: var(--cream, #F4F0E8);
+    font-size: var(--t-body, 16px);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius, 4px);
+  }
+
+  .action:hover { background: var(--blue-deep, #2C5378); }
+
+  .action:focus-visible {
+    outline: 2px solid var(--blue, #35648F);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .action { transition: background var(--dur, 150ms) var(--ease, ease); }
+  }
+
+  @media (max-width: 30rem) {
+    .panel h1 { font-size: var(--t-name, 28px); line-height: var(--lh-name, 1.12); }
+    .panel    { padding: var(--s-5, 24px); }
+    .action   { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+
+<body>
+  <a class="masthead" href="/">Hüttenfinder</a>
+
+  <main class="stage">
+    <div class="panel">
+      <h1>There's no page at this address.</h1>
+      <p>The link is either broken or out of date. Every hut on Hüttenfinder lives on one map — open it and filter by date, region and free beds.</p>
+      <a class="action" href="/">Open the map</a>
+    </div>
+  </main>
+</body>
+</html>
