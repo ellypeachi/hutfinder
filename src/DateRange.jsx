@@ -70,6 +70,16 @@ export default function DateRange({
   const [hover, setHover] = useState(null);
   const [cursor, setCursor] = useState(() => firstOfMonth(parseISO(from) || new Date()));
   const wrapRef = useRef(null);
+  const startBtnRef = useRef(null);
+  const endBtnRef = useRef(null);
+
+  /* Escape and a finished pick both close the calendar. Whatever had focus
+     inside it is then gone from the page, and focus would fall back to the
+     body — so it goes to the field the calendar belongs to. */
+  const focusField = (which) => {
+    const el = which === "end" ? endBtnRef.current : startBtnRef.current;
+    if (el && document.contains(el)) el.focus({ preventScroll: true });
+  };
 
   /* pointerdown rather than click: picking a day re-renders the grid, and a
      click handler can end up judging containment against a node that is no
@@ -80,7 +90,9 @@ export default function DateRange({
       if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
     };
     const onKey = (e) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      focusField(mode);
     };
     document.addEventListener("pointerdown", onDown);
     document.addEventListener("keydown", onKey);
@@ -88,7 +100,7 @@ export default function DateRange({
       document.removeEventListener("pointerdown", onDown);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, mode]);
 
   const months = isNarrow ? 1 : 2;
   const monthStarts = [];
@@ -120,6 +132,7 @@ export default function DateRange({
     setMode("start");
     setHover(null);
     setOpen(false);
+    focusField("end");
   };
 
   const openAt = (which) => {
@@ -132,6 +145,10 @@ export default function DateRange({
     setMode("start");
     setHover(null);
     setOpen(false);
+    /* Clearing removes this very button from the page. Without somewhere to
+       send focus it lands on the body, and the next Tab restarts at the top
+       of the document. */
+    focusField("start");
   };
 
   const nights =
@@ -145,9 +162,11 @@ export default function DateRange({
     return (
       <button
         type="button"
+        ref={which === "end" ? endBtnRef : startBtnRef}
         onClick={() => openAt(which)}
         aria-expanded={active}
         aria-haspopup="dialog"
+        className="hf-tap-min"
         style={{
           flex: "1 1 150px",
           minWidth: 0,
@@ -177,7 +196,9 @@ export default function DateRange({
             display: "block",
             fontSize: "0.95rem",
             fontWeight: value ? 600 : 400,
-            color: value ? "var(--ink)" : "var(--stone, #9C8B7D)",
+            /* --stone doesn't exist, so this was always the literal
+               fallback: 3.1:1 on the card, under the 4.5:1 minimum. */
+            color: value ? "var(--ink)" : "var(--ink-soft)",
             fontVariantNumeric: "tabular-nums",
           }}
         >
@@ -204,8 +225,14 @@ export default function DateRange({
         onMouseEnter={() => {
           if (mode === "end" && start && !sameDay(hover, d)) setHover(d);
         }}
-        aria-label={`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`}
+        /* The visible label is a bare number, which out of the grid means
+           nothing — and says nothing about which end of the stay it would
+           set. Both go in the label. */
+        aria-label={`${mode === "end" ? "Check out" : "Check in"} ${d.getDate()} ${
+          MONTHS[d.getMonth()]
+        } ${d.getFullYear()}`}
         aria-pressed={edge}
+        className="hf-tap"
         style={{
           position: "relative",
           aspectRatio: "1 / 1",
@@ -242,7 +269,7 @@ export default function DateRange({
               width: 3,
               height: 3,
               borderRadius: "50%",
-              background: edge ? "#fff" : "var(--stone, #9C8B7D)",
+              background: edge ? "#fff" : "var(--ink-soft)",
               transform: "translateX(-50%)",
             }}
           />
@@ -293,6 +320,7 @@ export default function DateRange({
       disabled={disabled}
       aria-label={label}
       onClick={() => setCursor((c) => new Date(c.getFullYear(), c.getMonth() + delta, 1))}
+      className="hf-tap"
       style={{
         width: 36,
         height: 36,
@@ -363,7 +391,10 @@ export default function DateRange({
             {monthStarts.map(monthGrid)}
           </div>
 
-          <p style={{ margin: "0.6rem 0 0", fontSize: "0.75rem", color: "var(--ink-soft)", textAlign: "center" }}>
+          {/* The calendar switches itself from check-in to check-out without
+              moving focus, so this line is the only sign it happened. As a
+              status it gets read out when it changes. */}
+          <p role="status" style={{ margin: "0.6rem 0 0", fontSize: "0.75rem", color: "var(--ink-soft)", textAlign: "center" }}>
             {mode === "start"
               ? "Pick your check-in day"
               : `Now pick check-out — up to ${maxNights} nights`}

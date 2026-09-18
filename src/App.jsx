@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import DateRange from "./DateRange";
 const TYPE_LABEL = {
@@ -55,6 +55,11 @@ const ELEV_UNKNOWN = "unknown";
 const RESULT_LIMIT = 300;
 const MAX_NIGHTS = 31;
 const MODAL_MS = 150; // keep in sync with --dur in tokens.css
+
+/* What a focus trap counts as a stop. Shared by the hut modal and the
+   narrow-screen More filters overlay so the two can't drift apart. */
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
 function reducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -147,6 +152,11 @@ function Pill({ active, onClick, label, count }) {
   return (
     <button
       onClick={onClick}
+      /* A filter pill is a toggle, not a link: aria-pressed is what makes a
+         screen reader say "Tirol, pressed" rather than leaving the state to
+         the blue fill, which not everyone can see. */
+      aria-pressed={active}
+      className="hf-tap"
       style={{
         border: active ? "1px solid var(--ink)" : "1px solid var(--hair)",
         background: active ? "var(--blue)" : empty ? "transparent" : "var(--card)",
@@ -162,16 +172,33 @@ function Pill({ active, onClick, label, count }) {
     >
       {label}
       {count != null && (
-        <span style={{ opacity: active ? 0.6 : 0.45, marginLeft: "0.4rem" }}>{count}</span>
+        /* The count used to be the label colour at 0.45 opacity, which lands
+           at 2.6:1 on cream — the quiet look was coming from washing the text
+           out. --ink-soft is the token for exactly this job and measures
+           5.7:1; on the blue pill, white at 0.8 measures 4.7:1. */
+        <span
+          style={{
+            color: active ? "rgba(255,255,255,0.8)" : "var(--ink-soft)",
+            marginLeft: "0.4rem",
+          }}
+        >
+          {count}
+        </span>
       )}
     </button>
   );
 }
 
 function FilterGroup({ label, children }) {
+  /* The little uppercase caption is the group's name on screen; tying the
+     pills to it with a labelled group makes it the group's name in a screen
+     reader too, so "Serviced" arrives as "Warden: Serviced" rather than on
+     its own with no idea what it filters. */
+  const labelId = useId();
   return (
     <div style={{ marginBottom: "0.9rem" }}>
       <div
+        id={labelId}
         style={{
           fontSize: "0.7rem",
           letterSpacing: "0.08em",
@@ -182,7 +209,13 @@ function FilterGroup({ label, children }) {
       >
         {label}
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>{children}</div>
+      <div
+        role="group"
+        aria-labelledby={labelId}
+        style={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -220,6 +253,8 @@ export default function App() {
   const closeTimer = useRef(null);
   const [hoveredId, setHoveredId] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const moreRef = useRef(null);      // the panel
+  const moreBtnRef = useRef(null);   // what opened it, and what gets focus back
   const closeModal = () => {
   if (!selected) return;
   setModalOpen(false);
@@ -251,9 +286,7 @@ export default function App() {
     if (e.key !== "Tab") return;
     const box = dialogRef.current;
     if (!box) return;
-    const nodes = box.querySelectorAll(
-      'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
+    const nodes = box.querySelectorAll(FOCUSABLE);
     if (!nodes.length) return;
     const first = nodes[0];
     const last = nodes[nodes.length - 1];
@@ -273,10 +306,59 @@ export default function App() {
     window.removeEventListener("keydown", onKey);
   };
 }, [selected]);
+
+  const closeMore = () => {
+    setShowMore(false);
+    const back = moreBtnRef.current;
+    if (back && document.contains(back)) back.focus({ preventScroll: true });
+  };
+
+
   const moreCount =
     [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +
     [type, elev].filter((a) => a.length).length;
   const isNarrow = useIsNarrow();
+
+  /* More filters is two things wearing the same markup: an inline panel on
+     desktop, and on a phone a full-screen overlay. The overlay covers the
+     page, so it has to behave like one — focus moves into it, Tab cycles
+     inside it, and closing hands focus back to the button that opened it.
+     Without the trap, Tab walks out of a panel that is still on top of
+     everything and into controls nobody can see.
+
+     The inline panel is left alone: focus staying put is correct for a
+     disclosure. Escape closes either. */
+  useEffect(() => {
+    if (!showMore) return undefined;
+    if (isNarrow) moreRef.current?.focus({ preventScroll: true });
+
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        closeMore();
+        return;
+      }
+      if (e.key !== "Tab" || !isNarrow) return;
+      const box = moreRef.current;
+      if (!box) return;
+      const nodes = box.querySelectorAll(FOCUSABLE);
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const here = document.activeElement;
+      if (e.shiftKey && (here === first || here === box)) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && here === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [showMore, isNarrow]);
+
   /* The toggle drives both breakpoints now. On a phone it used to be hidden,
      which left no way to ask for a full-height map or a full-height list. */
   const showMap = view !== "list";
@@ -355,13 +437,36 @@ export default function App() {
     }
     return null;
   };
-  const hutCardBody = (hut) => {
+  /* `open` is passed for a list card and left off in the modal. With it, the
+     hut name becomes the card's button: one labelled stop that says which hut
+     it opens, instead of a whole card announced as a button whose name is
+     every word inside it — including the names of the links it contains. */
+  const hutCardBody = (hut, open) => {
     const rec = recOf(hut);
     const nf = !nights.length ? nextFree(hut) : null;
     const mins = nights.length ? minBuckets(hut) : null;
     return (
       <>
-        <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>{hut.name}</div>
+        <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>
+          {open ? (
+            <button
+              type="button"
+              className="hf-cardname"
+              onClick={(e) => {
+                e.stopPropagation();
+                open();
+              }}
+              /* Keyboard focus lights the card and pans its pin, the same as
+                 hovering it with a mouse. */
+              onFocus={() => setHoveredId(hut.id)}
+              onBlur={() => setHoveredId(null)}
+            >
+              {hut.name}
+            </button>
+          ) : (
+            hut.name
+          )}
+        </div>
         <div style={{ color: "var(--ink-soft)", fontSize: "0.9rem", marginTop: "0.2rem" }}>
           {TYPE_LABEL[hut.type] || hut.type}
           {hut.region ? ` · ${hut.region}` : ""}
@@ -392,7 +497,15 @@ export default function App() {
           {hut.website ? (
             <>
               {" · "}
-              <a href={hut.website} target="_blank" rel="noreferrer" style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}>
+              <a
+                href={hut.website}
+                target="_blank"
+                rel="noreferrer"
+                /* Opening a link shouldn't also open the card behind it. */
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`${hut.name} website (opens in a new tab)`}
+                style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}
+              >
                 website
               </a>
             </>
@@ -414,6 +527,9 @@ export default function App() {
                 href={hut.hr_booking_url}
                 target="_blank"
                 rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Book ${hut.name} online (opens in a new tab)`}
+                className="hf-tap"
                 style={{
                   background: "var(--blue)",
                   color: "#fff",
@@ -433,7 +549,19 @@ export default function App() {
                 {hut.hr_dogs === true ? " · dogs welcome" : hut.hr_dogs === false ? " · no dogs" : ""}
               </span>
               {hut.hr_price_pdf ? (
-                <a href={hut.hr_price_pdf} target="_blank" rel="noreferrer" style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}>
+                <a
+                  href={hut.hr_price_pdf}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label={`${hut.name} price list, PDF (opens in a new tab)`}
+                  /* Sits in a row of its own rather than inside a sentence,
+                     so the inline-link exemption doesn't cover it. The row is
+                     already 44px tall because of the booking button, so this
+                     costs no layout. */
+                  className="hf-tap"
+                  style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}
+                >
                   price list
                 </a>
               ) : null}
@@ -776,6 +904,7 @@ export default function App() {
           key={k}
           onClick={() => setView(k)}
           aria-pressed={view === k}
+          className="hf-tap"
           style={{
             border: "1px solid var(--hair)",
             background: view === k ? "var(--ink)" : "transparent",
@@ -856,7 +985,15 @@ export default function App() {
 
   const mapBox = (
     <div
+      id="hut-map"
+      /* In Map view there is no list, so the map is the page's main content
+         and carries the main landmark — otherwise the page would have none,
+         and the skip link would be pointing at nothing in particular. */
+      role={showList ? "region" : "main"}
+      aria-label="Map of matching huts"
+      tabIndex={-1}
       style={{
+        outline: "none",
         position: wide ? "sticky" : "relative",
         top: wide ? 0 : undefined,
         /* Leaflet's control container uses z-index 1000 internally. Giving the
@@ -877,6 +1014,16 @@ export default function App() {
         overflow: "hidden",
       }}
     >
+      {/* The pins are painted to a canvas, which is what keeps 1,500 of them
+          smooth — and also means they are not elements and cannot take
+          focus. Arrow keys pan and zoom the map itself; opening a hut is
+          done from the list, which holds the same huts. Said out loud here
+          so a screen reader isn't left guessing at an unlabelled canvas. */}
+      <p className="hf-vh">
+        Map of the matching huts. Pins can be panned and zoomed with the arrow
+        keys and the plus and minus keys, but cannot be opened from the
+        keyboard — use the hut list, where every hut opens the same details.
+      </p>
       <MapPanel
         huts={filtered}
         onSelect={setSelected}
@@ -890,8 +1037,16 @@ export default function App() {
 
   return (
     <div style={{ background: "var(--cream)", color: "var(--ink)", minHeight: "100vh", width: "100%" }}>
+      {/* First stop in the tab order. Between the header and the first hut
+          sit the search box, the calendar and around thirty filter pills —
+          a long way to Tab through to reach the results, every time the
+          page loads. In Map view there is no list to skip to, so it aims at
+          the map instead. */}
+      <a className="hf-skip" href={showList ? "#results" : "#hut-map"}>
+        {showList ? "Skip to hut results" : "Skip to the map"}
+      </a>
       <div style={shellStyle}>
-        <div style={leftCol(1)}>
+        <header style={leftCol(1)}>
         <h1 style={{ margin: "0 0 0.5rem" }}>
           <img
             src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
@@ -899,7 +1054,10 @@ export default function App() {
             style={{ height: 30, display: "block" }}
           />
         </h1>
-        <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>
+        {/* Filtering changes this line and nothing else a screen reader would
+            notice. As a status region it gets read out, so the count is the
+            confirmation that the pill did something. */}
+        <p role="status" style={{ color: "var(--ink-soft)", marginTop: 0 }}>
           {status === "ready"
             ? nights.length
               ? /* rangeLabel is empty until check-out is chosen, and with the
@@ -919,11 +1077,17 @@ export default function App() {
 
         {status === "ready" && (
           <>
+            {/* The placeholder was the only label, and a placeholder vanishes
+                the moment you type — including for anyone who needs to check
+                what the field was for. */}
             <input
               type="text"
+              id="hut-search"
+              aria-label="Search huts by name"
               placeholder="Search by name…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              className="hf-tap-min"
               style={{
                 width: "100%",
                 padding: "0.6rem",
@@ -988,7 +1152,11 @@ export default function App() {
             )}
 
             <button
-              onClick={() => setShowMore(true)}
+              ref={moreBtnRef}
+              onClick={() => (showMore ? closeMore() : setShowMore(true))}
+              aria-expanded={showMore}
+              aria-controls="more-filters"
+              className="hf-tap"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -1006,18 +1174,26 @@ export default function App() {
             >
               More filters
               {moreCount > 0 ? (
-                <span
-                  style={{
-                    background: "var(--blue)",
-                    color: "#fff",
-                    borderRadius: 100,
-                    fontSize: "0.72rem",
-                    fontWeight: 700,
-                    padding: "0.08rem 0.42rem",
-                  }}
-                >
-                  {moreCount}
-                </span>
+                <>
+                  {/* The badge is a bare number on screen; spelled out for a
+                      screen reader, where "More filters 3" says nothing. */}
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      background: "var(--blue)",
+                      color: "#fff",
+                      borderRadius: 100,
+                      fontSize: "0.72rem",
+                      fontWeight: 700,
+                      padding: "0.08rem 0.42rem",
+                    }}
+                  >
+                    {moreCount}
+                  </span>
+                  <span className="hf-vh">
+                    {`${moreCount} ${moreCount === 1 ? "filter" : "filters"} applied`}
+                  </span>
+                </>
               ) : null}
             </button>
 
@@ -1037,6 +1213,7 @@ export default function App() {
                     key={c.k}
                     onClick={c.clear}
                     aria-label={`Remove filter ${c.label}`}
+                    className="hf-tap"
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
@@ -1063,6 +1240,15 @@ export default function App() {
             {/* MORE_FILTERS_PANEL */}
             {showMore ? (
               <div
+                id="more-filters"
+                ref={moreRef}
+                /* On a phone this is a full-screen overlay and is announced as
+                   one; on desktop the same markup is an inline panel, where
+                   dialog semantics would be a lie. */
+                role={isNarrow ? "dialog" : undefined}
+                aria-modal={isNarrow ? true : undefined}
+                aria-label={isNarrow ? "More filters" : undefined}
+                tabIndex={isNarrow ? -1 : undefined}
                 style={
                   isNarrow
                     ? {
@@ -1072,6 +1258,7 @@ export default function App() {
                         background: "var(--cream)",
                         overflowY: "auto",
                         padding: "1rem 1rem 2rem",
+                        outline: "none",
                       }
                     : {
                         border: "1px solid var(--hair)",
@@ -1092,7 +1279,8 @@ export default function App() {
                 >
                   <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>More filters</span>
                   <button
-                    onClick={() => setShowMore(false)}
+                    onClick={closeMore}
+                    className="hf-tap"
                     style={{
                       background: "var(--blue)",
                       color: "#fff",
@@ -1199,6 +1387,7 @@ export default function App() {
             {anyFilter && (
               <button
                 onClick={clearAll}
+                className="hf-tap"
                 style={{
                   border: "none",
                   background: "none",
@@ -1216,7 +1405,7 @@ export default function App() {
             {!isNarrow && viewToggle}
           </>
         )}
-        </div>
+        </header>
 
         {/* The map stage. On a phone it is rendered even in List view, because
             it carries the toggle — without it you would be stranded in the
@@ -1224,7 +1413,13 @@ export default function App() {
         {status === "ready" && (isNarrow || showMap) && (
           <div style={stageStyle}>
             {isNarrow && (
-              <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+              /* A landmark of its own: on a phone this bar is pinned above
+                 everything and is how you move around the page, so it should
+                 not be loose content sitting outside every landmark. */
+              <nav
+                aria-label="View"
+                style={{ display: "flex", gap: 8, alignItems: "stretch" }}
+              >
                 <div style={{ flex: "1 1 auto", minWidth: 0 }}>{viewToggle}</div>
                 {scrolledDown && (
                   <button
@@ -1244,17 +1439,23 @@ export default function App() {
                       cursor: "pointer",
                     }}
                   >
-                    ↑
+                    <span aria-hidden="true">↑</span>
                   </button>
                 )}
-              </div>
+              </nav>
             )}
             {showMap && mapBox}
           </div>
         )}
 
+        {/* The results are the page's main content and the skip link's
+            target. tabIndex -1 is what lets focus actually land here —
+            browsers move focus to a fragment target only if it can hold
+            it — so the next Tab continues from the first hut, not from the
+            top of the filters again. */}
         {status === "ready" && showList && (
-          <div style={leftCol(2)}>
+          <main id="results" tabIndex={-1} style={leftCol(2)}>
+            <h2 className="hf-vh">Hut results</h2>
             {filtered.length === 0 ? (
               <div
                 style={{
@@ -1284,17 +1485,17 @@ export default function App() {
                 {from && !avail ? null : (
                   <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.15rem" }}>
                     {nights.length > 1 ? (
-                      <button onClick={shortenStay} style={{ background: "var(--blue)", color: "#fff", border: "none", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer" }}>
+                      <button onClick={shortenStay} className="hf-tap" style={{ background: "var(--blue)", color: "#fff", border: "none", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer" }}>
                         {nights.length === 2 ? "Try 1 night" : `Try ${nights.length - 1} nights`}
                       </button>
                     ) : null}
                     {unblockers.map((u) => (
-                      <button key={u.skip} onClick={u.clear} style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
+                      <button key={u.skip} onClick={u.clear} className="hf-tap" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
                         {`Drop ${u.label} · ${u.n} ${u.n === 1 ? "hut" : "huts"}`}
                       </button>
                     ))}
                     {anyNonDate ? (
-                      <button onClick={clearAll} style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
+                      <button onClick={clearAll} className="hf-tap" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
                         Clear filters
                       </button>
                     ) : null}
@@ -1304,6 +1505,7 @@ export default function App() {
                           setFrom("");
                           setTo("");
                         }}
+                        className="hf-tap"
                         style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}
                       >
                         Clear dates
@@ -1315,19 +1517,16 @@ export default function App() {
             ) : (
               <ul style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
                 {visible.map((hut) => (
+                  /* The card used to be one big role="button" with links
+                     inside it — a button whose name was the entire card, and
+                     which is not allowed to contain links. The hut name now
+                     carries the button; clicking anywhere on the card still
+                     opens it, for a mouse. */
                   <li
                     key={hut.id}
                     onMouseEnter={() => setHoveredId(hut.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => setSelected(hut)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setSelected(hut);
-                      }
-                    }}
-                    tabIndex={0}
-                    role="button"
                     style={{
                       border:
                         hoveredId === hut.id
@@ -1342,7 +1541,7 @@ export default function App() {
                       transition: "border-color var(--dur) var(--ease), background var(--dur) var(--ease)",
                     }}
                   >
-                    {hutCardBody(hut)}
+                    {hutCardBody(hut, () => setSelected(hut))}
                   </li>
                 ))}
               </ul>
@@ -1381,7 +1580,7 @@ export default function App() {
                 ↑ Back to filters
               </button>
             )}
-          </div>
+          </main>
         )}
 
         {status === "ready" && selected && (
@@ -1409,7 +1608,9 @@ export default function App() {
       style={{
         background: "var(--card)",
         borderRadius: 12,
-        padding: "1.25rem 1.4rem",
+        /* Extra head room on a phone, where the close button grows to 44px
+           and would otherwise sit on top of the hut name. */
+        padding: isNarrow ? "2.6rem 1.4rem 1.25rem" : "1.25rem 1.4rem",
         width: "100%",
         maxWidth: 420,
         maxHeight: "80vh",
@@ -1423,7 +1624,10 @@ export default function App() {
     >
       <button
         onClick={closeModal}
-        aria-label="Close"
+        /* "Close" alone is ambiguous once there are two overlays that close.
+           The glyph is hidden so the label is all that's read. */
+        aria-label={`Close ${selected.name}`}
+        className="hf-close"
         style={{
           position: "absolute",
           top: "0.6rem",
@@ -1437,7 +1641,7 @@ export default function App() {
           padding: "0.2rem",
         }}
       >
-        ×
+        <span aria-hidden="true">×</span>
       </button>
       {hutCardBody(selected)}
     </div>
