@@ -32,6 +32,14 @@
   background: var(--map-void);
   font-family: Figtree, system-ui, -apple-system, sans-serif;
   font-size: 12px;
+
+  /* Leaflet gives its panes real z-indexes — 400 for tiles, 600 for markers,
+     1000 for the control container — and .leaflet-container itself creates no
+     stacking context, so those values escape into whatever wraps the map and
+     outrank anything overlaid on it. The legend card was being painted under
+     the tile pane and only appeared once a zoom forced a repaint. isolate
+     contains them without touching layout. */
+  isolation: isolate;
 }
 
 .leaflet-container a { color: var(--blue, #35648F); }

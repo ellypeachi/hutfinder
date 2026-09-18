@@ -1,5 +1,12 @@
 import { useEffect, useMemo } from "react";
-import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  CircleMarker,
+  Tooltip,
+  ZoomControl,
+  useMap,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 /* --------------------------------------------------------------------------
@@ -219,6 +226,9 @@ export default function MapPanel({
          the keyboard on whole levels. */
       zoomSnap={0.25}
       zoomDelta={1}
+      /* Moved out of the top-left corner, which the legend now owns, and into
+         the bottom right — on a phone that is also where a thumb reaches. */
+      zoomControl={false}
       style={{ height, width: "100%" }}
     >
       <TileLayer url={WORLD_URL} attribution={WORLD_ATTR} maxZoom={19} />
@@ -229,6 +239,7 @@ export default function MapPanel({
         maxZoom={19}
         bounds={AT_BOUNDS}
       />
+      <ZoomControl position="bottomright" />
       <AutoResize />
       <FitToHuts huts={pins} />
       <PanToFocus huts={pins} focusId={hoveredId} />

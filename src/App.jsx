@@ -280,6 +280,34 @@ export default function App() {
      which left no way to ask for a full-height map or a full-height list. */
   const showMap = view !== "list";
   const showList = view !== "map";
+
+  /* Getting back to the top of 300 cards was a lot of thumb, and swiping over
+     the map pans the map rather than scrolling the page — so the only way up
+     was repeated swipes on the list. A jump-to-top sits in the pinned bar,
+     where a thumb already is, and appears once there is something to go back
+     to. Only the threshold crossing sets state, so this costs one render per
+     crossing rather than one per scroll frame. */
+  const [scrolledDown, setScrolledDown] = useState(false);
+  useEffect(() => {
+    /* Desktop never reads this — the button only renders on a phone — so the
+       stale value is harmless and clearing it here would be a synchronous
+       setState inside an effect. */
+    if (!isNarrow) return undefined;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => setScrolledDown(window.scrollY > 320));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [isNarrow]);
+
+  const scrollToTop = () =>
+    window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}huts.json`)
       .then((res) => {
@@ -775,9 +803,11 @@ export default function App() {
       style={{
         position: "absolute",
         top: 10,
-        left: 56,
-        maxWidth: "calc(100% - 66px)",
-        zIndex: 3,
+        left: 10,
+        maxWidth: "calc(100% - 20px)",
+        /* Above Leaflet's control container (1000) as well, so the card still
+           shows if the isolate in map.css ever stops applying. */
+        zIndex: 1100,
         background: "rgba(251, 249, 244, 0.94)",
         border: "1px solid var(--hair)",
         borderRadius: 8,
@@ -1226,7 +1256,32 @@ export default function App() {
             list with no way back to the map. */}
         {status === "ready" && (isNarrow || showMap) && (
           <div style={stageStyle}>
-            {isNarrow && viewToggle}
+            {isNarrow && (
+              <div style={{ display: "flex", gap: 8, alignItems: "stretch" }}>
+                <div style={{ flex: "1 1 auto", minWidth: 0 }}>{viewToggle}</div>
+                {scrolledDown && (
+                  <button
+                    onClick={scrollToTop}
+                    aria-label="Back to the top of the page"
+                    title="Back to top"
+                    style={{
+                      flex: "0 0 44px",
+                      minHeight: 44,
+                      border: "1px solid var(--line-control)",
+                      background: "transparent",
+                      color: "var(--ink)",
+                      borderRadius: 6,
+                      fontFamily: "inherit",
+                      fontSize: "1.05rem",
+                      lineHeight: 1,
+                      cursor: "pointer",
+                    }}
+                  >
+                    ↑
+                  </button>
+                )}
+              </div>
+            )}
             {showMap && mapBox}
           </div>
         )}
