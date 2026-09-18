@@ -811,39 +811,44 @@ export default function App() {
         background: "rgba(251, 249, 244, 0.94)",
         border: "1px solid var(--hair)",
         borderRadius: 8,
-        padding: "0.45rem 0.6rem",
+        /* Trimmed on a phone, where the card was covering most of the map's
+           width. The wording is the only thing that shortens — both pin types
+           still have to be named, or the stone pins read as broken. */
+        padding: isNarrow ? "0.28rem 0.45rem" : "0.45rem 0.6rem",
         display: "flex",
-        gap: "0.9rem",
+        gap: isNarrow ? "0.6rem" : "0.9rem",
         flexWrap: "wrap",
-        fontSize: "0.72rem",
+        fontSize: isNarrow ? "0.66rem" : "0.72rem",
         color: "var(--ink-soft)",
         pointerEvents: "none",
       }}
     >
-      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
         <span
           style={{
-            width: 10,
-            height: 10,
+            width: isNarrow ? 8 : 10,
+            height: isNarrow ? 8 : 10,
             borderRadius: "50%",
             background: "var(--blue)",
             border: "1px solid #fff",
             boxShadow: "0 0 0 1px var(--hair)",
+            flex: "0 0 auto",
           }}
         />
-        bookable online
+        {isNarrow ? "bookable" : "bookable online"}
       </span>
-      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
         <span
           style={{
-            width: 9,
-            height: 9,
+            width: isNarrow ? 7 : 9,
+            height: isNarrow ? 7 : 9,
             borderRadius: "50%",
             background: "var(--map-pin-muted)",
             opacity: 0.75,
+            flex: "0 0 auto",
           }}
         />
-        contact the hut directly
+        {isNarrow ? "contact hut" : "contact the hut directly"}
       </span>
     </div>
   );
@@ -861,7 +866,10 @@ export default function App() {
           ? "100vh"
           : view === "map"
           ? "calc(100dvh - 9.5rem)"
-          : "min(40vh, 320px)",
+          : /* Split on a phone. The cap matters as much as the vh: without it
+               a tall phone gives the map so much height that the list below
+               it is down to a card and a half. */
+            "min(48vh, 380px)",
         border: wide ? "none" : "1px solid var(--hair)",
         borderLeft: wide ? "1px solid var(--hair)" : undefined,
         borderRadius: wide ? 0 : 12,
