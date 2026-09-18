@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
+import DateRange from "./DateRange";
 const TYPE_LABEL = {
   schutzhuette: "Schutzhütte",
   alm: "Alm",
@@ -901,7 +902,10 @@ export default function App() {
         <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>
           {status === "ready"
             ? nights.length
-              ? `${filtered.length} huts with space, ${rangeLabel} · ${nightsLabel}`
+              ? /* rangeLabel is empty until check-out is chosen, and with the
+                   shared calendar that half-filled state is now on screen for
+                   as long as it takes to pick the second date. */
+                `${filtered.length} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
               : `${filtered.length} of ${huts.length} huts`
             : ""}
         </p>
@@ -930,61 +934,16 @@ export default function App() {
             />
 
             <FilterGroup label="Available (nights)">
-              <label style={{ fontSize: "0.8rem", color: "var(--ink-soft)", marginRight: "0.35rem" }}>
-                Check in
-              </label>
-              <input
-                type="date"
-                value={from}
-                min={todayISO()}
-                onChange={(e) => {
-                  setFrom(e.target.value);
-                  if (to && to <= e.target.value) setTo("");
-                }}
-                style={{
-                  padding: "0.45rem 0.55rem",
-                  fontSize: "0.95rem",
-                  border: "1px solid var(--hair)",
-                  borderRadius: 6,
-                  marginRight: "0.6rem",
+              <DateRange
+                from={from}
+                to={to}
+                maxNights={MAX_NIGHTS}
+                isNarrow={isNarrow}
+                onChange={(f, t) => {
+                  setFrom(f);
+                  setTo(t);
                 }}
               />
-              <label style={{ fontSize: "0.8rem", color: "var(--ink-soft)", marginRight: "0.35rem" }}>
-                Check out
-              </label>
-              <input
-                type="date"
-                value={to}
-                min={from ? nextDayISO(from) : todayISO()}
-                disabled={!from}
-                onChange={(e) => setTo(e.target.value)}
-                style={{
-                  padding: "0.45rem 0.55rem",
-                  fontSize: "0.95rem",
-                  border: "1px solid var(--hair)",
-                  borderRadius: 6,
-                  marginRight: "0.5rem",
-                  opacity: from ? 1 : 0.5,
-                }}
-              />
-              {from && (
-                <button
-                  onClick={() => {
-                    setFrom("");
-                    setTo("");
-                  }}
-                  style={{
-                    border: "none",
-                    background: "none",
-                    color: "var(--ink-soft)",
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                    fontSize: "0.85rem",
-                  }}
-                >
-                  clear
-                </button>
-              )}
               {from && !avail && (
                 <span style={{ color: "var(--burgundy)", fontSize: "0.8rem", marginLeft: "0.5rem" }}>
                   availability.json didn’t load — run fetch_availability.py
