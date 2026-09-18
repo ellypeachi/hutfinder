@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import BottomSheet from "./BottomSheet";
 const TYPE_LABEL = {
@@ -54,7 +54,11 @@ const ELEV_UNKNOWN = "unknown";
 
 const RESULT_LIMIT = 300;
 const MAX_NIGHTS = 31;
+const MODAL_MS = 150; // keep in sync with --dur in tokens.css
 
+function reducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 function bandOf(h) {
   const e = h.elevation;
   if (!isNumber(e)) return ELEV_UNKNOWN;
@@ -210,17 +214,69 @@ export default function App() {
   const [roomType, setRoomType] = useState(null); // "dorm" | "shared" | "priv" | null
   const [view, setView] = useState("split");
   const [selected, setSelected] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false); // drives the enter/exit transition
+  const dialogRef = useRef(null);
+  const triggerRef = useRef(null);   // what gets focus back
+  const closeTimer = useRef(null);
   const [hoveredId, setHoveredId] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const closeModal = () => {
+  if (!selected) return;
+  setModalOpen(false);
+  const back = triggerRef.current;
+  if (back && document.contains(back)) back.focus({ preventScroll: true });
+  triggerRef.current = null;
+  clearTimeout(closeTimer.current);
+  closeTimer.current = setTimeout(
+    () => setSelected(null),
+    reducedMotion() ? 0 : MODAL_MS
+  );
+};
+  useEffect(() => {
+  if (!selected) return;
+  clearTimeout(closeTimer.current);
+
+  // remember the trigger, but only on first open — switching pins
+  // while the modal is up shouldn't overwrite it
+  if (!triggerRef.current) {
+    const a = document.activeElement;
+    triggerRef.current = a && a !== document.body ? a : null;
+  }
+
+  const raf = requestAnimationFrame(() => setModalOpen(true));
+  dialogRef.current?.focus({ preventScroll: true });
+
+  const onKey = (e) => {
+    if (e.key === "Escape") return closeModal();
+    if (e.key !== "Tab") return;
+    const box = dialogRef.current;
+    if (!box) return;
+    const nodes = box.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (!nodes.length) return;
+    const first = nodes[0];
+    const last = nodes[nodes.length - 1];
+    const here = document.activeElement;
+    if (e.shiftKey && (here === first || here === box)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && here === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
+  window.addEventListener("keydown", onKey);
+  return () => {
+    cancelAnimationFrame(raf);
+    window.removeEventListener("keydown", onKey);
+  };
+}, [selected]);
   const moreCount =
     [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +
     [type, elev].filter((a) => a.length).length;
     const isNarrow = useIsNarrow();
-      useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && setSelected(null);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
   const showMap = isNarrow || view !== "list";
   const showList = isNarrow || view !== "map";
   useEffect(() => {
@@ -1104,7 +1160,7 @@ export default function App() {
                       cursor: "pointer",
                       background:
                         hoveredId === hut.id ? "var(--card)" : "transparent",
-                      transition: "border-color 150ms ease, background 150ms ease",
+                      transition: "border-color var(--dur) var(--ease), background var(--dur) var(--ease)",
                     }}
                   >
                     {hutCardBody(hut)}
@@ -1203,54 +1259,64 @@ export default function App() {
               )}
             </div>
                         {selected && (
-              <div
-                onClick={() => setSelected(null)}
-                style={{
-                  position: "fixed",
-                  inset: 0,
-                  background: "rgba(20,18,14,0.45)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "1rem",
-                  zIndex: 2000,
-                }}
-              >
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    background: "var(--card)",
-                    borderRadius: 12,
-                    padding: "1.25rem 1.4rem",
-                    width: "100%",
-                    maxWidth: 420,
-                    maxHeight: "80vh",
-                    overflowY: "auto",
-                    position: "relative",
-                  }}
-                >
-                  <button
-                    onClick={() => setSelected(null)}
-                    aria-label="Close"
-                    style={{
-                      position: "absolute",
-                      top: "0.6rem",
-                      right: "0.7rem",
-                      border: "none",
-                      background: "none",
-                      color: "var(--ink-soft)",
-                      fontSize: "1.3rem",
-                      lineHeight: 1,
-                      cursor: "pointer",
-                      padding: "0.2rem",
-                    }}
-                  >
-                    ×
-                  </button>
-                  {hutCardBody(selected)}
-                </div>
-              </div>
-            )}
+  <div
+    onClick={closeModal}
+    style={{
+      position: "fixed",
+      inset: 0,
+      background: modalOpen ? "rgba(20,18,14,0.45)" : "rgba(20,18,14,0)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "1rem",
+      zIndex: 2000,
+      transition: "background-color var(--dur) var(--ease)",
+    }}
+  >
+    <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-label={selected.name}
+      tabIndex={-1}
+      onClick={(e) => e.stopPropagation()}
+      style={{
+        background: "var(--card)",
+        borderRadius: 12,
+        padding: "1.25rem 1.4rem",
+        width: "100%",
+        maxWidth: 420,
+        maxHeight: "80vh",
+        overflowY: "auto",
+        position: "relative",
+        outline: "none",
+        opacity: modalOpen ? 1 : 0,
+        transform: modalOpen ? "translateY(0)" : "translateY(8px)",
+        transition: "opacity var(--dur) var(--ease), transform var(--dur) var(--ease)",
+      }}
+    >
+      <button
+        onClick={closeModal}
+        aria-label="Close"
+        style={{
+          position: "absolute",
+          top: "0.6rem",
+          right: "0.7rem",
+          border: "none",
+          background: "none",
+          color: "var(--ink-soft)",
+          fontSize: "1.3rem",
+          lineHeight: 1,
+          cursor: "pointer",
+          padding: "0.2rem",
+        }}
+      >
+        ×
+      </button>
+      {hutCardBody(selected)}
+    </div>
+  </div>
+)}
           </>
         )}
       </div>
