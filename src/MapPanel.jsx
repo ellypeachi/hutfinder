@@ -76,7 +76,7 @@ function FitToHuts({ huts }) {
         [Math.min(...lats), Math.min(...lngs)],
         [Math.max(...lats), Math.max(...lngs)],
       ],
-      { padding: [48, 48], maxZoom: 9 }
+      { padding: [24, 24], maxZoom: 9 }
     );
   }, [map, huts.length, huts[0]?.id]);
   return null;
@@ -110,6 +110,31 @@ function PanToFocus({ huts, focusId }) {
     }, 180);
     return () => clearTimeout(t);
   }, [map, huts, focusId]);
+  return null;
+}
+
+/* Leaflet caches the container's size and only re-reads it on a window resize.
+   The map box now changes height on its own — switching between Split and Map
+   on a phone, and crossing the desktop breakpoint — which resizes the element
+   without resizing the window. Without this the canvas keeps the old size and
+   pins land in the wrong place. */
+function AutoResize() {
+  const map = useMap();
+  useEffect(() => {
+    if (typeof ResizeObserver === "undefined") return undefined;
+    const el = map.getContainer();
+    let frame = 0;
+    const ro = new ResizeObserver(() => {
+      /* Coalesce: a height change can fire this several times in one frame. */
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => map.invalidateSize({ animate: false }));
+    });
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(frame);
+      ro.disconnect();
+    };
+  }, [map]);
   return null;
 }
 
@@ -187,6 +212,13 @@ export default function MapPanel({
       zoom={7}
       preferCanvas={true}
       scrollWheelZoom={true}
+      /* Austria is about 2:1, so at whole-number zoom levels it only ever
+         fills one dimension of the panel — in the wide desktop map it sat in
+         the middle at a third of the width. Quarter steps let fitBounds pick a
+         zoom that actually fills the box. zoomDelta keeps the +/- buttons and
+         the keyboard on whole levels. */
+      zoomSnap={0.25}
+      zoomDelta={1}
       style={{ height, width: "100%" }}
     >
       <TileLayer url={WORLD_URL} attribution={WORLD_ATTR} maxZoom={19} />
@@ -197,6 +229,7 @@ export default function MapPanel({
         maxZoom={19}
         bounds={AT_BOUNDS}
       />
+      <AutoResize />
       <FitToHuts huts={pins} />
       <PanToFocus huts={pins} focusId={hoveredId} />
       <ZoomToSelected huts={pins} selectedId={selectedId} />

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
-import BottomSheet from "./BottomSheet";
 const TYPE_LABEL = {
   schutzhuette: "Schutzhütte",
   alm: "Alm",
@@ -276,9 +275,11 @@ export default function App() {
   const moreCount =
     [bookableOnly, showerOnly, warden, assoc].filter(Boolean).length +
     [type, elev].filter((a) => a.length).length;
-    const isNarrow = useIsNarrow();
-  const showMap = isNarrow || view !== "list";
-  const showList = isNarrow || view !== "map";
+  const isNarrow = useIsNarrow();
+  /* The toggle drives both breakpoints now. On a phone it used to be hidden,
+     which left no way to ask for a full-height map or a full-height list. */
+  const showMap = view !== "list";
+  const showList = view !== "map";
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}huts.json`)
       .then((res) => {
@@ -665,17 +666,193 @@ export default function App() {
     ? `${nights.length} ${nights.length === 1 ? "night" : "nights"}`
     : "";
 
+  /* ----------------------------------------------------------------------
+     Layout
+
+     Desktop: a two-column grid. The left column carries the header, filters
+     and list; the map takes column 2 and spans both rows, so it sticks to the
+     top of the window at full height and runs to the right edge of the glass.
+
+     Phone: one column. The map stage sits between the filters and the list
+     and sticks to the top, carrying the view toggle with it — so the map and
+     the controls stay on screen however far down the list you have scrolled.
+
+     The map sits in the same place in the DOM either way; only its grid area
+     changes. Crossing the breakpoint therefore never remounts Leaflet.
+     ---------------------------------------------------------------------- */
+  const wide = !isNarrow && showMap;
+
+  const shellStyle = wide
+    ? {
+        display: "grid",
+        gridTemplateColumns: "min(760px, 50%) 1fr",
+        gridTemplateRows: "auto 1fr",
+        width: "100%",
+        fontFamily: "var(--font-ui)",
+        textAlign: "left",
+      }
+    : {
+        maxWidth: 720,
+        margin: "0 auto",
+        padding: isNarrow ? "1.25rem 1rem 0" : "2rem 1rem",
+        fontFamily: "var(--font-ui)",
+        textAlign: "left",
+      };
+
+  /* row 1 = header and filters, row 2 = the list. Both in grid column 1. */
+  const leftCol = (row) =>
+    wide
+      ? {
+          gridColumn: 1,
+          gridRow: row,
+          minWidth: 0,
+          padding: row === 1 ? "2rem 1.75rem 0 2rem" : "0 1.75rem 3rem 2rem",
+        }
+      : { minWidth: 0 };
+
+  const stageStyle = wide
+    ? { gridColumn: 2, gridRow: "1 / 3", minWidth: 0 }
+    : {
+        position: "sticky",
+        top: 0,
+        zIndex: 5,
+        background: "var(--cream)",
+        margin: "0.75rem 0 0",
+        padding: "0.5rem 0",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.5rem",
+        /* A soft edge so cards passing underneath read as behind, not merged. */
+        boxShadow: "0 8px 12px -10px rgba(58, 42, 32, 0.22)",
+      };
+
+  /* One control, rendered in the header on desktop and inside the pinned
+     stage on a phone, where it has to stay reachable from anywhere. */
+  const viewToggle = (
+    <div
+      role="group"
+      aria-label="View"
+      style={{
+        display: "flex",
+        gap: isNarrow ? 8 : 6,
+        margin: isNarrow ? 0 : "1.25rem 0 0",
+      }}
+    >
+      {[
+        ["list", "List"],
+        ["split", "Split"],
+        ["map", "Map"],
+      ].map(([k, label]) => (
+        <button
+          key={k}
+          onClick={() => setView(k)}
+          aria-pressed={view === k}
+          style={{
+            border: "1px solid var(--hair)",
+            background: view === k ? "var(--ink)" : "transparent",
+            color: view === k ? "#fff" : "var(--ink-soft)",
+            borderRadius: 6,
+            padding: isNarrow ? "0.6rem 0.8rem" : "0.3rem 0.8rem",
+            minHeight: isNarrow ? 44 : undefined,
+            flex: isNarrow ? "1 1 0" : undefined,
+            fontFamily: "inherit",
+            fontSize: isNarrow ? "0.9rem" : "0.82rem",
+            fontWeight: isNarrow ? 600 : 400,
+            cursor: "pointer",
+            transition: "background var(--dur) var(--ease), color var(--dur) var(--ease)",
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+
+  /* Sits on the map rather than above it: a full-bleed map has no room above
+     it, and the phone needs every pixel of height it can keep. */
+  const legendCard = (
+    <div
+      style={{
+        position: "absolute",
+        top: 10,
+        left: 56,
+        maxWidth: "calc(100% - 66px)",
+        zIndex: 3,
+        background: "rgba(251, 249, 244, 0.94)",
+        border: "1px solid var(--hair)",
+        borderRadius: 8,
+        padding: "0.45rem 0.6rem",
+        display: "flex",
+        gap: "0.9rem",
+        flexWrap: "wrap",
+        fontSize: "0.72rem",
+        color: "var(--ink-soft)",
+        pointerEvents: "none",
+      }}
+    >
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+        <span
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            background: "var(--blue)",
+            border: "1px solid #fff",
+            boxShadow: "0 0 0 1px var(--hair)",
+          }}
+        />
+        bookable online
+      </span>
+      <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
+        <span
+          style={{
+            width: 9,
+            height: 9,
+            borderRadius: "50%",
+            background: "var(--map-pin-muted)",
+            opacity: 0.75,
+          }}
+        />
+        contact the hut directly
+      </span>
+    </div>
+  );
+
+  const mapBox = (
+    <div
+      style={{
+        position: wide ? "sticky" : "relative",
+        top: wide ? 0 : undefined,
+        /* Leaflet's control container uses z-index 1000 internally. Giving the
+           map its own stacking context contains those values, so they stay
+           under the stage and the modal. */
+        zIndex: 0,
+        height: wide
+          ? "100vh"
+          : view === "map"
+          ? "calc(100dvh - 9.5rem)"
+          : "min(40vh, 320px)",
+        border: wide ? "none" : "1px solid var(--hair)",
+        borderLeft: wide ? "1px solid var(--hair)" : undefined,
+        borderRadius: wide ? 0 : 12,
+        overflow: "hidden",
+      }}
+    >
+      <MapPanel
+        huts={filtered}
+        onSelect={setSelected}
+        selectedId={selected?.id ?? null}
+        hoveredId={hoveredId}
+        onHover={setHoveredId}
+      />
+      {legendCard}
+    </div>
+  );
+
   return (
     <div style={{ background: "var(--cream)", color: "var(--ink)", minHeight: "100vh", width: "100%" }}>
-      <div
-        style={{
-          maxWidth: 720,
-          margin: "0 auto",
-          padding: "2rem 1rem",
-          fontFamily: "var(--font-ui)",
-          textAlign: "left",
-        }}
-      >
+      <div style={shellStyle}>
+        <div style={leftCol(1)}>
         <h1 style={{ margin: "0 0 0.5rem" }}>
           <img
             src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
@@ -1039,43 +1216,23 @@ export default function App() {
                 Clear filters
               </button>
             )}
-            {!isNarrow && (
-              <div style={{ display: "flex", gap: 6, margin: "1.25rem 0 0" }}>
-                {[
-                  ["list", "List"],
-                  ["split", "Split"],
-                  ["map", "Map"],
-                ].map(([k, label]) => (
-                  <button
-                    key={k}
-                    onClick={() => setView(k)}
-                    style={{
-                      border: "1px solid var(--hair)",
-                      background: view === k ? "var(--ink)" : "transparent",
-                      color: view === k ? "#fff" : "var(--ink-soft)",
-                      borderRadius: 6,
-                      padding: "0.3rem 0.8rem",
-                      fontSize: "0.82rem",
-                      cursor: "pointer",
-                    }}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            )}
+            {!isNarrow && viewToggle}
+          </>
+        )}
+        </div>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: isNarrow ? "column" : "row",
-                gap: isNarrow ? "0.75rem" : "1.5rem",
-                alignItems: "flex-start",
-                marginTop: "1rem",
-              }}
-            >
-              <BottomSheet enabled={isNarrow}>
-              <div style={{ flex: 1, minWidth: 0, width: "100%", display: showList ? "block" : "none" }}>
+        {/* The map stage. On a phone it is rendered even in List view, because
+            it carries the toggle — without it you would be stranded in the
+            list with no way back to the map. */}
+        {status === "ready" && (isNarrow || showMap) && (
+          <div style={stageStyle}>
+            {isNarrow && viewToggle}
+            {showMap && mapBox}
+          </div>
+        )}
+
+        {status === "ready" && showList && (
+          <div style={leftCol(2)}>
             {filtered.length === 0 ? (
               <div
                 style={{
@@ -1178,87 +1335,34 @@ export default function App() {
             <p style={{ color: "var(--ink-soft)", fontSize: "0.75rem", marginTop: "1.5rem" }}>
               * elevation estimated from coordinates
             </p>
-                          </div>
-              </BottomSheet>
+            {isNarrow && (
+              <button
+                onClick={() =>
+                  window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" })
+                }
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  minHeight: 44,
+                  padding: "0 1rem",
+                  marginTop: "0.5rem",
+                  border: "1px solid var(--line-control)",
+                  borderRadius: "var(--radius)",
+                  background: "transparent",
+                  color: "var(--ink)",
+                  fontFamily: "inherit",
+                  fontSize: "0.9rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                ↑ Back to filters
+              </button>
+            )}
+          </div>
+        )}
 
-              {showMap && (
-                <div
-                  data-map-stage
-                  style={{
-                    flex: isNarrow ? "none" : "0 0 44%",
-                    width: "100%",
-                    /* order moves the map above the list visually while leaving
-                       DOM order alone. Replaces column-reverse, which broke
-                       sticky positioning. */
-                    order: isNarrow ? -1 : 0,
-                    position: "sticky",
-                    top: isNarrow ? 0 : "1rem",
-                    zIndex: isNarrow ? 0 : undefined,
-                    background: isNarrow ? "var(--cream)" : undefined,
-                    paddingBottom: isNarrow ? "0.4rem" : undefined,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.45rem",
-                  }}
-                >
-                  <p
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "1rem",
-                      flexWrap: "wrap",
-                      margin: 0,
-                      fontSize: "0.78rem",
-                      color: "var(--ink-soft)",
-                    }}
-                  >
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-                      <span
-                        style={{
-                          width: 10,
-                          height: 10,
-                          borderRadius: "50%",
-                          background: "var(--blue)",
-                          border: "1px solid #fff",
-                          boxShadow: "0 0 0 1px var(--hair)",
-                        }}
-                      />
-                      bookable online
-                    </span>
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem" }}>
-                      <span
-                        style={{
-                          width: 9,
-                          height: 9,
-                          borderRadius: "50%",
-                          background: "var(--map-pin-muted)",
-                          opacity: 0.75,
-                        }}
-                      />
-                      contact the hut directly
-                    </span>
-                  </p>
-
-                  <div
-                    style={{
-                      height: isNarrow ? "48vh" : "74vh",
-                      border: "1px solid var(--hair)",
-                      borderRadius: 12,
-                      overflow: "hidden",
-                    }}
-                  >
-                  <MapPanel
-                    huts={filtered}
-                    onSelect={setSelected}
-                    selectedId={selected?.id ?? null}
-                    hoveredId={hoveredId}
-                    onHover={setHoveredId}
-                  />
-                  </div>
-                </div>
-              )}
-            </div>
-                        {selected && (
+        {status === "ready" && selected && (
   <div
     onClick={closeModal}
     style={{
@@ -1317,8 +1421,6 @@ export default function App() {
     </div>
   </div>
 )}
-          </>
-        )}
       </div>
     </div>
   );
