@@ -119,6 +119,123 @@ function fmtGenerated(iso) {
   }
 }
 
+/* The facts people skim for, most useful first. A card shows the first
+   three and the pop-up all of them. Anything the data doesn't know is left
+   out rather than shown as "unknown", and an inferred value says so
+   ("Usually serviced"). */
+function hutTags(hut) {
+  const tags = [];
+  if (hut.club) tags.push({ label: CLUB_LABEL[hut.club] || hut.club, club: true });
+  else if (hut.association) tags.push({ label: ASSOC_LABEL[hut.association] || hut.association });
+  const beds = isNumber(hut.hr_capacity) ? hut.hr_capacity : hut.sleeping;
+  if (beds > 0) tags.push({ label: `${beds} beds` });
+  else if (beds === 0) tags.push({ label: "No overnight" });
+  if (hut.warden === "bewirtschaftet") {
+    tags.push({ label: hut.warden_source === "inferred" ? "Usually serviced" : "Serviced" });
+  } else if (hut.warden === "bewartet") tags.push({ label: "Attended" });
+  else if (hut.warden === "selbstversorger") tags.push({ label: "Self-service" });
+  if (hut.shower === true) tags.push({ label: "Shower" });
+  if (hut.winterraum === true) tags.push({ label: "Winter room" });
+  if (hut.hr_dogs === true) tags.push({ label: "Dogs welcome" });
+  else if (hut.hr_dogs === false) tags.push({ label: "No dogs" });
+  return tags;
+}
+
+function Tags({ tags }) {
+  return (
+    <ul className="hf-tags">
+      {tags.map((t) => (
+        <li key={t.label} className={t.club ? "hf-tag hf-tag-club" : "hf-tag"}>
+          {t.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// Some hut websites come without a scheme ("www.hut.at"), which a bare href
+// would treat as a path on this site.
+function webHref(url) {
+  return /^https?:\/\//i.test(url) ? url : `https://${url}`;
+}
+function webLabel(url) {
+  try {
+    return new URL(webHref(url)).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
+}
+function phoneLabel(phone) {
+  return phone.replace(/\s*\/\s*/g, " ").trim();
+}
+function telHref(phone) {
+  return "tel:" + phone.replace(/[^\d+]/g, "");
+}
+
+// Hut texts from hut-reservation.org arrive as HTML. A parsed document is
+// inert (no scripts run, nothing loads), so reading its text is safe.
+function plainText(html) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return (doc.body.textContent || "").replace(/\s+/g, " ").trim();
+}
+
+/* photos.json keeps Wikimedia's 500px thumbnail. Wikimedia serves a fixed set
+   of widths (250, 500, 960, ...); asking for one wider than the original
+   fails, so 960 is only offered when the photo is that big. */
+function thumbAt(photo, w) {
+  return photo.thumb.includes("/500px-") ? photo.thumb.replace("/500px-", `/${w}px-`) : photo.thumb;
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+    </svg>
+  );
+}
+function GlobeIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18" />
+    </svg>
+  );
+}
+
+/* Two lines of the hut's own text, with "Read more" at the end of the second
+   line (the float trick behind .hf-desc in tokens.css). The button only
+   appears when the text is actually cut off; that is measured in a ref
+   callback once the paragraph is laid out. */
+function Description({ text }) {
+  const [open, setOpen] = useState(false);
+  const [cut, setCut] = useState(false);
+  const measure = (el) => {
+    if (!el || open) return;
+    const isCut = el.scrollHeight > el.clientHeight + 1;
+    if (isCut !== cut) setCut(isCut);
+  };
+  return (
+    <div className="hf-desc-wrap">
+      <p ref={measure} className={open ? "hf-desc is-open" : "hf-desc"}>
+        {!open && cut ? (
+          <button type="button" className="hf-more" aria-expanded="false" onClick={() => setOpen(true)}>
+            <span>Read more</span>
+          </button>
+        ) : null}
+        {text}
+        {open ? (
+          <button type="button" className="hf-more" aria-expanded="true" onClick={() => setOpen(false)}>
+            <span>Show less</span>
+          </button>
+        ) : null}
+      </p>
+    </div>
+  );
+}
+
 function nightsBetween(from, to) {
   if (!from) return [];
   // `to` is the check-out day — you don't sleep that night. No `to` = a single night.
@@ -233,6 +350,7 @@ function useIsNarrow(max = 860) {
 export default function App() {
   const [huts, setHuts] = useState([]);
   const [avail, setAvail] = useState(null);
+  const [photos, setPhotos] = useState({}); // hut id -> Commons photo, from photos.json
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState([]); // MULTI_SELECT
@@ -406,6 +524,11 @@ export default function App() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setAvail(data))
       .catch(() => setAvail(null));
+    // Photos are a nice-to-have: if the file is missing the cards just have none.
+    fetch(`${import.meta.env.BASE_URL}photos.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setPhotos((data && data.photos) || {}))
+      .catch(() => setPhotos({}));
   }, []);
 
   const nights = nightsBetween(from, to);
@@ -437,186 +560,283 @@ export default function App() {
     }
     return null;
   };
-  /* `open` is passed for a list card and left off in the modal. With it, the
-     hut name becomes the card's button: one labelled stop that says which hut
-     it opens, instead of a whole card announced as a button whose name is
-     every word inside it — including the names of the links it contains. */
-  const hutCardBody = (hut, open) => {
+  /* Availability, shown the same way on a card and in the pop-up: the free
+     beds per room type once dates are picked, otherwise the next free date. */
+  const availBlock = (hut) => {
+    if (!avail || !hut.hr_hut_id) return null;
     const rec = recOf(hut);
     const nf = !nights.length ? nextFree(hut) : null;
     const mins = nights.length ? minBuckets(hut) : null;
-    return (
-      <>
-        <div style={{ fontWeight: 600, fontSize: "1.05rem" }}>
-          {open ? (
-            <button
-              type="button"
-              className="hf-cardname"
-              onClick={(e) => {
-                e.stopPropagation();
-                open();
-              }}
-              /* Keyboard focus lights the card and pans its pin, the same as
-                 hovering it with a mouse. */
-              onFocus={() => setHoveredId(hut.id)}
-              onBlur={() => setHoveredId(null)}
-            >
-              {hut.name}
-            </button>
-          ) : (
-            hut.name
-          )}
-        </div>
-        <div style={{ color: "var(--ink-soft)", fontSize: "0.9rem", marginTop: "0.2rem" }}>
-          {TYPE_LABEL[hut.type] || hut.type}
-          {hut.region ? ` · ${hut.region}` : ""}
-          {isNumber(hut.elevation)
-            ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
-            : ""}
-        </div>
-        <div style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.35rem" }}>
-          {isNumber(hut.hr_capacity)
-            ? `${hut.hr_capacity} beds`
-            : hut.sleeping > 0
-            ? `${hut.sleeping} beds`
-            : hut.sleeping === 0
-            ? "no overnight"
-            : "beds unknown"}
-          {" · "}
-          {hut.warden === "bewirtschaftet"
-            ? hut.warden_source === "inferred"
-              ? "usually serviced"
-              : "serviced"
-            : hut.warden === "bewartet"
-            ? "attended"
-            : hut.warden === "selbstversorger"
-            ? "self-service"
-            : "warden unknown"}
-          {hut.association ? ` · ${ASSOC_LABEL[hut.association] || hut.association}` : ""}
-          {hut.shower === true ? " · shower" : ""}
-          {hut.website ? (
-            <>
-              {" · "}
-              <a
-                href={hut.website}
-                target="_blank"
-                rel="noreferrer"
-                /* Opening a link shouldn't also open the card behind it. */
-                onClick={(e) => e.stopPropagation()}
-                aria-label={`${hut.name} website (opens in a new tab)`}
-                style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}
-              >
-                website
-              </a>
-            </>
-          ) : null}
-        </div>
-
-        {hut.hr_hut_id ? (
-          <div
-            style={{
-              marginTop: "0.6rem",
-              paddingTop: "0.55rem",
-              borderTop: "1px solid var(--hair)",
-              fontSize: "0.85rem",
-              color: "var(--ink-soft)",
-            }}
-          >
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.55rem" }}>
-              <a
-                href={hut.hr_booking_url}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                aria-label={`Book ${hut.name} online (opens in a new tab)`}
-                className="hf-tap"
+    if (nights.length && mins && rec && rec.caps) {
+      return (
+        <div>
+          <div style={{ fontSize: "0.8rem", marginBottom: "0.45rem" }}>
+            <span style={{ color: "var(--ink)", fontWeight: 700 }}>Free {rangeLabel}</span>
+            {nights.length > 1 ? (
+              <span style={{ color: "var(--ink-soft)" }}> · fewest across your nights</span>
+            ) : null}
+          </div>
+          {BUCKET_ORDER.map((k) => {
+            const idx = BUCKET_IDX[k];
+            if (!(rec.caps[idx] > 0)) return null;
+            const n = mins[idx];
+            return (
+              <div
+                key={k}
                 style={{
-                  background: "var(--blue)",
-                  color: "#fff",
-                  textDecoration: "none",
-                  padding: "0.3rem 0.65rem",
-                  borderRadius: "var(--radius)",
-                  fontWeight: 600,
-                  fontSize: "0.82rem",
-                  whiteSpace: "nowrap",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  maxWidth: 240,
+                  padding: "1px 0",
                 }}
               >
-                Book online →
-              </a>
-              <span>
-                {hut.club ? CLUB_LABEL[hut.club] || hut.club : null}
-                {isNumber(hut.hr_half_board_eur) ? ` · half board €${hut.hr_half_board_eur}` : ""}
-                {hut.hr_dogs === true ? " · dogs welcome" : hut.hr_dogs === false ? " · no dogs" : ""}
-              </span>
-              {hut.hr_price_pdf ? (
+                <span style={{ color: "var(--ink-soft)" }}>
+                  <Dot n={n} />
+                  {BUCKET_LABEL[k]}
+                </span>
+                <span style={{ color: bedColor(n), fontWeight: 700 }}>
+                  {n > 0 ? `${n} ${n === 1 ? "bed" : "beds"}` : "Full"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    if (nf) {
+      return (
+        <span style={{ color: "var(--ink-soft)" }}>
+          <Dot n={nf.free} />
+          Next free: {fmtISO(nf.date)} ({nf.free} beds)
+        </span>
+      );
+    }
+    if (rec) return <span style={{ color: "var(--ink-soft)" }}>No open dates in the next months</span>;
+    return null;
+  };
+
+  const bookButton = (hut) => (
+    <a
+      href={hut.hr_booking_url}
+      target="_blank"
+      rel="noreferrer"
+      onClick={(e) => e.stopPropagation()}
+      aria-label={`Book ${hut.name} online (opens in a new tab)`}
+      className="hf-tap"
+      style={{
+        background: "var(--blue)",
+        color: "#fff",
+        textDecoration: "none",
+        padding: "0.3rem 0.65rem",
+        borderRadius: "var(--radius)",
+        fontWeight: 600,
+        fontSize: "0.82rem",
+        whiteSpace: "nowrap",
+      }}
+    >
+      Book online →
+    </a>
+  );
+
+  /* A hut that can't be booked online: the phone number is the next step, so
+     it is the button. */
+  const callBand = (hut) =>
+    hut.phone ? (
+      <div className="hf-card-band hf-card-band-row">
+        <a
+          href={telHref(hut.phone)}
+          onClick={(e) => e.stopPropagation()}
+          aria-label={`Call ${hut.name}, ${phoneLabel(hut.phone)}`}
+          className="hf-call hf-tap"
+        >
+          <PhoneIcon />
+          Call {phoneLabel(hut.phone)}
+        </a>
+        <span>Not bookable online</span>
+      </div>
+    ) : (
+      <div className="hf-card-band">
+        <span>Not bookable online · no phone number listed</span>
+      </div>
+    );
+
+  const metaLine = (hut) =>
+    `${TYPE_LABEL[hut.type] || hut.type}${
+      isNumber(hut.elevation) ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}` : ""
+    }`;
+
+  /* A card in the list: only what it takes to choose a hut. Everything else
+     is in the pop-up. The hut name is the card's button: one labelled stop
+     that says which hut it opens, instead of a whole card announced as a
+     button whose name is every word inside it. */
+  const hutCard = (hut, open) => {
+    const photo = photos[hut.id];
+    const tags = hutTags(hut).slice(0, 3);
+    return (
+      <>
+        <div className="hf-card-head">
+          {photo ? (
+            <img
+              className="hf-thumb"
+              src={thumbAt(photo, 250)}
+              srcSet={`${thumbAt(photo, 250)} 250w, ${photo.thumb} 500w`}
+              sizes="96px"
+              width={96}
+              height={72}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              title={`Photo: ${photo.credit} · ${photo.license}`}
+            />
+          ) : null}
+          <div className="hf-card-title">
+            <div style={{ fontWeight: 600, fontSize: "1.05rem", lineHeight: 1.3 }}>
+              <button
+                type="button"
+                className="hf-cardname"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  open();
+                }}
+                /* Keyboard focus lights the card and pans its pin, the same as
+                   hovering it with a mouse. */
+                onFocus={() => setHoveredId(hut.id)}
+                onBlur={() => setHoveredId(null)}
+              >
+                {hut.name}
+              </button>
+            </div>
+            <div className="hf-card-meta">{metaLine(hut)}</div>
+            {hut.region ? <div className="hf-card-meta">{hut.region}</div> : null}
+          </div>
+        </div>
+        {tags.length ? <Tags tags={tags} /> : null}
+        {hut.hr_hut_id ? (
+          <div className="hf-card-band">
+            {availBlock(hut)}
+            <div>{bookButton(hut)}</div>
+          </div>
+        ) : (
+          callBand(hut)
+        )}
+      </>
+    );
+  };
+
+  /* The pop-up: the photo and its credit, how to reach the hut, every tag,
+     the hut's own description, and the booking row as it has always been. */
+  const hutDetail = (hut) => {
+    const photo = photos[hut.id];
+    const notes = hut.hr_notes ? plainText(hut.hr_notes) : "";
+    const tags = hutTags(hut);
+    return (
+      <>
+        {photo ? (
+          <>
+            <img
+              className="hf-detail-photo"
+              src={photo.thumb}
+              srcSet={
+                photo.width >= 960 ? `${photo.thumb} 500w, ${thumbAt(photo, 960)} 960w` : undefined
+              }
+              sizes="(max-width: 460px) 100vw, 420px"
+              width={420}
+              height={220}
+              alt={hut.name}
+            />
+            <p className="hf-credit">
+              Photo: {photo.credit} · <span style={{ whiteSpace: "nowrap" }}>{photo.license}</span>
+            </p>
+          </>
+        ) : null}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.9rem",
+            padding: photo
+              ? "0.75rem 1.4rem 1.25rem"
+              : isNarrow
+              ? "2.6rem 1.4rem 1.25rem"
+              : "1.25rem 1.4rem",
+          }}
+        >
+          <div>
+            <h2 className="hf-detail-name">{hut.name}</h2>
+            <div className="hf-card-meta" style={{ fontSize: "0.9rem" }}>
+              {TYPE_LABEL[hut.type] || hut.type}
+              {hut.region ? ` · ${hut.region}` : ""}
+              {isNumber(hut.elevation)
+                ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
+                : ""}
+            </div>
+          </div>
+          {hut.phone || hut.website ? (
+            <div className="hf-contact">
+              {hut.phone ? (
+                <a href={telHref(hut.phone)} className="hf-tap-min" aria-label={`Call ${hut.name}, ${phoneLabel(hut.phone)}`}>
+                  <PhoneIcon />
+                  <span>{phoneLabel(hut.phone)}</span>
+                </a>
+              ) : null}
+              {hut.website ? (
                 <a
-                  href={hut.hr_price_pdf}
+                  href={webHref(hut.website)}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label={`${hut.name} price list, PDF (opens in a new tab)`}
-                  /* Sits in a row of its own rather than inside a sentence,
-                     so the inline-link exemption doesn't cover it. The row is
-                     already 44px tall because of the booking button, so this
-                     costs no layout. */
-                  className="hf-tap"
-                  style={{ color: "var(--blue-deep)", fontWeight: 600, textDecoration: "none" }}
+                  className="hf-tap-min"
+                  aria-label={`${hut.name} website, ${webLabel(hut.website)} (opens in a new tab)`}
                 >
-                  {/* The underline lives on the text, not the link: at 44px
-                      tall, a border on the link itself sat 12px under the
-                      words. */}
-                  <span style={{ borderBottom: "1px solid var(--powder)" }}>price list</span>
+                  <GlobeIcon />
+                  <span>{webLabel(hut.website)}</span>
                 </a>
               ) : null}
             </div>
-
-            {avail ? (
-              <div style={{ marginTop: "0.5rem" }}>
-                {nights.length && mins && rec && rec.caps ? (
-                  <>
-                    <div style={{ fontSize: "0.8rem", marginBottom: "0.45rem" }}>
-                      <span style={{ color: "var(--ink)", fontWeight: 700 }}>Free {rangeLabel}</span>
-                      {nights.length > 1 ? (
-                        <span style={{ color: "var(--ink-soft)" }}> · fewest across your nights</span>
-                      ) : null}
-                    </div>
-                    {BUCKET_ORDER.map((k) => {
-                      const idx = BUCKET_IDX[k];
-                      if (!(rec.caps[idx] > 0)) return null;
-                      const n = mins[idx];
-                      return (
-                        <div
-                          key={k}
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            maxWidth: 240,
-                            padding: "1px 0",
-                          }}
-                        >
-                          <span style={{ color: "var(--ink-soft)" }}>
-                            <Dot n={n} />
-                            {BUCKET_LABEL[k]}
-                          </span>
-                          <span style={{ color: bedColor(n), fontWeight: 700 }}>
-                            {n > 0 ? `${n} ${n === 1 ? "bed" : "beds"}` : "Full"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </>
-                ) : nf ? (
-                  <span style={{ color: "var(--ink-soft)" }}>
-                    <Dot n={nf.free} />
-                    Next free: {fmtISO(nf.date)} ({nf.free} beds)
-                  </span>
-                ) : rec ? (
-                  <span style={{ color: "var(--ink-soft)" }}>No open dates in the next months</span>
+          ) : null}
+          {tags.length ? <Tags tags={tags} /> : null}
+          {notes ? (
+            <div>
+              <div className="hf-label">Description</div>
+              <Description key={hut.id} text={notes} />
+            </div>
+          ) : null}
+          {hut.hr_hut_id ? (
+            <div
+              style={{
+                paddingTop: "0.6rem",
+                borderTop: "1px solid var(--hair)",
+                fontSize: "0.85rem",
+                color: "var(--ink-soft)",
+              }}
+            >
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.55rem" }}>
+                {bookButton(hut)}
+                <span>
+                  {hut.club ? CLUB_LABEL[hut.club] || hut.club : null}
+                  {isNumber(hut.hr_half_board_eur) ? ` · half board €${hut.hr_half_board_eur}` : ""}
+                  {hut.hr_dogs === true ? " · dogs welcome" : hut.hr_dogs === false ? " · no dogs" : ""}
+                </span>
+                {hut.hr_price_pdf ? (
+                  <a
+                    href={hut.hr_price_pdf}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${hut.name} price list, PDF (opens in a new tab)`}
+                    /* Sits in a row of its own rather than inside a sentence,
+                       so the inline-link exemption doesn't cover it. */
+                    className="hf-tap"
+                    style={{ color: "var(--blue-deep)", fontWeight: 600, textDecoration: "none" }}
+                  >
+                    <span style={{ borderBottom: "1px solid var(--powder)" }}>price list</span>
+                  </a>
                 ) : null}
               </div>
-            ) : null}
-          </div>
-        ) : null}
+              {avail ? <div style={{ marginTop: "0.5rem" }}>{availBlock(hut)}</div> : null}
+            </div>
+          ) : (
+            callBand(hut)
+          )}
+        </div>
       </>
     );
   };
@@ -1528,7 +1748,7 @@ export default function App() {
                 )}
               </div>
             ) : (
-              <ul style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
+              <ul className="hf-cards" style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
                 {visible.map((hut) => (
                   /* The card used to be one big role="button" with links
                      inside it — a button whose name was the entire card, and
@@ -1546,15 +1766,17 @@ export default function App() {
                           ? "1px solid var(--blue)"
                           : "1px solid var(--hair)",
                       borderRadius: 8,
-                      padding: "0.9rem 1rem",
-                      marginBottom: "0.75rem",
+                      padding: "0.9rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.7rem",
                       cursor: "pointer",
                       background:
                         hoveredId === hut.id ? "var(--card)" : "transparent",
                       transition: "border-color var(--dur) var(--ease), background var(--dur) var(--ease)",
                     }}
                   >
-                    {hutCardBody(hut, () => setSelected(hut))}
+                    {hutCard(hut, () => setSelected(hut))}
                   </li>
                 ))}
               </ul>
@@ -1621,9 +1843,8 @@ export default function App() {
       style={{
         background: "var(--card)",
         borderRadius: 12,
-        /* Extra head room on a phone, where the close button grows to 44px
-           and would otherwise sit on top of the hut name. */
-        padding: isNarrow ? "2.6rem 1.4rem 1.25rem" : "1.25rem 1.4rem",
+        /* The photo runs to the edges, so the padding lives in hutDetail. */
+        padding: 0,
         width: "100%",
         maxWidth: 420,
         maxHeight: "80vh",
@@ -1646,17 +1867,22 @@ export default function App() {
           top: "0.6rem",
           right: "0.7rem",
           border: "none",
-          background: "none",
-          color: "var(--ink-soft)",
+          /* On top of a photo it needs its own backing to stay readable. */
+          background: photos[selected.id] ? "var(--card)" : "none",
+          borderRadius: photos[selected.id] ? "50%" : 0,
+          color: photos[selected.id] ? "var(--ink)" : "var(--ink-soft)",
           fontSize: "1.3rem",
           lineHeight: 1,
           cursor: "pointer",
           padding: "0.2rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <span aria-hidden="true">×</span>
       </button>
-      {hutCardBody(selected)}
+      {hutDetail(selected)}
     </div>
   </div>
 )}
