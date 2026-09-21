@@ -1,16 +1,32 @@
-# React + Vite
+# Hüttenfinder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[Hüttenfinder](https://www.hutfinder.at) helps people find Austrian alpine huts
+by live bed availability, then book directly. It covers 1,524 huts. Unlike
+other hut directories, it's booking-first: filter by free beds, region and
+room type, then go straight to the booking page.
 
-Currently, two official plugins are available:
+## Running locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Add `-- --host` to open the dev server on a phone on the same wifi.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm run build   # production build into dist/
+npm run lint
+```
 
-## Expanding the ESLint configuration
+Stack: React 19, Vite 8, react-leaflet 5, plain CSS. Map tiles come from
+basemap.at inside Austria and OpenStreetMap outside it.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Deploying
+
+Pushing to `main` puts the site live: `deploy.yml` builds and publishes to
+GitHub Pages on every push. A separate workflow, `refresh-availability.yml`,
+commits an updated `public/availability.json` a few times a day.
+
+See [CLAUDE.md](./CLAUDE.md) for a fuller map of the codebase and working
+conventions.
