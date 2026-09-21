@@ -93,14 +93,20 @@
 }
 
 /* Coarse pointers get a bigger target: 30px is fine with a mouse, small with
-   a thumb. */
+   a thumb. 44px is the figure the rest of the app now uses.
+
+   The :link selector has to be repeated here. Without it the base rule above
+   wins — it carries an a:link variant, and among !important declarations the
+   higher specificity takes it whatever the order, so this block was silently
+   doing nothing and the buttons stayed at 30px on a phone. */
 @media (pointer: coarse) {
   .leaflet-container .leaflet-control-zoom a,
+  .leaflet-container .leaflet-control-zoom a:link,
   .leaflet-touch .leaflet-control-zoom a {
-    width: 38px !important;
-    height: 38px !important;
-    font-size: 19px !important;
-    line-height: 36px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 21px !important;
+    line-height: 42px !important;
   }
 }
 
