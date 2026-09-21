@@ -199,7 +199,6 @@ export default function DateRange({
             /* --stone doesn't exist, so this was always the literal
                fallback: 3.1:1 on the card, under the 4.5:1 minimum. */
             color: value ? "var(--ink)" : "var(--ink-soft)",
-            fontVariantNumeric: "tabular-nums",
           }}
         >
           {value ? fmt(value) : "Add date"}
@@ -248,7 +247,6 @@ export default function DateRange({
           fontFamily: "inherit",
           fontSize: "0.85rem",
           fontWeight: 500,
-          fontVariantNumeric: "tabular-nums",
           borderRadius: inRange
             ? 0
             : edge && !solo
