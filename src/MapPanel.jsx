@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -6,7 +6,9 @@ import {
   Tooltip,
   ZoomControl,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 /* --------------------------------------------------------------------------
@@ -173,6 +175,67 @@ function ZoomToSelected({ huts, selectedId }) {
   return null;
 }
 
+/* --------------------------------------------------------------------------
+   Hover card
+
+   On a desktop, resting on a pin shows that hut's list card next to it, so
+   you can compare huts on the map without opening each one. It waits a
+   moment before opening, so sweeping the mouse across the map doesn't flash
+   cards; once one is open, moving to the next pin swaps it at once. It stays
+   open while the pointer is on the card itself, so Book and Call can be
+   clicked, and it closes as soon as the map moves.
+
+   Only where the device really hovers (a mouse or trackpad). On a touch
+   screen a tap opens the hut as before.
+   -------------------------------------------------------------------------- */
+
+const CARD_W = 300;
+const CARD_GAP = 14; // between the pin and the card
+const OPEN_MS = 150;
+const CLOSE_MS = 200;
+
+function CloseOnMove({ onMove }) {
+  useMapEvents({ movestart: onMove, zoomstart: onMove });
+  return null;
+}
+
+function HoverCard({ hut, render, onEnter, onLeave, onOpen }) {
+  const map = useMap();
+  const pt = map.latLngToContainerPoint([hut.lat, hut.lng]);
+  const size = map.getSize();
+  /* Centred over the pin, but kept inside the map. Above the pin unless the
+     pin is near the top, where it goes below. The card's height isn't
+     known before it renders, so the flip uses the room there is rather
+     than measuring. */
+  const left = Math.min(Math.max(pt.x - CARD_W / 2, 8), Math.max(size.x - CARD_W - 8, 8));
+  const above = pt.y >= 320 || pt.y > size.y - pt.y;
+  /* Leaflet listens on the whole map container, so without this a click on
+     the card would also be a click on the map, and scrolling over it would
+     zoom the map. */
+  const isolate = (el) => {
+    if (!el) return;
+    L.DomEvent.disableClickPropagation(el);
+    L.DomEvent.disableScrollPropagation(el);
+  };
+  return (
+    <div
+      ref={isolate}
+      className="hf-hovercard"
+      style={{
+        left,
+        top: above ? pt.y - CARD_GAP : pt.y + CARD_GAP,
+        transform: above ? "translateY(-100%)" : undefined,
+        width: CARD_W,
+      }}
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      onClick={onOpen}
+    >
+      {render(hut, onOpen)}
+    </div>
+  );
+}
+
 export default function MapPanel({
   huts,
   onSelect,
@@ -182,7 +245,54 @@ export default function MapPanel({
   selectedId = null,
   hoveredId = null,
   onHover = null,
+  /* Optional: (hut, open) => the card to show when a pin is hovered. */
+  renderHoverCard = null,
 }) {
+  const canHover = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches,
+    []
+  );
+  const cards = Boolean(renderHoverCard) && canHover;
+  const [cardId, setCardId] = useState(null);
+  /* The pin under the mouse right now, if any. A hover that starts on the
+     map must not pan the map: the pin is already in view, and moving it
+     would slide it out from under the cursor (and close its card). Panning
+     is for a hover that starts in the list. */
+  const [pinHoverId, setPinHoverId] = useState(null);
+  const cardOpen = useRef(false);
+  const openTimer = useRef(0);
+  const closeTimer = useRef(0);
+  const showCard = (id) => {
+    clearTimeout(closeTimer.current);
+    clearTimeout(openTimer.current);
+    if (cardOpen.current) {
+      setCardId(id);
+      return;
+    }
+    openTimer.current = setTimeout(() => {
+      cardOpen.current = true;
+      setCardId(id);
+    }, OPEN_MS);
+  };
+  const hideCard = (now = false) => {
+    clearTimeout(openTimer.current);
+    clearTimeout(closeTimer.current);
+    const close = () => {
+      cardOpen.current = false;
+      setCardId(null);
+    };
+    if (now) close();
+    else closeTimer.current = setTimeout(close, CLOSE_MS);
+  };
+  useEffect(
+    () => () => {
+      clearTimeout(openTimer.current);
+      clearTimeout(closeTimer.current);
+    },
+    []
+  );
   const pins = useMemo(
     () =>
       huts.filter(
@@ -207,6 +317,9 @@ export default function MapPanel({
     () => (selectedId == null ? null : pins.find((h) => h.id === selectedId)),
     [pins, selectedId]
   );
+  /* Not while a hut is open in the pop-up, and gone if a filter removes it. */
+  const cardHut =
+    cards && cardId != null && selectedId == null ? pins.find((h) => h.id === cardId) : null;
 
   /* Draw order is deliberately stable. Sorting the array to put the hovered
      pin last makes React recreate that marker underneath the cursor, which
@@ -242,7 +355,10 @@ export default function MapPanel({
       <ZoomControl position="bottomright" />
       <AutoResize />
       <FitToHuts huts={pins} />
-      <PanToFocus huts={pins} focusId={hoveredId} />
+      <PanToFocus
+        huts={pins}
+        focusId={hoveredId != null && hoveredId === pinHoverId ? null : hoveredId}
+      />
       <ZoomToSelected huts={pins} selectedId={selectedId} />
 
       {/* Halo under the selected pin. Drawn before the pins so it sits beneath
@@ -280,20 +396,48 @@ export default function MapPanel({
               fillOpacity: 1,
             }}
             eventHandlers={{
-              click: () => onSelect(hut),
+              click: () => {
+                if (cards) hideCard(true);
+                onSelect(hut);
+              },
               mouseover: (e) => {
                 e.target.bringToFront();
+                setPinHoverId(hut.id);
                 if (onHover) onHover(hut.id);
+                if (cards) showCard(hut.id);
               },
-              mouseout: () => onHover && onHover(null),
+              mouseout: () => {
+                setPinHoverId(null);
+                if (onHover) onHover(null);
+                if (cards) hideCard();
+              },
             }}
           >
-            <Tooltip direction="top" offset={[0, -6]}>
-              {hut.name}
-            </Tooltip>
+            {/* Where there is a hover card, it names the hut; the label would
+                only sit on top of it. */}
+            {cards ? null : (
+              <Tooltip direction="top" offset={[0, -6]}>
+                {hut.name}
+              </Tooltip>
+            )}
           </CircleMarker>
         );
       })}
+
+      {cards ? <CloseOnMove onMove={() => hideCard(true)} /> : null}
+      {cardHut ? (
+        <HoverCard
+          key={cardHut.id}
+          hut={cardHut}
+          render={renderHoverCard}
+          onEnter={() => clearTimeout(closeTimer.current)}
+          onLeave={() => hideCard()}
+          onOpen={() => {
+            hideCard(true);
+            onSelect(cardHut);
+          }}
+        />
+      ) : null}
     </MapContainer>
   );
 }

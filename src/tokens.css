@@ -352,6 +352,31 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
 }
 .hf-call:hover { border-color: var(--ink); }
 
+/* The same card, shown next to a map pin while it is hovered (desktop). */
+.hf-hovercard {
+  position: absolute;
+  z-index: 1050; /* over Leaflet's panes and zoom control */
+  box-sizing: border-box;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(58, 42, 32, 0.22);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink);
+  cursor: pointer;
+  animation: hf-card-in var(--dur) var(--ease);
+}
+@keyframes hf-card-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hf-hovercard { animation: none; }
+}
+
 /* ---- The hut pop-up ---------------------------------------------------- */
 .hf-detail-photo {
   display: block;

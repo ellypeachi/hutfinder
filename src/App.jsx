@@ -1274,6 +1274,7 @@ export default function App() {
         selectedId={selected?.id ?? null}
         hoveredId={hoveredId}
         onHover={setHoveredId}
+        renderHoverCard={hutCard}
       />
       {legendCard}
     </div>
