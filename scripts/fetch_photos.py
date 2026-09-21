@@ -219,14 +219,25 @@ def commons_query(params, max_requests=None):
 
 # --------------------------------------------------------------- helpers
 def file_title(name):
-    """'Foo_bar.jpg' / 'File:foo bar.jpg' / a Commons URL -> 'File:Foo bar.jpg'"""
-    name = urllib.parse.unquote(str(name)).strip()
-    m = re.search(r'commons\.wikimedia\.org/wiki/(File:[^?#]+)', name)
-    if m:
-        name = m.group(1)
-    name = re.sub(r'^(file|datei|image|bild):', '', name, flags=re.I)
-    name = name.replace('_', ' ').strip()
-    return 'File:' + name[:1].upper() + name[1:] if name else None
+    """Commons file name from 'Foo_bar.jpg', 'File:foo bar.jpg' or a Wikimedia link.
+
+    Accepts commons.wikimedia.org/wiki/File:… pages, upload.wikimedia.org image
+    links (full size or thumbnail) and Wikipedia "#/media/Datei:…" links.
+    Returns None for a link to any other site: those photos aren't free to use.
+    """
+    s = urllib.parse.unquote(str(name or '')).strip()
+    s = re.sub(r'^(file|datei|image|bild):\s*(?=https?:)', '', s, flags=re.I)
+    if re.match(r'https?:', s, flags=re.I):
+        m = (re.search(r'commons\.(?:m\.)?wikimedia\.org/wiki/(?:Special:FilePath/)?'
+                       r'((?:File|Datei):[^?#]+|[^?#/:]+\.\w{3,4})', s, flags=re.I)
+             or re.search(r'wikipedia\.org/wiki/[^#]*#/media/((?:File|Datei|Bild):[^?#]+)', s, flags=re.I)
+             or re.search(r'upload\.wikimedia\.org/wikipedia/commons/(?:thumb/)?[0-9a-f]/[0-9a-f]{2}/([^/?#]+)',
+                          s, flags=re.I))
+        if not m:
+            return None
+        s = m.group(1)
+    s = re.sub(r'^(file|datei|image|bild):', '', s, flags=re.I).replace('_', ' ').strip()
+    return 'File:' + s[:1].upper() + s[1:] if s else None
 
 
 def plain(value):
@@ -401,7 +412,7 @@ def main():
         elif wc:
             osm_file = file_title(wc)
         img = t.get('image') or ''
-        if not osm_file and re.search(r'commons\.wikimedia\.org/wiki/File:|^File:', img, flags=re.I):
+        if not osm_file and re.search(r'wikimedia\.org/|^File:', img, flags=re.I):
             osm_file = file_title(img)
         links[h['id']] = {'qid': qid, 'osm_file': osm_file, 'osm_cat': osm_cat}
 
@@ -410,6 +421,7 @@ def main():
         todo = todo[:limit]
     print(f'  {len(todo)} huts link to Wikidata or Commons, or have a hand pick')
 
+    bad_picks = []
     print('Fetching Wikidata images and categories...')
     claims = wikidata_claims({links[h['id']]['qid'] for h in todo if links[h['id']]['qid']})
 
@@ -420,6 +432,9 @@ def main():
         lk['category'] = c.get('category') or lk['osm_cat']
         pick = picks.get(h['id'])
         lk['pick'] = file_title(pick['file']) if pick and pick.get('file') else None
+        if pick and pick.get('file') and not lk['pick']:
+            bad_picks.append(f"  {h['name']}: {pick['file'][:70]} is not a Wikimedia Commons photo, "
+                             "so it can't be used without the owner's permission. Choosing automatically.")
 
     # ------------------------------------------------ single files first
     singles = sorted({t for h in todo for t in (links[h['id']]['p18'], links[h['id']]['pick']) if t})
@@ -510,7 +525,7 @@ def main():
               'none': 'nothing usable'}
     for how, n in sorted(how_count.items(), key=lambda kv: -kv[1]):
         print(f'  {n:4}  {labels.get(how, how)}')
-    for line in missing_picks:
+    for line in bad_picks + missing_picks:
         print(line)
     for hid, p in list(photos.items())[:8]:
         name = next(h['name'] for h in huts if h['id'] == hid)

@@ -6,7 +6,7 @@
   ],
   "w312596378": {
     "_name": "Annaberger Haus",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/0/00/2018-08-11 (118) Annaberger Haus at Tirolerkogel, Annaberg, Austria.jpg",
+    "file": "File:2018-08-11 (118) Annaberger Haus at Tirolerkogel, Annaberg, Austria.jpg",
     "_checked": "2026-09-21"
   },
   "w78158759": {
@@ -26,8 +26,10 @@
   },
   "w242250125": {
     "_name": "Augsburger Hütte",
-    "file": "File:Https://img.oastatic.com/img2/25094220/600x300r/augsburger-huette.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://img.oastatic.com/img2/25094220/600x300r/augsburger-huette.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "w101968311": {
     "_name": "Bad Kissinger Hütte",
@@ -36,8 +38,10 @@
   },
   "w508275860": {
     "_name": "Berghaus Kleinwalsertal",
-    "file": "File:Https://www.dav-memmingen.de/fileadmin/ processed /b/1/csm Memminger-Huette-web 9b4b57f1d8.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://www.dav-memmingen.de/fileadmin/_processed_/b/1/csm_Memminger-Huette-web_9b4b57f1d8.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "n925572227": {
     "_name": "Biberacher Hütte",
@@ -71,7 +75,7 @@
   },
   "w218941198": {
     "_name": "Erlanger Hütte",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/6/6f/Erlanger Hütte.jpg",
+    "file": "File:Erlanger Hütte.jpg",
     "_checked": "2026-09-21"
   },
   "n389785876": {
@@ -161,8 +165,10 @@
   },
   "w110183140": {
     "_name": "Hofalm",
-    "file": "File:Https://www.oberhofalm.at/wp-content/uploads/oberhofalm-filzmoos-sommer-1-616x424.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://www.oberhofalm.at/wp-content/uploads/oberhofalm-filzmoos-sommer-1-616x424.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "w84131551": {
     "_name": "Hofpürglhütte",
@@ -171,8 +177,10 @@
   },
   "w157743419": {
     "_name": "Hubertushaus",
-    "file": "File:Https://www.wieneralpen.at/images/vRmefb3BO2g/cb:/g:ce/aHR0cHM6Ly9pbXhwbGF0Zm9ybS1jdXN0LW5vZXcuZnNuMS55b3VyLW9iamVjdHN0b3JhZ2UuY29tL21lZGlhL2ltYWdlcy8zMDFfZHNjMDQ5NjIuanBn",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://www.wieneralpen.at/images/vRmefb3BO2g/cb:/g:ce/aHR0cHM6Ly9pbXhwbGF0Zm9ybS1jdXN0LW5vZXcuZnNuMS55b3VyLW9iamVjdHN0b3JhZ2UuY29tL21lZGlhL2ltYWdlcy8zMDFfZHNjMDQ5NjIuanBn",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "n417326836": {
     "_name": "Ignaz-Mattis-Hütte",
@@ -186,7 +194,7 @@
   },
   "w121270054": {
     "_name": "Julius-Seitner-Hütte",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/9/9e/2009-06-17 Julius Seitner-Hütte at Eisenstein, Türnitz, Austria.jpg",
+    "file": "File:2009-06-17 Julius Seitner-Hütte at Eisenstein, Türnitz, Austria.jpg",
     "_checked": "2026-09-21"
   },
   "w130176573": {
@@ -201,8 +209,10 @@
   },
   "n960531683": {
     "_name": "Keinprechthütte",
-    "file": "File:Https://www.steiermark.com/Alpstein/Images/4158546/468413/image-thumb  468413  gallery-item/keinprechthuette-4158604.f9e460c9.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://www.steiermark.com/Alpstein/Images/4158546/468413/image-thumb__468413__gallery-item/keinprechthuette-4158604.f9e460c9.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "w163922893": {
     "_name": "Konstanzer Hütte",
@@ -226,17 +236,19 @@
   },
   "w78167535": {
     "_name": "Lucknerhütte",
-    "file": "File:Https://www.osttirolerland.com/fileadmin/feuser uploads/ processed /7/4/csm lucknerhuette-kals-zimmer-c-lucknerhuette  6  081778d969.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://www.osttirolerland.com/fileadmin/feuser_uploads/_processed_/7/4/csm_lucknerhuette-kals-zimmer-c-lucknerhuette__6__081778d969.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "w178125170": {
     "_name": "Ludwigsburger Hütte",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/a/af/Ludwigsburger Hütte.jpg",
+    "file": "File:Ludwigsburger Hütte.jpg",
     "_checked": "2026-09-21"
   },
   "w233768517": {
     "_name": "Millstätter Hütte 1880 m",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/a/ad/ÖAV Millstätter Hütte, Kärnten.jpg",
+    "file": "File:ÖAV Millstätter Hütte, Kärnten.jpg",
     "_checked": "2026-09-21"
   },
   "w187790403": {
@@ -351,8 +363,10 @@
   },
   "w168877636": {
     "_name": "Söldenhütte",
-    "file": "File:Https://soeldenhuette.at/wp-content/uploads/DJI 0050.00 05 12 18.Standbild015-scaled.jpg",
-    "_checked": "2026-09-21"
+    "file": null,
+    "_checked": "2026-09-21",
+    "_wanted": "https://soeldenhuette.at/wp-content/uploads/DJI_0050.00_05_12_18.Standbild015-scaled.jpg",
+    "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
   },
   "w84674198": {
     "_name": "Starkenburger Hütte",
@@ -361,7 +375,7 @@
   },
   "w200305337": {
     "_name": "Sticklerhütte",
-    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/6/6d/ÖAV Sticklerhütte (1750 m ü.A.), Radstädter Tauern, Österreich 01.jpg",
+    "file": "File:ÖAV Sticklerhütte (1750 m ü.A.), Radstädter Tauern, Österreich 01.jpg",
     "_checked": "2026-09-21"
   },
   "w83191764": {
@@ -406,7 +420,7 @@
   },
   "w129263669": {
     "_name": "Ybbstaler Hütte",
-    "file": "File:Https://de.wikipedia.org/wiki/Ybbstaler Hütte#/media/Datei:Ybbstaler Hütte.jpg",
+    "file": "File:Ybbstaler Hütte.jpg",
     "_checked": "2026-09-21"
   },
   "w187225847": {

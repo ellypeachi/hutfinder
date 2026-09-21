@@ -46,6 +46,8 @@
   .status { margin: 6px 0 12px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
   .status strong { font-weight: 600; }
   .paste { display: inline-flex; gap: 6px; }
+  .paste-msg { flex-basis: 100%; font-size: 13px; }
+  .paste-msg:empty { display: none; }
   .paste input { width: 240px; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 8px; background: #fff; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
@@ -116,10 +118,19 @@ function saveDraft(id, value) {
   try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage off: fine */ }
 }
 
+// Same rules as file_title() in fetch_photos.py. Returns null for a link to any
+// site other than Wikimedia: those photos aren't free to use.
 function fileTitle(s) {
-  s = decodeURIComponent(String(s).trim());
-  const m = s.match(/commons\.wikimedia\.org\/wiki\/(File:[^?#]+)/i);
-  if (m) s = m[1];
+  s = String(s || '').trim();
+  try { s = decodeURIComponent(s); } catch (e) { /* leave as typed */ }
+  s = s.replace(/^(file|datei|image|bild):\s*(?=https?:)/i, '');
+  if (/^https?:/i.test(s)) {
+    const m = s.match(/commons\.(?:m\.)?wikimedia\.org\/wiki\/(?:Special:FilePath\/)?((?:File|Datei):[^?#]+|[^?#/:]+\.\w{3,4})/i)
+      || s.match(/wikipedia\.org\/wiki\/[^#]*#\/media\/((?:File|Datei|Bild):[^?#]+)/i)
+      || s.match(/upload\.wikimedia\.org\/wikipedia\/commons\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/?#]+)/i);
+    if (!m) return null;
+    s = m[1];
+  }
   s = s.replace(/^(file|datei|image|bild):/i, '').replace(/_/g, ' ').trim();
   return s ? 'File:' + s[0].toUpperCase() + s.slice(1) : null;
 }
@@ -173,7 +184,16 @@ function render() {
     if (current && !cands.some(c => c.file === current)) {
       cands.unshift({ file: current, thumb: filePath(current), page: commonsPage(current), date: '', date_kind: 'pasted', wikidata: false, reasons: [] });
     }
-    const input = el('input', { type: 'text', placeholder: 'Or paste a Commons file name or link', 'aria-label': `Commons file for ${hut.name}` });
+    const input = el('input', { type: 'text', placeholder: 'Or paste a Wikimedia Commons link', 'aria-label': `Commons file for ${hut.name}` });
+    const pasteMsg = el('span', { class: 'paste-msg', role: 'status' });
+    const usePasted = () => {
+      if (!input.value.trim()) return;
+      const t = fileTitle(input.value);
+      if (t) { pick(hut.id, t); return; }
+      let host = 'another website';
+      try { host = new URL(input.value.trim()).hostname.replace(/^www\./, ''); } catch (e) { /* not a URL */ }
+      pasteMsg.textContent = `That photo is from ${host}. Only Wikimedia Commons photos can be used without the owner's permission.`;
+    };
     root.append(el('section', { class: 'hut' },
       el('div', { class: 'hut-head' },
         el('h2', {}, hut.name),
@@ -186,7 +206,8 @@ function render() {
         el('button', { type: 'button', class: 'quiet', 'aria-pressed': String(current === null),
           onclick: () => current === null ? unpick(hut.id) : pick(hut.id, null) }, 'No good photo'),
         el('span', { class: 'paste' }, input,
-          el('button', { type: 'button', class: 'quiet', onclick: () => { const t = fileTitle(input.value); if (t) pick(hut.id, t); } }, 'Use'))),
+          el('button', { type: 'button', class: 'quiet', onclick: usePasted }, 'Use')),
+        pasteMsg),
       cands.length
         ? el('div', { class: 'grid' }, cands.map(c => tile(hut, c, current)))
         : el('p', { class: 'empty' }, 'No photos on Commons for this hut. Paste one if you find it, or ask the hut.')));
