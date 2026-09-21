@@ -178,6 +178,9 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
    controls that already lay themselves out. */
 @media (pointer: coarse) {
   .hf-tap {
+    /* Buttons are border-box by default and links are not, so without this
+       a padded link ("Book online") came out at 44px plus its padding. */
+    box-sizing: border-box;
     min-width: 44px;
     min-height: 44px;
     display: inline-flex;
@@ -185,6 +188,10 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
     justify-content: center;
   }
   .hf-tap-min { min-height: 44px; }
+
+  /* A filter pill with a short label ("All", "Any") would otherwise be
+     44 x 44 — a circle, which reads as a badge rather than a pill. */
+  .hf-pill { min-width: 60px; }
 }
 
 /* The modal's close button: a 21px glyph, which fails even the AA

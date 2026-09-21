@@ -156,7 +156,7 @@ function Pill({ active, onClick, label, count }) {
          screen reader say "Tirol, pressed" rather than leaving the state to
          the blue fill, which not everyone can see. */
       aria-pressed={active}
-      className="hf-tap"
+      className="hf-tap hf-pill"
       style={{
         border: active ? "1px solid var(--ink)" : "1px solid var(--hair)",
         background: active ? "var(--blue)" : empty ? "transparent" : "var(--card)",
@@ -560,9 +560,12 @@ export default function App() {
                      already 44px tall because of the booking button, so this
                      costs no layout. */
                   className="hf-tap"
-                  style={{ color: "var(--blue-deep)", fontWeight: 600, borderBottom: "1px solid var(--powder)", textDecoration: "none" }}
+                  style={{ color: "var(--blue-deep)", fontWeight: 600, textDecoration: "none" }}
                 >
-                  price list
+                  {/* The underline lives on the text, not the link: at 44px
+                      tall, a border on the link itself sat 12px under the
+                      words. */}
+                  <span style={{ borderBottom: "1px solid var(--powder)" }}>price list</span>
                 </a>
               ) : null}
             </div>
@@ -823,6 +826,27 @@ export default function App() {
     ? `${nights.length} ${nights.length === 1 ? "night" : "nights"}`
     : "";
 
+  /* rangeLabel is empty until check-out is chosen, and with the shared
+     calendar that half-filled state is on screen for as long as it takes to
+     pick the second date. */
+  const countLine =
+    status === "ready"
+      ? nights.length
+        ? `${filtered.length} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
+        : `${filtered.length} of ${huts.length} huts`
+      : "";
+
+  /* The count is the only thing a screen reader would notice changing when a
+     filter is applied, so it is read out — but not on every keystroke. Typing
+     "Hütte" into the search used to queue five counts in a row. This copy
+     settles 700ms after the last change, and says "," where the screen shows
+     "·", which some voices read aloud as "middle dot". */
+  const [announced, setAnnounced] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setAnnounced(countLine.replace(/ · /g, ", ")), 700);
+    return () => clearTimeout(t);
+  }, [countLine]);
+
   /* ----------------------------------------------------------------------
      Layout
 
@@ -1054,19 +1078,8 @@ export default function App() {
             style={{ height: 30, display: "block" }}
           />
         </h1>
-        {/* Filtering changes this line and nothing else a screen reader would
-            notice. As a status region it gets read out, so the count is the
-            confirmation that the pill did something. */}
-        <p role="status" style={{ color: "var(--ink-soft)", marginTop: 0 }}>
-          {status === "ready"
-            ? nights.length
-              ? /* rangeLabel is empty until check-out is chosen, and with the
-                   shared calendar that half-filled state is now on screen for
-                   as long as it takes to pick the second date. */
-                `${filtered.length} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
-              : `${filtered.length} of ${huts.length} huts`
-            : ""}
-        </p>
+        <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>{countLine}</p>
+        <span className="hf-vh" role="status">{announced}</span>
 
         {status === "loading" && <p>Loading huts…</p>}
         {status === "error" && (
