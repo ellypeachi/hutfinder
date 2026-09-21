@@ -1,0 +1,427 @@
+{
+  "_readme": [
+    "Hand-picked hut photos from Wikimedia Commons, keyed by hut id.",
+    "\"file\": a Commons file name. \"file\": null means no good photo; the card shows the fallback.",
+    "Made with data/photo-picker.html. fetch_photos.py reads this file and always uses these picks."
+  ],
+  "w312596378": {
+    "_name": "Annaberger Haus",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/0/00/2018-08-11 (118) Annaberger Haus at Tirolerkogel, Annaberg, Austria.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w78158759": {
+    "_name": "Anton-Karg-Haus",
+    "file": "File:Anton Karg Haus III.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w192496838": {
+    "_name": "Arthur-von-Schmid-Haus",
+    "file": "File:Arthur-von-Schmid-Haus Sauleck.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w155094206": {
+    "_name": "Ascher Hütte",
+    "file": "File:Ascher Hütte a.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w242250125": {
+    "_name": "Augsburger Hütte",
+    "file": "File:Https://img.oastatic.com/img2/25094220/600x300r/augsburger-huette.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w101968311": {
+    "_name": "Bad Kissinger Hütte",
+    "file": "File:Bad-Kissinger-Huette-Aggenstein-2023.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w508275860": {
+    "_name": "Berghaus Kleinwalsertal",
+    "file": "File:Https://www.dav-memmingen.de/fileadmin/ processed /b/1/csm Memminger-Huette-web 9b4b57f1d8.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n925572227": {
+    "_name": "Biberacher Hütte",
+    "file": "File:Biberacher Hütte a.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n389785744": {
+    "_name": "Bonn-Matreier-Hütte",
+    "file": "File:Bonn-Matreier-Hütte mit Sitzbank.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w215667342": {
+    "_name": "Brandenburger Haus",
+    "file": "File:Brandenburger Haus HQ.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w131906872": {
+    "_name": "Douglasshütte",
+    "file": "File:Douglashütte am Lünersee.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n389785804": {
+    "_name": "Edelrautehütte",
+    "file": "File:Gemeinde Hohentauern, 8785, Austria - panoramio - Martin Cígler (8).jpg",
+    "_checked": "2026-09-21"
+  },
+  "n301262877": {
+    "_name": "Elberfelder Hütte",
+    "file": "File:ElberfelderHütte2016.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w218941198": {
+    "_name": "Erlanger Hütte",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/6/6f/Erlanger Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n389785876": {
+    "_name": "Fraganter Schutzhaus",
+    "file": "File:Fraganter schutzhaus.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w168866551": {
+    "_name": "Franz-Fischer-Hütte",
+    "file": "File:Franz-Fischer-Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w84547654": {
+    "_name": "Franz-Senn-Hütte",
+    "file": "File:Stubai-Franz-Senn-Hütte-6.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w121901087": {
+    "_name": "Freiburger Hütte",
+    "file": "File:Freiburger Hütte - Formarinsee 02.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w255324844": {
+    "_name": "Freschenhaus",
+    "file": "File:A-V-Bregenzerwaldgebirge - Freschenhaus.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w246634739": {
+    "_name": "Friedrichshafener Hütte",
+    "file": "File:Friedrichshafener Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w178754385": {
+    "_name": "Friesenberghaus",
+    "file": "File:Friesenberghaus von Süden.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w137132960": {
+    "_name": "Geraer Hütte",
+    "file": "File:Geraer Hütte (5970647768).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w126087678": {
+    "_name": "Glorerhütte",
+    "file": "File:Glorerhuette2006.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w168530342": {
+    "_name": "Gmundner Hütte",
+    "file": "File:Gmunden - Gmundner Hütte.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w83122437": {
+    "_name": "Gruttenhütte",
+    "file": "File:Gruttenhuette2.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w179362547": {
+    "_name": "Guttenberghaus",
+    "file": "File:Guttenberghaus (DSC07521).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w187162092": {
+    "_name": "Heinrich-Hueter-Hütte",
+    "file": "File:H.Hüter-Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w171618472": {
+    "_name": "Heinrich-Schwaiger-Haus",
+    "file": "File:HeinrichSchwaigerHaus.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w84541388": {
+    "_name": "Hildesheimer Hütte",
+    "file": "File:Hildesheim Hut in July 2025-1.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w122902604": {
+    "_name": "Hochjoch-Hospiz",
+    "file": "File:Hochjochhospiz Schafe.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w233647338": {
+    "_name": "Hochweißsteinhaus",
+    "file": "File:Ingridhuette1.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w110183140": {
+    "_name": "Hofalm",
+    "file": "File:Https://www.oberhofalm.at/wp-content/uploads/oberhofalm-filzmoos-sommer-1-616x424.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w84131551": {
+    "_name": "Hofpürglhütte",
+    "file": "File:Hofpuergelhuette.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w157743419": {
+    "_name": "Hubertushaus",
+    "file": "File:Https://www.wieneralpen.at/images/vRmefb3BO2g/cb:/g:ce/aHR0cHM6Ly9pbXhwbGF0Zm9ybS1jdXN0LW5vZXcuZnNuMS55b3VyLW9iamVjdHN0b3JhZ2UuY29tL21lZGlhL2ltYWdlcy8zMDFfZHNjMDQ5NjIuanBn",
+    "_checked": "2026-09-21"
+  },
+  "n417326836": {
+    "_name": "Ignaz-Mattis-Hütte",
+    "file": "File:Ignaz-mattishütte 1477 13-08-11.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w174663350": {
+    "_name": "Jamtalhütte",
+    "file": "File:Jamtalhütte Teich.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w121270054": {
+    "_name": "Julius-Seitner-Hütte",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/9/9e/2009-06-17 Julius Seitner-Hütte at Eisenstein, Türnitz, Austria.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w130176573": {
+    "_name": "Kaltenberghütte",
+    "file": "File:Klösterle Kaltenberghütte Nebengebäude.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w172653740": {
+    "_name": "Kaunergrathütte",
+    "file": "File:WatzespitzeVonKaunergrathütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n960531683": {
+    "_name": "Keinprechthütte",
+    "file": "File:Https://www.steiermark.com/Alpstein/Images/4158546/468413/image-thumb  468413  gallery-item/keinprechthuette-4158604.f9e460c9.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w163922893": {
+    "_name": "Konstanzer Hütte",
+    "file": "File:KonstanzerHütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w30573888": {
+    "_name": "Kürsingerhütte",
+    "file": "File:Kürsinger Hütte Schlieferspitze.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w29269844": {
+    "_name": "Lamsenjochhütte",
+    "file": "File:20101010-Lamsenjochhütte vor Lamsenspitze.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w101987039": {
+    "_name": "Landsberger Hütte",
+    "file": "File:2025 Landsberger-Hütte von Süden.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w78167535": {
+    "_name": "Lucknerhütte",
+    "file": "File:Https://www.osttirolerland.com/fileadmin/feuser uploads/ processed /7/4/csm lucknerhuette-kals-zimmer-c-lucknerhuette  6  081778d969.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w178125170": {
+    "_name": "Ludwigsburger Hütte",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/a/af/Ludwigsburger Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w233768517": {
+    "_name": "Millstätter Hütte 1880 m",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/a/ad/ÖAV Millstätter Hütte, Kärnten.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w187790403": {
+    "_name": "Mödlinger Hütte",
+    "file": "File:Mödlinger Hütte, Gesäuse 1.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w125338464": {
+    "_name": "Neue Bamberger Hütte",
+    "file": "File:Bamberger Hütte und Kuhwildalm.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w293475431": {
+    "_name": "Neue Fürther Hütte",
+    "file": "File:Neue Fürther Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w307277777": {
+    "_name": "Neue Reutlinger Hütte",
+    "file": "File:Silbertal Neue Reutlinger Hütte Schrägluftbild.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w83896191": {
+    "_name": "Niedersachsenhaus",
+    "file": "File:Niedersachsenhaus 3579.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w172609525": {
+    "_name": "Nürnberger Hütte",
+    "file": "File:Nürnberger Hütte, S 2018-09 (2).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w132073459": {
+    "_name": "Oberzalimhütte",
+    "file": "File:Oberzalimhütte.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w39911021": {
+    "_name": "Olpererhütte",
+    "file": "File:Olpererhütte (DSC06949).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w142890732": {
+    "_name": "Ostpreußenhütte",
+    "file": "File:Ostpreußenhütte 2013.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n389786192": {
+    "_name": "Peter-Wiechenthaler-Hütte",
+    "file": "File:20150822 Peter-Wiechenthaler-Hütte, Saalfelden, Österreich (01766).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w117889584": {
+    "_name": "Pfeishütte",
+    "file": "File:Pfeishütte, Samertal 2016-07.jpg",
+    "_checked": "2026-09-21"
+  },
+  "n460355329": {
+    "_name": "Preintalerhütte",
+    "file": "File:Preintalerhütte 1292 11-08-18.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w25439465": {
+    "_name": "Richterhütte",
+    "file": "File:Richterhuette.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w29176116": {
+    "_name": "Riemannhaus",
+    "file": "File:Riemannhaus (20200909 192101).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w129497954": {
+    "_name": "Rotgüldenseehütte",
+    "file": "File:Rotgüldenseehütte20070719.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w128117135": {
+    "_name": "Rüsselsheimer Hütte",
+    "file": "File:Rüsselsheimer Hütte 4.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w146174865": {
+    "_name": "Sarotlahütte",
+    "file": "File:Sarotlahütte 2.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w157295582": {
+    "_name": "Schneealpenhaus",
+    "file": "File:Schneealpenhaus auf der Schneealpe 01.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w827811452": {
+    "_name": "Seethalerhütte",
+    "file": "File:Seethalerhütte 2019.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w122409746": {
+    "_name": "Siegerlandhütte",
+    "file": "File:Siegerlandhütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w123303946": {
+    "_name": "Sillianer Hütte",
+    "file": "File:2019 Osttirol 1027 Sillianer Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w122404162": {
+    "_name": "Simonyhütte",
+    "file": "File:Simonyhuette und Dachsteinkapelle 1.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w168877636": {
+    "_name": "Söldenhütte",
+    "file": "File:Https://soeldenhuette.at/wp-content/uploads/DJI 0050.00 05 12 18.Standbild015-scaled.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w84674198": {
+    "_name": "Starkenburger Hütte",
+    "file": "File:StarkenburgerHütte Habicht.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w200305337": {
+    "_name": "Sticklerhütte",
+    "file": "File:Https://upload.wikimedia.org/wikipedia/commons/6/6d/ÖAV Sticklerhütte (1750 m ü.A.), Radstädter Tauern, Österreich 01.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w83191764": {
+    "_name": "Stripsenjochhaus",
+    "file": "File:Austria 2015-07-23 (20781946518).jpg",
+    "_checked": "2026-09-21"
+  },
+  "w126348573": {
+    "_name": "Stüdlhütte",
+    "file": "File:Stüdlhütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w297173189": {
+    "_name": "Stuttgarter Hütte",
+    "file": "File:Stuttgarter Hütte 8.2013 02.JPG",
+    "_checked": "2026-09-21"
+  },
+  "w40719448": {
+    "_name": "Tannheimer Hütte",
+    "file": "File:Tannheimer Hütte August 2026.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w150245424": {
+    "_name": "Taschachhaus",
+    "file": "File:Taschachhaus 2013a.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w183971836": {
+    "_name": "Vernagthütte",
+    "file": "File:Vernagthütte 2020c.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w92957930": {
+    "_name": "Wangenitzseehütte",
+    "file": "File:Wangenitzseehütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w81920286": {
+    "_name": "Westfalenhaus",
+    "file": "File:WestfalenhausSommer.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w129263669": {
+    "_name": "Ybbstaler Hütte",
+    "file": "File:Https://de.wikipedia.org/wiki/Ybbstaler Hütte#/media/Datei:Ybbstaler Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w187225847": {
+    "_name": "Zellerhütte",
+    "file": "File:Vorderstoder Zellerhütte Spitzmauer Brotfall.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w25477186": {
+    "_name": "Zittauer Hütte",
+    "file": "File:Zittauer Hütte.jpg",
+    "_checked": "2026-09-21"
+  },
+  "w85718959": {
+    "_name": "Zittelhaus",
+    "file": "File:Zittelhaus sonnblick 1798 13-08-01.JPG",
+    "_checked": "2026-09-21"
+  }
+}
