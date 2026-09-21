@@ -16,3 +16,6 @@ venv/
 *.backup*
 *.prewiki
 *.premulti
+
+# written by scripts/fetch_photos.py --picker
+data/photo-picker.html

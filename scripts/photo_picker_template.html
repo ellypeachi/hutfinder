@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hut photo picker</title>
+<!-- Template for data/photo-picker.html. fetch_photos.py --picker fills in the data. -->
+<style>
+  :root {
+    --cream: #F4F0E8; --card: #FBF9F4; --ink: #3A2A20; --ink-soft: #6E5A4B;
+    --hair: #E0D8CA; --line-control: #8C7C68; --blue: #35648F; --blue-deep: #2C5378;
+    --radius: 4px;
+    --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+    --font-ui: 'Figtree Variable', 'Figtree', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 15px/1.45 var(--font-ui); }
+  a { color: var(--blue-deep); }
+  button, input { font: inherit; color: inherit; }
+
+  header { position: sticky; top: 0; z-index: 2; background: var(--cream); border-bottom: 1px solid var(--hair); }
+  .bar { max-width: 1180px; margin: 0 auto; padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+  h1 { font: 600 24px/1.1 var(--font-display); margin: 0; }
+  .sub { color: var(--ink-soft); font-size: 13px; }
+  .progress { font-weight: 600; }
+  .spacer { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--line-control); border-radius: var(--radius); overflow: hidden; }
+  .seg button { background: none; border: 0; padding: 6px 12px; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line-control); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--card); }
+  .primary { background: var(--blue); color: #fff; border: 0; border-radius: var(--radius); padding: 8px 14px; cursor: pointer; font-weight: 600; }
+  .primary:hover { background: var(--blue-deep); }
+  .quiet { background: none; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 10px; cursor: pointer; }
+  .quiet:hover { border-color: var(--ink); }
+  .quiet[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 8px 20px 80px; }
+  .note { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 10px 14px; margin: 14px 0; font-size: 14px; }
+  .note button { background: none; border: 0; padding: 0; color: var(--blue-deep); text-decoration: underline; cursor: pointer; }
+
+  section.hut { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 16px 18px 18px; margin: 14px 0; }
+  .hut-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .hut-head h2 { font: 600 20px/1.2 var(--font-display); margin: 0; }
+  .meta { color: var(--ink-soft); font-size: 13px; }
+  .meta a { margin-left: 10px; }
+  .status { margin: 6px 0 12px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .status strong { font-weight: 600; }
+  .paste { display: inline-flex; gap: 6px; }
+  .paste input { width: 240px; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 8px; background: #fff; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .tile { display: flex; flex-direction: column; gap: 5px; }
+  .tile button { padding: 0; border: 0; background: var(--hair); border-radius: var(--radius); cursor: pointer; aspect-ratio: 4 / 3; overflow: hidden; outline-offset: 2px; }
+  .tile button:hover { outline: 2px solid var(--line-control); }
+  .tile button[aria-pressed="true"] { outline: 3px solid var(--blue); }
+  .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile .cap { font-size: 12.5px; line-height: 1.35; }
+  .tile .why { color: var(--ink-soft); font-size: 12px; }
+  .chip { display: inline-block; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line-control); border-radius: 999px; padding: 0 7px; margin-right: 4px; }
+  .chip.pick { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .empty { color: var(--ink-soft); font-size: 14px; margin: 4px 0 0; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div>
+      <h1>Hut photo picker</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="spacer"></div>
+    <div class="seg" role="group" aria-label="Show">
+      <button type="button" id="show-all" aria-pressed="true">All huts</button>
+      <button type="button" id="show-open" aria-pressed="false">Not chosen yet</button>
+    </div>
+    <button type="button" class="primary" id="export">Download photo_picks.json</button>
+  </div>
+</header>
+<main>
+  <div class="note">
+    Click a photo to pick it for that hut, and click it again to go back to the automatic choice.
+    The frame is cropped to 4:3, roughly how a card will show it.
+    When you're done, download the file, save it as <code>data/photo_picks.json</code>, and run
+    <code>python3 scripts/fetch_photos.py</code> again.
+  </div>
+  <div class="note hidden" id="draft-note"></div>
+  <div id="huts"></div>
+</main>
+
+<script>
+const DATA = /*DATA*/null;
+const DRAFT_KEY = 'hf-photo-picks-draft';
+const today = new Date().toISOString().slice(0, 10);
+
+// picks: id -> { file: 'File:…' | null, ...notes } ; absent = automatic
+const fileEntries = Object.fromEntries(Object.entries(DATA.picks || {}).filter(([k]) => !k.startsWith('_')));
+const picks = JSON.parse(JSON.stringify(fileEntries));
+let draft = {};
+try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}') || {}; } catch (e) { draft = {}; }
+// drop draft entries the saved file already agrees with (e.g. after you saved and re-ran)
+for (const [id, v] of Object.entries(draft)) {
+  const saved = fileEntries[id];
+  if (v === 'auto' ? !saved : (saved && saved.file === v.file)) delete draft[id];
+}
+try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage off: fine */ }
+const draftCount = Object.keys(draft).length;
+for (const [id, v] of Object.entries(draft)) {
+  if (v === 'auto') delete picks[id]; else picks[id] = { ...(picks[id] || {}), file: v.file };
+}
+let showOpen = false;
+
+function saveDraft(id, value) {
+  draft[id] = value;
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage off: fine */ }
+}
+
+function fileTitle(s) {
+  s = decodeURIComponent(String(s).trim());
+  const m = s.match(/commons\.wikimedia\.org\/wiki\/(File:[^?#]+)/i);
+  if (m) s = m[1];
+  s = s.replace(/^(file|datei|image|bild):/i, '').replace(/_/g, ' ').trim();
+  return s ? 'File:' + s[0].toUpperCase() + s.slice(1) : null;
+}
+const filePath = t => 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(t.slice(5).replace(/ /g, '_')) + '?width=500';
+const commonsPage = t => 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(t.replace(/ /g, '_'));
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else if (v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k);
+  return n;
+};
+const HOW = { wikidata: 'the Wikidata image', recent: 'a recent photo from its category', none: 'nothing usable, so it shows the fallback' };
+
+function pick(id, file) { picks[id] = { ...(picks[id] || {}), file }; saveDraft(id, { file }); render(); }
+function unpick(id) { delete picks[id]; saveDraft(id, 'auto'); render(); }
+
+function tile(hut, c, current) {
+  const picked = current === c.file;
+  const auto = !(hut.id in picks) && hut.auto === c.file;
+  const yr = c.date ? c.date.slice(0, 4) : 'no date';
+  return el('div', { class: 'tile' },
+    el('button', {
+      type: 'button', 'aria-pressed': String(picked), title: c.file.slice(5),
+      onclick: () => picked ? unpick(hut.id) : pick(hut.id, c.file)
+    }, el('img', { src: c.thumb, alt: c.file.slice(5), loading: 'lazy' })),
+    el('div', { class: 'cap' },
+      picked ? el('span', { class: 'chip pick' }, 'Your pick') : null,
+      auto ? el('span', { class: 'chip' }, 'Automatic') : null,
+      c.wikidata ? el('span', { class: 'chip' }, 'Wikidata') : null,
+      `${yr} · ${c.date_kind} · `, el('a', { href: c.page, target: '_blank', rel: 'noopener' }, 'Commons ↗')),
+    c.reasons.length ? el('div', { class: 'why' }, c.reasons.join(', ')) : null);
+}
+
+function render() {
+  const root = document.getElementById('huts');
+  root.textContent = '';
+  const chosen = DATA.huts.filter(h => h.id in picks).length;
+  document.getElementById('progress').textContent = `${chosen} of ${DATA.huts.length} chosen`;
+  for (const hut of DATA.huts) {
+    if (showOpen && hut.id in picks) continue;
+    const entry = picks[hut.id];
+    const current = entry ? entry.file : undefined;
+    let status;
+    if (entry && entry.file === null) status = [el('strong', {}, 'No photo'), ' — this hut shows the fallback'];
+    else if (entry) status = [el('strong', {}, 'Your pick: '), entry.file.slice(5)];
+    else status = [el('strong', {}, 'Automatic: '), HOW[hut.how] || hut.how];
+
+    const cands = hut.candidates.slice();
+    if (current && !cands.some(c => c.file === current)) {
+      cands.unshift({ file: current, thumb: filePath(current), page: commonsPage(current), date: '', date_kind: 'pasted', wikidata: false, reasons: [] });
+    }
+    const input = el('input', { type: 'text', placeholder: 'Or paste a Commons file name or link', 'aria-label': `Commons file for ${hut.name}` });
+    root.append(el('section', { class: 'hut' },
+      el('div', { class: 'hut-head' },
+        el('h2', {}, hut.name),
+        el('span', { class: 'meta' },
+          [hut.elevation ? `${Math.round(hut.elevation).toLocaleString('de-AT')} m` : null, hut.region].filter(Boolean).join(' · '),
+          hut.category ? el('a', { href: commonsPage(hut.category), target: '_blank', rel: 'noopener' }, 'Commons category ↗') : null,
+          hut.website ? el('a', { href: hut.website, target: '_blank', rel: 'noopener' }, 'Hut website ↗') : null)),
+      el('div', { class: 'status' },
+        el('span', {}, ...status),
+        el('button', { type: 'button', class: 'quiet', 'aria-pressed': String(current === null),
+          onclick: () => current === null ? unpick(hut.id) : pick(hut.id, null) }, 'No good photo'),
+        el('span', { class: 'paste' }, input,
+          el('button', { type: 'button', class: 'quiet', onclick: () => { const t = fileTitle(input.value); if (t) pick(hut.id, t); } }, 'Use'))),
+      cands.length
+        ? el('div', { class: 'grid' }, cands.map(c => tile(hut, c, current)))
+        : el('p', { class: 'empty' }, 'No photos on Commons for this hut. Paste one if you find it, or ask the hut.')));
+  }
+}
+
+function exportPicks() {
+  const names = Object.fromEntries(DATA.huts.map(h => [h.id, h.name]));
+  const out = {
+    _readme: (DATA.picks && DATA.picks._readme) || [
+      'Hand-picked hut photos from Wikimedia Commons, keyed by hut id.',
+      '"file": a Commons file name. "file": null means no good photo; the card shows the fallback.',
+      'Made with data/photo-picker.html. fetch_photos.py reads this file and always uses these picks.'
+    ]
+  };
+  for (const id of Object.keys(picks).sort((a, b) => (names[a] || a).localeCompare(names[b] || b))) {
+    const before = fileEntries[id];
+    const changed = !before || before.file !== picks[id].file;
+    out[id] = { _name: names[id] || picks[id]._name, ...picks[id], _checked: changed ? today : (picks[id]._checked || today) };
+  }
+  const blob = new Blob([JSON.stringify(out, null, 2) + '\n'], { type: 'application/json' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: 'photo_picks.json' });
+  document.body.append(a); a.click(); a.remove();
+}
+
+document.getElementById('sub').textContent = `${DATA.huts.length} bookable huts · candidates fetched ${DATA.generated}`;
+document.getElementById('export').addEventListener('click', exportPicks);
+document.getElementById('show-all').addEventListener('click', e => { showOpen = false; e.target.setAttribute('aria-pressed', 'true'); document.getElementById('show-open').setAttribute('aria-pressed', 'false'); render(); });
+document.getElementById('show-open').addEventListener('click', e => { showOpen = true; e.target.setAttribute('aria-pressed', 'true'); document.getElementById('show-all').setAttribute('aria-pressed', 'false'); render(); });
+if (draftCount) {
+  const note = document.getElementById('draft-note');
+  note.classList.remove('hidden');
+  note.append(`Restored ${draftCount} choice${draftCount === 1 ? '' : 's'} from your last session that aren't in photo_picks.json yet. `,
+    el('button', { type: 'button', onclick: () => { try { localStorage.removeItem(DRAFT_KEY); } catch (e) {} location.reload(); } }, 'Discard them'));
+}
+render();
+</script>
+</body>
+</html>
