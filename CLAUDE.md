@@ -94,6 +94,8 @@ basemap.at inside Austria and OpenStreetMap outside it.
 - Data changes go through targeted scripts: run `--check` / `--dry-run` first,
   and match on content, not line numbers.
 - Don't trust grep counts when comments contain the search term. Check the actual output.
+- After rebuilding huts.json with import_osm.py, run scripts/backfill_contacts.py
+  (--check first), then apply_overrides.py last.
 - Nothing loads in visitors' browsers from another server without `privacy/index.html` saying so first.
   Photos come only from `public/photos/`: don't add a fallback to Wikimedia URLs.
 
