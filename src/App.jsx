@@ -92,6 +92,11 @@ function fmtISO(s) {
   return `${d}.${m}.${y}`;
 }
 
+// Hut counts with a thousands separator: "1,524", not "1524".
+function fmtN(n) {
+  return n.toLocaleString("en");
+}
+
 function toISO(d) {
   const p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
@@ -1083,22 +1088,33 @@ export default function App() {
   /* rangeLabel is empty until check-out is chosen, and with the shared
      calendar that half-filled state is on screen for as long as it takes to
      pick the second date. */
-  const countLine =
-    status === "ready"
-      ? nights.length
-        ? roomType === ROOM_NONE
-          ? `${filtered.length} unlisted huts${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
-          : `${matchCount} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}${
-              unlistedCount > 0 ? ` · ${unlistedCount} unlisted` : ""
-            }`
-        : `${filtered.length} of ${huts.length} huts${
+  /* The count is split in two: the number people act on (countLead) carries
+     the weight, the rest (countRest) stays quiet. With nothing narrowing the
+     list it reads "1,524 huts", not "1524 of 1524 huts". countLine joins the
+     two for the screen-reader announcement below. */
+  const rangeTail = `${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`;
+  const allShown = filtered.length === huts.length;
+  const [countLead, countRest] =
+    status !== "ready"
+      ? ["", ""]
+      : nights.length
+      ? roomType === ROOM_NONE
+        ? [`${fmtN(filtered.length)} unlisted huts`, rangeTail]
+        : [
+            `${fmtN(matchCount)} huts with space`,
+            `${rangeTail}${unlistedCount > 0 ? ` · ${fmtN(unlistedCount)} unlisted` : ""}`,
+          ]
+      : [
+          allShown ? `${fmtN(huts.length)} huts` : fmtN(filtered.length),
+          `${allShown ? "" : ` of ${fmtN(huts.length)} huts`}${
             unlistedCount > 0
               ? matchCount > 0
-                ? ` · ${matchCount} with ${BUCKET_PLURAL[roomType]} first`
+                ? ` · ${fmtN(matchCount)} with ${BUCKET_PLURAL[roomType]} first`
                 : ` · none known to have ${BUCKET_PLURAL[roomType]}`
               : ""
-          }`
-      : "";
+          }`,
+        ];
+  const countLine = countLead + countRest;
 
   /* The count is the only thing a screen reader would notice changing when a
      filter is applied, so it is read out — but not on every keystroke. Typing
@@ -1167,12 +1183,13 @@ export default function App() {
         display: "flex",
         flexDirection: "column",
         gap: "0.5rem",
-        /* A soft edge so cards passing underneath read as behind, not merged. */
-        boxShadow: "0 8px 12px -10px rgba(58, 42, 32, 0.22)",
+        /* No shadow under the bar. It used to mark cards passing behind it,
+           but at rest it sat right on top of the hut count. The map's own
+           border keeps the edge clear. */
       };
 
-  /* One control, rendered in the header on desktop and inside the pinned
-     stage on a phone, where it has to stay reachable from anywhere. */
+  /* One control, rendered next to the hut count on desktop and inside the
+     pinned stage on a phone, where it has to stay reachable from anywhere. */
   const viewToggle = (
     <div
       role="group"
@@ -1180,7 +1197,7 @@ export default function App() {
       style={{
         display: "flex",
         gap: isNarrow ? 8 : 6,
-        margin: isNarrow ? 0 : "1.25rem 0 0",
+        margin: 0,
       }}
     >
       {[
@@ -1211,6 +1228,53 @@ export default function App() {
           {label}
         </button>
       ))}
+    </div>
+  );
+
+  /* The hut count, as the visible heading of the results. It used to sit
+     under the logo, a long way from the list it describes.
+     Desktop: one row with List / Split / Map at the other end.
+     Phone: the toggle lives in the pinned bar above the map, so the count
+     stands alone, inset to line up with the hut names inside the cards
+     (their 0.9rem padding plus the 1px border).
+     Map view has no list, so the same bar closes the header instead. */
+  const countHeading = (
+    <h2
+      style={{
+        margin: 0,
+        fontFamily: "var(--font-ui)",
+        fontVariationSettings: "normal",
+        fontSize: "0.97rem",
+        lineHeight: 1.4,
+        fontWeight: 600,
+        color: "var(--ink)",
+      }}
+    >
+      {countLead}
+      {countRest ? (
+        <span style={{ fontWeight: 400, color: "var(--ink-soft)" }}>{countRest}</span>
+      ) : null}
+    </h2>
+  );
+  const countBar = isNarrow ? (
+    <div style={{ padding: showList ? "0.875rem 0 0 calc(0.9rem + 1px)" : 0 }}>
+      {countHeading}
+    </div>
+  ) : (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: "0.5rem 0.75rem",
+        marginTop: "0.25rem",
+        paddingTop: "0.875rem",
+        borderTop: "1px solid var(--hair)",
+      }}
+    >
+      {countHeading}
+      {viewToggle}
     </div>
   );
 
@@ -1343,7 +1407,11 @@ export default function App() {
             style={{ height: 30, display: "block" }}
           />
         </h1>
-        <p style={{ color: "var(--ink-soft)", marginTop: 0 }}>{countLine}</p>
+        {/* What the site is, in a line: Austria only, and what you do here.
+            About 280px at 16px, so it stays on one line on a 360px phone. */}
+        <p style={{ color: "var(--ink-soft)", margin: "0 0 1.25rem", lineHeight: 1.5 }}>
+          Find and book mountain huts in Austria.
+        </p>
         <span className="hf-vh" role="status">{announced}</span>
 
         {status === "loading" && <p>Loading huts…</p>}
@@ -1744,7 +1812,7 @@ export default function App() {
                     cursor: "pointer",
                   }}
                 >
-                  {`Show ${filtered.length} ${filtered.length === 1 ? "hut" : "huts"}`}
+                  {`Show ${fmtN(filtered.length)} ${filtered.length === 1 ? "hut" : "huts"}`}
                 </button>
               </div>
             ) : null}
@@ -1769,7 +1837,7 @@ export default function App() {
                 Clear filters
               </button>
             )}
-            {!isNarrow && viewToggle}
+            {!showList && countBar}
           </>
         )}
         </header>
@@ -1822,7 +1890,7 @@ export default function App() {
             top of the filters again. */}
         {status === "ready" && showList && (
           <main id="results" tabIndex={-1} style={leftCol(2)}>
-            <h2 className="hf-vh">Hut results</h2>
+            {countBar}
             {filtered.length === 0 ? (
               <div
                 style={{
@@ -1882,7 +1950,10 @@ export default function App() {
                 )}
               </div>
             ) : (
-              <ul className="hf-cards" style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
+              <ul
+                className="hf-cards"
+                style={{ listStyle: "none", padding: 0, margin: isNarrow ? "0.625rem 0 0" : "0.875rem 0 0" }}
+              >
                 {visible.map((hut, i) => (
                   <Fragment key={hut.id}>
                   {splitUnlisted && i === matchCount ? (
@@ -1906,7 +1977,7 @@ export default function App() {
                           fontWeight: 700,
                         }}
                       >
-                        {`Unlisted · ${unlistedCount} ${unlistedCount === 1 ? "hut" : "huts"}`}
+                        {`Unlisted · ${fmtN(unlistedCount)} ${unlistedCount === 1 ? "hut" : "huts"}`}
                       </h3>
                       <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", lineHeight: 1.5, color: "var(--ink-soft)" }}>
                         {nights.length
@@ -1951,7 +2022,7 @@ export default function App() {
 
             {hiddenCount > 0 && (
               <p style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
-                Showing the first {RESULT_LIMIT} — narrow the filters to see the other {hiddenCount}.
+                Showing the first {RESULT_LIMIT} — narrow the filters to see the other {fmtN(hiddenCount)}.
               </p>
             )}
 
