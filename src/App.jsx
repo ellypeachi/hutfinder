@@ -2044,7 +2044,7 @@ export default function App() {
                           ? sortByRoom
                             ? `Bed availability unknown. They may have ${BUCKET_PLURAL[roomType]} free too. Call or check the hut’s website to ask.`
                             : "Bed availability unknown. Call or check the hut’s website to ask about your dates."
-                          : `Bed availability unknown. They may have ${BUCKET_PLURAL[roomType]} too. Call or check the hut’s website to ask.`}
+                          : `Room types unknown. They may have ${BUCKET_PLURAL[roomType]} too. Call or check the hut’s website to ask.`}
                       </p>
                     </li>
                   ) : null}

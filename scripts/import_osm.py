@@ -31,7 +31,8 @@ import requests
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
-    "https://overpass.osm.ch/api/interpreter",
+    # overpass.osm.ch is left out on purpose: it only holds Swiss data and
+    # answers "nothing" for Austrian huts.
     "https://overpass.kumi.systems/api/interpreter",
 ]
 

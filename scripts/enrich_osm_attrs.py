@@ -35,9 +35,11 @@ HUTS_PATH = ROOT / "public" / "huts.json"
 OVERPASS_ENDPOINTS = [
     "https://overpass-api.de/api/interpreter",
     "https://overpass.private.coffee/api/interpreter",
-    "https://overpass.osm.ch/api/interpreter",
+    # overpass.osm.ch is left out on purpose: it only holds Swiss data and
+    # answers "nothing" for Austrian huts.
     "https://overpass.kumi.systems/api/interpreter",
 ]
+MIN_ELEMENTS = 1000
 HEADERS = {
     "User-Agent": "hutfinder/0.1 (personal mountain-hut finder project)",
     "Accept": "application/json",
@@ -73,7 +75,17 @@ def fetch(query, attempts_per_endpoint=2):
                     time.sleep(wait)
                     continue
                 r.raise_for_status()
-                return r.json().get("elements", [])
+                data = r.json()
+                # A busy server that runs out of time still answers 200, with
+                # whatever it found so far and a "remark" saying so.
+                if data.get("remark"):
+                    raise ValueError(f"partial answer: {data['remark'][:120]}")
+                elements = data.get("elements", [])
+                # The whole-of-Austria query returns well over a thousand huts;
+                # far fewer means a broken answer, not a change in OSM.
+                if len(elements) < MIN_ELEMENTS:
+                    raise ValueError(f"only {len(elements)} elements returned")
+                return elements
             except Exception as e:  # noqa: BLE001 — fall through to next mirror
                 last_err = e
                 print(f"  endpoint failed ({url}): {e}", file=sys.stderr)

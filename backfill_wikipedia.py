@@ -47,11 +47,34 @@ def get(url):
     return json.loads(urllib.request.urlopen(req, timeout=60).read())
 
 
+OVERPASS = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+]
+
+
 def post_overpass(query):
-    req = urllib.request.Request(
-        'https://overpass-api.de/api/interpreter',
-        data=query.encode('utf-8'), headers={'User-Agent': UA})
-    return json.loads(urllib.request.urlopen(req, timeout=300).read())['elements']
+    """Try each server twice. A busy server can answer 200 with only part of
+    the result (and a "remark" saying so), so that counts as a failure too,
+    as does an answer far smaller than the whole-of-Austria query returns."""
+    last = None
+    for url in OVERPASS:
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(url, data=query.encode('utf-8'),
+                                             headers={'User-Agent': UA})
+                data = json.loads(urllib.request.urlopen(req, timeout=300).read())
+                if data.get('remark'):
+                    raise ValueError('partial answer: ' + data['remark'][:120])
+                if len(data.get('elements', [])) < 1000:
+                    raise ValueError(f"only {len(data.get('elements', []))} elements returned")
+                return data['elements']
+            except Exception as e:  # noqa: BLE001 - try again, then the next server
+                last = e
+                print(f'  {url} failed: {e}', file=sys.stderr)
+                time.sleep(10 * (attempt + 1))
+    sys.exit(f'Every Overpass server failed ({last}). Nothing written; try again later.')
 
 
 # ------------------------------------------------------------------ load
