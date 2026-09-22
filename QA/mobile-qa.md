@@ -103,6 +103,14 @@ Actual:    First tap only highlights; needs a second tap
 Severity:  High — blocks the main action
 ```
 
+## Languages
+
+- [ ] The globe and code sit beside the wordmark on one line at 360px wide.
+- [ ] Tapping it opens the list; Escape, a tap outside and a choice all close it.
+- [ ] After picking Deutsch the page is German and stays German after a reload.
+- [ ] German and Czech are the longest: no filter pill, tag or button clipped,
+      and the tagline still holds one line.
+
 ## Severity
 
 - **Blocker** — can't complete the core task (find a hut, reach a booking link)

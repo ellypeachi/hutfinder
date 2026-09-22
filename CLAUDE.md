@@ -19,11 +19,14 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | Path | What |
 |---|---|
 | `src/App.jsx` | Almost all the UI: filters, list, hut modal, layout. Styles are mostly inline. |
+| `src/i18n.js` + `src/strings/<code>.js` | Every visible string, one file per language. `src/I18nProvider.jsx` holds the choice, `src/LanguageMenu.jsx` is the control in the header. |
 | `src/MapPanel.jsx` | The Leaflet map. Pins are canvas `CircleMarker`s (`preferCanvas`). |
 | `src/DateRange.jsx` | The shared check-in/check-out calendar. |
 | `src/tokens.css` | Design tokens, base styles, and the accessibility helper classes. |
 | `src/map.css` | Leaflet chrome in the house palette. Must load **after** Leaflet's CSS. |
 | `public/huts.json` | The hut dataset. |
+| `public/hut_texts.json` | The huts' own descriptions per language, written by `scripts/build_hut_texts.py`. Loaded when the first pop-up opens, not with the list. |
+| `data/note_translations.json` | Our Dutch and Czech of those descriptions, each with `src_sha`: the fingerprint of the text it was made from. |
 | `public/availability.json` | Written by a bot. Never edit by hand. |
 | `public/photos.json` + `public/photos/` | Hut photos from Wikimedia Commons, served from our own server. `scripts/fetch_photos.py` picks them, then `scripts/download_photos.py` saves them as WebP and adds the `card`/`full` fields. Always run both, in that order: after `fetch_photos.py` alone, no photos show. |
 | `imprint/`, `privacy/` | The legal pages, plain HTML (Vite entries in `vite.config.js`, styles in `src/legal.css`). |
@@ -59,6 +62,34 @@ basemap.at inside Austria and OpenStreetMap outside it.
   figures, coloured tile backgrounds, and architecture beyond what's needed.
 - No `font-variant-numeric: tabular-nums` anywhere (tokens.css explains why).
   `DateRange.jsx` still uses it in two places; those should come out.
+
+## Languages
+
+English, German, Dutch, French and Czech. The site opens in the browser's
+language, remembers a change, and sets `<html lang>`.
+
+- **No string in a component.** `const { t, nf } = useI18n()`, then
+  `t("pill.all")`. A key missing from a language falls back to English, so a
+  half-finished translation still renders a whole page.
+- **Plurals** are `{ one, other }` (Czech adds `few`), picked by
+  `Intl.PluralRules` from the count passed as `count`.
+- **Numbers, dates, month names and weekday initials** come from `Intl`, never
+  from a table: `nf()`, `monthName()`, `dowShort()`. German formats dates with
+  de-AT (*Jänner*, not Januar) but numbers with de-DE, because de-AT follows
+  ÖNORM and groups with a space where Austrian sites write "1.524".
+- **Adding a language**: a new `src/strings/<code>.js` with the same keys, then
+  a line in `LANGS` and `DICTS` in `src/i18n.js`. Same keys, same
+  `{placeholders}` — a script that checks both is in the commit message for
+  "Dutch, French and Czech".
+- **Register**: German and Dutch are informal (du / je), French and Czech are
+  formal (vous / vykání), each following that country's alpine club.
+- **Hut types stay German** in every language (Schutzhütte, Alm,
+  Jausenstation): that is what is written on the hut and on the map.
+- **Czech** avoids `{rooms}` in four sentences, because the word would need a
+  different case in each; `src/strings/cs.js` says so at the top.
+- The huts' own descriptions are not UI strings: they come from
+  `public/hut_texts.json` in the hut's own languages (de, en, fr, it) plus our
+  nl and cs. A text of ours says so under the description, once it is open.
 
 ## Accessibility conventions (pass 9)
 
