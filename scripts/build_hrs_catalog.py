@@ -19,6 +19,11 @@ Writes data/hrs_huts.json     (one rich record per Austrian hut)
 
 Gentle by design: ~0.4s between huts, a real User-Agent, and it caches — a
 re-run skips huts already in hrs_huts.json unless you pass --refresh.
+
+Hut texts ("notes") are kept in every language the site has them in — German,
+English, French and Italian — as {"de": ..., "en": ...}. Records fetched
+before that change hold a bare English string, so after pulling this change
+run it once with --refresh to pick the other languages up.
 """
 
 import json
@@ -52,6 +57,24 @@ def en(items, key="description"):
     return (items[0].get(key) if items else None)
 
 
+# hut-reservation.org carries each hut's own text in these four. German is
+# usually the original; the others are the hut's translations of it.
+LANG_MAP = {"DE_DE": "de", "DE": "de", "EN": "en", "en": "en", "FR": "fr", "IT": "it"}
+
+
+def all_langs(items, key="description"):
+    """Every language a list of {language, ...} dicts carries: {"de": ..., "en": ...}.
+
+    Empty strings are dropped rather than stored as a language the hut has."""
+    out = {}
+    for it in items or []:
+        code = LANG_MAP.get(it.get("language"))
+        text = (it.get(key) or it.get("label") or "").strip()
+        if code and text and code not in out:
+            out[code] = text
+    return out or None
+
+
 def parse_hut_info(d):
     lat = lng = None
     if d.get("coordinates"):
@@ -83,7 +106,7 @@ def parse_hut_info(d):
         "payment": d.get("providerName"),                   # NO_EPAYMENT = cash on site
         "max_nights": d.get("maxNumberOfNights"),
         "bed_categories": cats,
-        "notes": en(d.get("hutGeneralDescriptions")),
+        "notes": all_langs(d.get("hutGeneralDescriptions")),  # {"de": ..., "en": ..., "fr": ..., "it": ...}
         "booking_url": f"https://www.hut-reservation.org/reservation/book-hut/{d.get('hutId')}/wizard",
     }
 

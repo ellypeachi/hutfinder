@@ -471,6 +471,26 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
 .hf-more span { border-bottom: 1px solid var(--powder); }
 .hf-desc.is-open .hf-more { float: none; margin-left: 0.3em; }
 
+/* The note under a description we translated ourselves. Same size and grey as
+   the photo credit — it is a note about the text, not part of it. The button
+   sits inside the sentence, so the 44px rule's inline-link exemption covers it. */
+.hf-translated {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.hf-translated button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--blue-deep);
+  cursor: pointer;
+}
+.hf-translated button span { border-bottom: 1px solid var(--powder); }
+
 .hf-badge {
   font-size: 12.5px;
   font-weight: 600;

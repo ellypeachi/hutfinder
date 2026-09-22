@@ -35,6 +35,10 @@ const bucketPlural = (t, k) => t(`bucketPlural.${k}`);
    when a room type or dates are picked, after the huts known to match. */
 const ROOM_NONE = "none";
 
+/* The languages a hut writes its own description in, most complete first.
+   Dutch and Czech are ours, so they are not in this list. */
+const HUT_TEXT_LANGS = ["de", "en", "fr", "it"];
+
 const REGION_ORDER = [
   "Tirol",
   "Salzburg",
@@ -244,16 +248,21 @@ function MailIcon() {
    line (the float trick behind .hf-desc in tokens.css). The button only
    appears when the text is actually cut off; that is measured in a ref
    callback once the paragraph is laid out. */
-function Description({ text }) {
+function Description({ text, source }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [cut, setCut] = useState(false);
+  /* Showing the hut's own words instead of ours. Only possible where we did
+     the translating — Dutch and Czech. */
+  const [orig, setOrig] = useState(false);
+  const shown = orig && source ? source.text : text;
   const measure = (el) => {
     if (!el || open) return;
     const isCut = el.scrollHeight > el.clientHeight + 1;
     if (isCut !== cut) setCut(isCut);
   };
   return (
+    <>
     <div className="hf-desc-wrap">
       <p ref={measure} className={open ? "hf-desc is-open" : "hf-desc"}>
         {!open && cut ? (
@@ -261,7 +270,7 @@ function Description({ text }) {
             <span>{t("detail.readMore")}</span>
           </button>
         ) : null}
-        {text}
+        {shown}
         {open ? (
           <button type="button" className="hf-more" aria-expanded="true" onClick={() => setOpen(false)}>
             <span>{t("detail.showLess")}</span>
@@ -269,6 +278,28 @@ function Description({ text }) {
         ) : null}
       </p>
     </div>
+    {/* The note waits until the text is open: on a closed card it would be a
+        line of doubt under two lines nobody has read yet. A description short
+        enough that it was never cut has no "Read more" to wait for, so the
+        note shows straight away. */}
+    {source && (open || !cut) ? (
+      <p className="hf-translated">
+        {orig
+          ? t("detail.sourceNote", { language: t(`language.${source.code}`) })
+          : t("detail.translatedNote")}
+        {" · "}
+        <button
+          type="button"
+          onClick={() => {
+            setOrig(!orig);
+            setOpen(true);
+          }}
+        >
+          <span>{orig ? t("detail.showTranslation") : t("detail.showOriginal")}</span>
+        </button>
+      </p>
+    ) : null}
+    </>
   );
 }
 
@@ -391,10 +422,11 @@ function useIsNarrow(max = 860) {
 export default function App() {
   /* nf is the old fmtN under its new name: the same thousands separator,
      now the active language's. */
-  const { t, nf: fmtN, locale } = useI18n();
+  const { t, nf: fmtN, locale, lang } = useI18n();
   const [huts, setHuts] = useState([]);
   const [avail, setAvail] = useState(null);
   const [photos, setPhotos] = useState({}); // hut id -> Commons photo, from photos.json
+  const [hutTexts, setHutTexts] = useState(null); // hr_hut_id -> the hut's text per language
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState([]); // MULTI_SELECT
@@ -579,6 +611,38 @@ export default function App() {
       })
       .catch(() => setPhotos({}));
   }, []);
+
+  /* The huts' own descriptions: six languages of paragraphs that only a
+     pop-up ever shows, so they load when the first one opens instead of
+     holding up the list. Missing file, or a hut that isn't in it: the card
+     simply has no description, as before. */
+  useEffect(() => {
+    if (!selected || hutTexts) return undefined;
+    let alive = true;
+    fetch(`${import.meta.env.BASE_URL}hut_texts.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => alive && setHutTexts((data && data.texts) || {}))
+      .catch(() => alive && setHutTexts({}));
+    return () => {
+      alive = false;
+    };
+  }, [selected, hutTexts]);
+
+  /* Which text a hut shows, and whether it is ours. The hut's own languages
+     come first in the fallback: German is usually the original, English its
+     own translation of it. */
+  const hutText = (hut) => {
+    const entry = hutTexts && hut.hr_hut_id ? hutTexts[String(hut.hr_hut_id)] : null;
+    if (!entry) return hut.hr_notes ? { text: hut.hr_notes } : null;
+    const code = [lang, "en", ...HUT_TEXT_LANGS].find((c) => entry[c]);
+    if (!code) return null;
+    const ours = (entry.translated || []).includes(code);
+    const srcCode = ours ? HUT_TEXT_LANGS.find((c) => c !== code && entry[c]) : null;
+    return {
+      text: entry[code],
+      source: srcCode ? { code: srcCode, text: entry[srcCode] } : null,
+    };
+  };
 
   const nights = nightsBetween(from, to);
 
@@ -803,7 +867,9 @@ export default function App() {
      the hut's own description, and the booking row as it has always been. */
   const hutDetail = (hut) => {
     const photo = photos[hut.id];
-    const notes = hut.hr_notes ? plainText(hut.hr_notes) : "";
+    const own = hutText(hut);
+    const notes = own ? plainText(own.text) : "";
+    const source = own && own.source ? { code: own.source.code, text: plainText(own.source.text) } : null;
     const tags = hutTags(hut, t);
     return (
       <>
@@ -876,7 +942,7 @@ export default function App() {
           {notes ? (
             <div>
               <div className="hf-label">{t("detail.description")}</div>
-              <Description key={hut.id} text={notes} />
+              <Description key={hut.id} text={notes} source={source} />
             </div>
           ) : null}
           {hut.hr_hut_id ? (

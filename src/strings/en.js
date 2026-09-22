@@ -76,6 +76,15 @@ export const en = {
   "detail.priceList": "price list",
   "detail.priceListAria": "{hut} price list, PDF (opens in a new tab)",
   "detail.closeAria": "Close {hut}",
+  // the note under a description we translated ourselves
+  "detail.translatedNote": "Translated",
+  "detail.sourceNote": "The hut’s own text, in {language}",
+  "detail.showOriginal": "show the hut’s own text",
+  "detail.showTranslation": "show the translation",
+  "language.de": "German",
+  "language.en": "English",
+  "language.fr": "French",
+  "language.it": "Italian",
 
   // ---------- filters ----------
   "filter.available": "Available (nights)",

@@ -76,6 +76,15 @@ export const de = {
   "detail.priceList": "Preisliste",
   "detail.priceListAria": "Preisliste von {hut}, PDF (öffnet in einem neuen Tab)",
   "detail.closeAria": "{hut} schließen",
+  // Die Zeile unter einem Text, den wir übersetzt haben
+  "detail.translatedNote": "Übersetzt",
+  "detail.sourceNote": "Text der Hütte, auf {language}",
+  "detail.showOriginal": "Text der Hütte anzeigen",
+  "detail.showTranslation": "Übersetzung anzeigen",
+  "language.de": "Deutsch",
+  "language.en": "Englisch",
+  "language.fr": "Französisch",
+  "language.it": "Italienisch",
 
   // ---------- Filter ----------
   "filter.available": "Frei (Nächte)",
