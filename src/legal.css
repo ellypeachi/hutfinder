@@ -1,0 +1,105 @@
+/* ============================================================
+   Legal pages — imprint/ and privacy/
+   ------------------------------------------------------------
+   Plain reading pages in the app's 720px list column. Section
+   headings use the UI font: fifteen serif headings down one
+   page would shout, and these pages are for looking things up.
+   ============================================================ */
+
+.legal {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-4) var(--s-5);
+}
+
+.legal-mark {
+  display: inline-block;
+}
+.legal-mark img {
+  display: block;
+  height: 30px;
+}
+
+.legal h1 {
+  font-size: var(--t-section);
+  line-height: var(--lh-section);
+  font-variation-settings: var(--fr-head);
+  letter-spacing: 0;
+  margin: var(--s-7) 0 var(--s-3);
+}
+
+.legal-lead {
+  color: var(--ink-soft);
+  margin: 0 0 var(--s-6);
+}
+
+.legal h2 {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  line-height: 1.4;
+  font-weight: 650;
+  margin: var(--s-6) 0 var(--s-2);
+}
+
+.legal p,
+.legal ul {
+  margin: 0 0 var(--s-3);
+  max-width: 65ch;
+}
+
+.legal ul {
+  padding-left: 1.25em;
+}
+
+.legal li + li {
+  margin-top: var(--s-1);
+}
+
+.legal a {
+  color: var(--blue-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  overflow-wrap: anywhere;
+}
+
+.legal-updated {
+  color: var(--ink-soft);
+  font-size: var(--t-meta);
+  line-height: var(--lh-meta);
+  margin-top: var(--s-6);
+}
+
+.legal-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--s-4);
+  margin-top: var(--s-7);
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--hair);
+  font-size: var(--t-label);
+  line-height: var(--lh-label);
+  color: var(--ink-soft);
+}
+
+.legal .legal-foot a {
+  color: var(--ink-soft);
+}
+
+.legal .legal-foot a[aria-current="page"] {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 30rem) {
+  .legal {
+    padding: var(--s-5) var(--s-4);
+  }
+  .legal h1 {
+    font-size: var(--t-name);
+    line-height: var(--lh-name);
+    margin-top: var(--s-6);
+  }
+}

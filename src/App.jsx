@@ -1158,7 +1158,7 @@ export default function App() {
     ? {
         display: "grid",
         gridTemplateColumns: "min(760px, 50%) 1fr",
-        gridTemplateRows: "auto 1fr",
+        gridTemplateRows: "auto 1fr auto",
         width: "100%",
         fontFamily: "var(--font-ui)",
         textAlign: "left",
@@ -1171,19 +1171,22 @@ export default function App() {
         textAlign: "left",
       };
 
-  /* row 1 = header and filters, row 2 = the list. Both in grid column 1. */
+  /* row 1 = header and filters, row 2 = the list, row 3 = the footer. All in
+     grid column 1. Row 2 takes the slack, so in Map view (no list) the
+     footer still sits at the foot of the column. */
   const leftCol = (row) =>
     wide
       ? {
           gridColumn: 1,
           gridRow: row,
           minWidth: 0,
-          padding: row === 1 ? "2rem 1.75rem 0 2rem" : "0 1.75rem 3rem 2rem",
+          padding:
+            row === 1 ? "2rem 1.75rem 0 2rem" : row === 2 ? "0 1.75rem 1.5rem 2rem" : "0 1.75rem 1.25rem 2rem",
         }
       : { minWidth: 0 };
 
   const stageStyle = wide
-    ? { gridColumn: 2, gridRow: "1 / 3", minWidth: 0 }
+    ? { gridColumn: 2, gridRow: "1 / 4", minWidth: 0 }
     : {
         position: "sticky",
         top: 0,
@@ -2052,6 +2055,46 @@ export default function App() {
             )}
           </main>
         )}
+
+        {/* Imprint and privacy, in every view and while loading, so they are
+            always one click away. The OSM credit is here because the list
+            shows OSM data even when no map (and so no map attribution) is on
+            screen. The legal pages are plain HTML: imprint/ and privacy/. */}
+        <footer
+          style={
+            wide
+              ? leftCol(3)
+              : { minWidth: 0, margin: "1.5rem 0 0", padding: isNarrow ? "0 0 1.25rem" : 0 }
+          }
+        >
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              columnGap: "1rem",
+              paddingTop: "0.5rem",
+              borderTop: "1px solid var(--hair)",
+              fontSize: "var(--t-label)",
+              lineHeight: "var(--lh-label)",
+              color: "var(--ink-soft)",
+            }}
+          >
+            <a className="hf-tap" href={`${import.meta.env.BASE_URL}imprint/`} style={{ color: "inherit" }}>
+              Imprint
+            </a>
+            <a className="hf-tap" href={`${import.meta.env.BASE_URL}privacy/`} style={{ color: "inherit" }}>
+              Privacy
+            </a>
+            <span>
+              Hut data ©{" "}
+              <a href="https://www.openstreetmap.org/copyright" style={{ color: "inherit" }}>
+                OpenStreetMap
+              </a>{" "}
+              contributors
+            </span>
+          </div>
+        </footer>
 
         {status === "ready" && selected && (
   <div
