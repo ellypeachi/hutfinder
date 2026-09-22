@@ -190,6 +190,7 @@ export const nl = {
   "lang.aria": "Taal: {name}",
 
   // ---------- voet ----------
+  "footer.faq": "FAQ",
   "footer.imprint": "Colofon",
   "footer.privacy": "Privacy",
   "footer.osmBefore": "Huttendata ©",

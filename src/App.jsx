@@ -2242,6 +2242,9 @@ export default function App() {
               color: "var(--ink-soft)",
             }}
           >
+            <a className="hf-tap" href={`${import.meta.env.BASE_URL}faq/`} style={{ color: "inherit" }}>
+              {t("footer.faq")}
+            </a>
             <a className="hf-tap" href={`${import.meta.env.BASE_URL}imprint/`} style={{ color: "inherit" }}>
               {t("footer.imprint")}
             </a>

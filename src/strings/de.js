@@ -193,6 +193,7 @@ export const de = {
   "lang.aria": "Sprache: {name}",
 
   // ---------- Fuß ----------
+  "footer.faq": "FAQ",
   "footer.imprint": "Impressum",
   "footer.privacy": "Datenschutz",
   "footer.osmBefore": "Hüttendaten ©",

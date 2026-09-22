@@ -1,5 +1,5 @@
 /* ============================================================
-   Legal pages — imprint/ and privacy/
+   Static pages — faq/, imprint/ and privacy/
    ------------------------------------------------------------
    Plain reading pages in the app's 720px list column. Section
    headings use the UI font: fifteen serif headings down one
@@ -42,12 +42,14 @@
 }
 
 .legal p,
-.legal ul {
+.legal ul,
+.legal ol {
   margin: 0 0 var(--s-3);
   max-width: 65ch;
 }
 
-.legal ul {
+.legal ul,
+.legal ol {
   padding-left: 1.25em;
 }
 
@@ -63,7 +65,8 @@
   overflow-wrap: anywhere;
 }
 
-.legal-updated {
+.legal-updated,
+.legal-note {
   color: var(--ink-soft);
   font-size: var(--t-meta);
   line-height: var(--lh-meta);

@@ -210,6 +210,7 @@ export const cs = {
   "lang.aria": "Jazyk: {name}",
 
   // ---------- patička ----------
+  "footer.faq": "FAQ",
   "footer.imprint": "Tiráž",
   "footer.privacy": "Soukromí",
   "footer.osmBefore": "Data chat ©",

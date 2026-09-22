@@ -191,6 +191,7 @@ export const fr = {
   "lang.aria": "Langue : {name}",
 
   // ---------- pied de page ----------
+  "footer.faq": "FAQ",
   "footer.imprint": "Mentions légales",
   "footer.privacy": "Confidentialité",
   "footer.osmBefore": "Données des refuges ©",
