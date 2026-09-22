@@ -29,8 +29,8 @@ export const de = {
   "bucket.shared": "Mehrbettzimmer",
   "bucket.priv": "Privatzimmer",
   "bucketPlural.dorm": "Matratzenlager",
-  "bucketPlural.shared": "Mehrbettzimmern",
-  "bucketPlural.priv": "Privatzimmern",
+  "bucketPlural.shared": "Mehrbettzimmer",
+  "bucketPlural.priv": "Privatzimmer",
   "region.other": "Andere/Unbekannt",
 
   // ---------- Tags auf der Karte ----------

@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
 import { en } from "./strings/en";
 import { de } from "./strings/de";
+import { nl } from "./strings/nl";
+import { fr } from "./strings/fr";
+import { cs } from "./strings/cs";
 
 /* ==========================================================================
    i18n
@@ -26,9 +29,12 @@ import { de } from "./strings/de";
 export const LANGS = [
   { code: "en", label: "EN", name: "English" },
   { code: "de", label: "DE", name: "Deutsch" },
+  { code: "nl", label: "NL", name: "Nederlands" },
+  { code: "fr", label: "FR", name: "Français" },
+  { code: "cs", label: "CS", name: "Čeština" },
 ];
 
-const DICTS = { en, de };
+const DICTS = { en, de, nl, fr, cs };
 
 /* The locale each language formats dates with. de-AT rather than de-DE:
    Jänner, not Januar. */
