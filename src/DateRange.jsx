@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "./i18n";
 
 /* ==========================================================================
    DateRange
@@ -18,12 +19,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
    keeps in `from` / `to` and what the availability snapshot is keyed by. Date
    objects exist only inside this file.
    ========================================================================== */
-
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-const DOW = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 function toISO(d) {
   const p = (n) => String(n).padStart(2, "0");
@@ -57,6 +52,8 @@ export default function DateRange({
   maxNights = 31,
   isNarrow = false,
 }) {
+  const { t, monthName, dowShort } = useI18n();
+  const dow = dowShort();
   const today = useMemo(() => {
     const n = new Date();
     return new Date(n.getFullYear(), n.getMonth(), n.getDate());
@@ -201,7 +198,7 @@ export default function DateRange({
             color: value ? "var(--ink)" : "var(--ink-soft)",
           }}
         >
-          {value ? fmt(value) : "Add date"}
+          {value ? fmt(value) : t("date.add")}
         </span>
       </button>
     );
@@ -227,9 +224,12 @@ export default function DateRange({
         /* The visible label is a bare number, which out of the grid means
            nothing — and says nothing about which end of the stay it would
            set. Both go in the label. */
-        aria-label={`${mode === "end" ? "Check out" : "Check in"} ${d.getDate()} ${
-          MONTHS[d.getMonth()]
-        } ${d.getFullYear()}`}
+        aria-label={t("date.dayAria", {
+          mode: mode === "end" ? t("date.checkOut") : t("date.checkIn"),
+          day: d.getDate(),
+          month: monthName(d.getMonth()),
+          year: d.getFullYear(),
+        })}
         aria-pressed={edge}
         className="hf-tap"
         style={{
@@ -289,10 +289,10 @@ export default function DateRange({
     return (
       <div key={toISO(first)} style={{ flex: "1 1 0", minWidth: 0 }}>
         <div style={{ textAlign: "center", fontWeight: 600, fontSize: "0.88rem", marginBottom: "0.5rem" }}>
-          {MONTHS[first.getMonth()]} {first.getFullYear()}
+          {monthName(first.getMonth())} {first.getFullYear()}
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 2, marginBottom: 4 }}>
-          {DOW.map((d) => (
+          {dow.map((d) => (
             <span
               key={d}
               style={{
@@ -339,8 +339,8 @@ export default function DateRange({
   return (
     <div ref={wrapRef} style={{ width: "100%", position: "relative" }}>
       <div style={{ display: "flex", gap: "0.6rem", alignItems: "stretch", flexWrap: "wrap" }}>
-        {field("start", "Check in", start)}
-        {field("end", "Check out", end)}
+        {field("start", t("date.checkIn"), start)}
+        {field("end", t("date.checkOut"), end)}
         {(start || end) && (
           <button
             type="button"
@@ -359,7 +359,7 @@ export default function DateRange({
               cursor: "pointer",
             }}
           >
-            Clear
+            {t("date.clear")}
           </button>
         )}
       </div>
@@ -367,7 +367,7 @@ export default function DateRange({
       {open && (
         <div
           role="dialog"
-          aria-label="Choose your dates"
+          aria-label={t("date.dialogAria")}
           style={{
             marginTop: "0.6rem",
             background: "var(--card)",
@@ -377,9 +377,9 @@ export default function DateRange({
           }}
         >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-            {navBtn("Previous month", -1, cursor <= firstOfMonth(today))}
+            {navBtn(t("date.prevMonth"), -1, cursor <= firstOfMonth(today))}
             <span style={{ flex: "1 1 auto" }} />
-            {navBtn("Next month", 1, false)}
+            {navBtn(t("date.nextMonth"), 1, false)}
           </div>
 
           <div
@@ -394,8 +394,8 @@ export default function DateRange({
               status it gets read out when it changes. */}
           <p role="status" style={{ margin: "0.6rem 0 0", fontSize: "0.75rem", color: "var(--ink-soft)", textAlign: "center" }}>
             {mode === "start"
-              ? "Pick your check-in day"
-              : `Now pick check-out — up to ${maxNights} nights`}
+              ? t("date.pickCheckIn")
+              : t("date.pickCheckOut", { n: maxNights })}
           </p>
         </div>
       )}
@@ -404,14 +404,14 @@ export default function DateRange({
         {nights > 0 ? (
           <>
             <strong style={{ color: "var(--ink)" }}>
-              {nights} {nights === 1 ? "night" : "nights"}
+              {t("date.nights", { count: nights, n: nights })}
             </strong>
             {` · ${fmt(start)}–${fmt(end)}`}
           </>
         ) : start ? (
-          `Check-in ${fmt(start)} · pick a check-out date`
+          t("date.checkInPending", { date: fmt(start) })
         ) : (
-          "No dates — showing all huts"
+          t("date.noDates")
         )}
       </p>
     </div>

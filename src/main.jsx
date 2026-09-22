@@ -5,10 +5,13 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './tokens.css'
 import App from './App.jsx'
+import { I18nProvider } from './I18nProvider'
 import './map.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <I18nProvider>
+      <App />
+    </I18nProvider>
   </StrictMode>,
 )
