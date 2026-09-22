@@ -104,6 +104,12 @@ function PanToFocus({ huts, focusId }) {
     if (focusId == null) return;
     const hut = huts.find((h) => h.id === focusId);
     if (!hut) return;
+    /* A map with no size has no centre either, and every coordinate Leaflet
+       works out from it comes back NaN — panTo then throws and takes the page
+       with it. Happens wherever the container is laid out at zero: a hidden
+       pane, a tab restored in the background. Nothing to pan to anyway. */
+    const size = map.getSize();
+    if (!size.x || !size.y) return;
 
     const point = [hut.lat, hut.lng];
     /* pad(-0.08) shrinks the test area, so a pin hugging the edge still pans
@@ -165,6 +171,9 @@ function ZoomToSelected({ huts, selectedId }) {
 
     const hut = huts.find((h) => h.id === selectedId);
     if (!hut) return;
+    // as in PanToFocus: no size, no centre, no flying anywhere
+    const size = map.getSize();
+    if (!size.x || !size.y) return;
 
     const target = [hut.lat, hut.lng];
     const zoom = Math.max(map.getZoom(), 13);
