@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import { en } from "./strings/en";
+import { de } from "./strings/de";
 
 /* ==========================================================================
    i18n
@@ -22,13 +23,22 @@ import { en } from "./strings/en";
 
 // Languages the site offers, in the order the switcher lists them. A language
 // appears here only once its strings file exists.
-export const LANGS = [{ code: "en", label: "EN", name: "English" }];
+export const LANGS = [
+  { code: "en", label: "EN", name: "English" },
+  { code: "de", label: "DE", name: "Deutsch" },
+];
 
-const DICTS = { en };
+const DICTS = { en, de };
 
-/* The locale each language formats with. de-AT rather than de-DE: Jänner,
-   and Austrian date order. */
+/* The locale each language formats dates with. de-AT rather than de-DE:
+   Jänner, not Januar. */
 const LOCALES = { en: "en-GB", de: "de-AT", nl: "nl-NL", fr: "fr-FR", cs: "cs-CZ" };
+
+/* Numbers are the one place de-AT is not what people expect: it follows
+   ÖNORM and groups with a space ("1 524"), while Austrian sites write
+   "1.524". Only the exceptions are listed; everything else uses its own
+   locale. */
+const NUMBER_LOCALES = { de: "de-DE" };
 
 const STORE_KEY = "hf-lang";
 
@@ -87,7 +97,7 @@ export function buildApi(lang, setLang) {
     setLang: choose,
     t,
     // 1,524 in English, 1.524 in German
-    nf: (n) => Number(n).toLocaleString(locale),
+    nf: (n) => Number(n).toLocaleString(NUMBER_LOCALES[lang] || locale),
     // "January", "Jänner", "leden"
     monthName: (i) =>
       new Intl.DateTimeFormat(locale, { month: "long" }).format(new Date(2021, i, 1)),

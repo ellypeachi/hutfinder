@@ -179,6 +179,10 @@ export const en = {
   "date.checkInPending": "Check-in {date} · pick a check-out date",
   "date.noDates": "No dates — showing all huts",
 
+  // ---------- the language menu ----------
+  "lang.label": "Language",
+  "lang.aria": "Language: {name}",
+
   // ---------- footer ----------
   "footer.imprint": "Imprint",
   "footer.privacy": "Privacy",

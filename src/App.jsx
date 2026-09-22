@@ -2,6 +2,7 @@ import { Fragment, useEffect, useId, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import DateRange from "./DateRange";
 import { useI18n } from "./i18n";
+import LanguageMenu from "./LanguageMenu";
 /* The data's own values on the left, a strings key on the right. Anything
    the strings file doesn't cover falls back to the raw value rather than
    vanishing. */
@@ -1490,13 +1491,27 @@ export default function App() {
       </a>
       <div style={shellStyle}>
         <header style={leftCol(1)}>
-        <h1 style={{ margin: "0 0 0.5rem" }}>
-          <img
-            src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
-            alt="Hüttenfinder"
-            style={{ height: 30, display: "block" }}
-          />
-        </h1>
+        {/* The wordmark, with the language control at the other end of the
+            row. On a 360px phone the wordmark is about 187px and the control
+            about 60px, so the two share one line. */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            margin: "0 0 0.5rem",
+          }}
+        >
+          <h1 style={{ margin: 0 }}>
+            <img
+              src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
+              alt="Hüttenfinder"
+              style={{ height: 30, display: "block" }}
+            />
+          </h1>
+          <LanguageMenu />
+        </div>
         {/* What the site is, in a line: Austria only, and what you do here.
             About 280px at 16px, so it stays on one line on a 360px phone. */}
         <p style={{ color: "var(--ink-soft)", margin: "0 0 1.25rem", lineHeight: 1.5 }}>
