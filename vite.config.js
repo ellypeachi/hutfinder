@@ -10,6 +10,10 @@ export default defineConfig({
     input: {
       main: fileURLToPath(new URL('./index.html', import.meta.url)),
       notfound: fileURLToPath(new URL('./404.html', import.meta.url)),
+      // Folders rather than imprint.html, so /imprint/ works the same in
+      // `npm run dev` and on GitHub Pages.
+      imprint: fileURLToPath(new URL('./imprint/index.html', import.meta.url)),
+      privacy: fileURLToPath(new URL('./privacy/index.html', import.meta.url)),
     },
   },
 },
