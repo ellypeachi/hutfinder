@@ -291,7 +291,34 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 0.75rem;
 }
+
+/* One hut card. Filled like the filter pills and date fields, so it reads
+   as something to tap, with a chevron that says it opens more. It darkens
+   while pressed, the feedback a touch screen gets instead of hover (but not
+   when the press is on Book or Call). .is-lit: hovered, focused, or its pin
+   is hovered. */
+.hf-hutcard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(58, 42, 32, 0.07), 0 3px 10px rgba(58, 42, 32, 0.06);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color var(--dur) var(--ease),
+              background var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+.hf-hutcard.is-lit { border-color: var(--blue); }
+.hf-hutcard:active:not(:has(a:active)) {
+  background: #EAE4D8; /* the chip hover tone */
+  box-shadow: none;
+}
 .hf-card-head { display: flex; gap: 0.75rem; align-items: flex-start; }
+.hf-chevron { flex-shrink: 0; align-self: center; margin-left: auto; color: var(--ink-soft); }
 .hf-thumb {
   width: 96px;
   height: 72px;

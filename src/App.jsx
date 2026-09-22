@@ -196,6 +196,16 @@ function thumbAt(photo, w) {
   return photo.thumb.includes("/500px-") ? photo.thumb.replace("/500px-", `/${w}px-`) : photo.thumb;
 }
 
+/* The card's "opens more" mark, as on a list row on a phone. Decorative:
+   the hut name is the card's button and says what it opens. */
+function ChevronIcon() {
+  return (
+    <svg className="hf-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
 function PhoneIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
@@ -724,6 +734,7 @@ export default function App() {
             <div className="hf-card-meta">{metaLine(hut)}</div>
             {hut.region ? <div className="hf-card-meta">{hut.region}</div> : null}
           </div>
+          <ChevronIcon />
         </div>
         {tags.length ? <Tags tags={tags} /> : null}
         {hut.hr_hut_id ? (
@@ -1997,21 +2008,7 @@ export default function App() {
                     onMouseEnter={() => setHoveredId(hut.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => setSelected(hut)}
-                    style={{
-                      border:
-                        hoveredId === hut.id
-                          ? "1px solid var(--blue)"
-                          : "1px solid var(--hair)",
-                      borderRadius: 8,
-                      padding: "0.9rem",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.7rem",
-                      cursor: "pointer",
-                      background:
-                        hoveredId === hut.id ? "var(--card)" : "transparent",
-                      transition: "border-color var(--dur) var(--ease), background var(--dur) var(--ease)",
-                    }}
+                    className={`hf-hutcard${hoveredId === hut.id ? " is-lit" : ""}`}
                   >
                     {hutCard(hut, () => setSelected(hut))}
                   </li>
