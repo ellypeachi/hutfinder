@@ -225,6 +225,15 @@ function GlobeIcon() {
     </svg>
   );
 }
+function MailIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0 }}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 7l9 6 9-6" />
+    </svg>
+  );
+}
 
 /* Two lines of the hut's own text, with "Read more" at the end of the second
    line (the float trick behind .hf-desc in tokens.css). The button only
@@ -685,9 +694,37 @@ export default function App() {
         </a>
         <span>Not bookable online</span>
       </div>
+    ) : hut.website || hut.email ? (
+      /* No phone number, but a website or an email is still a way to ask. */
+      <div className="hf-card-band hf-card-band-row">
+        {hut.website ? (
+          <a
+            href={webHref(hut.website)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`${hut.name} website, ${webLabel(hut.website)} (opens in a new tab)`}
+            className="hf-call hf-tap"
+          >
+            <GlobeIcon />
+            Website
+          </a>
+        ) : (
+          <a
+            href={`mailto:${hut.email}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label={`Email ${hut.name}, ${hut.email}`}
+            className="hf-call hf-tap"
+          >
+            <MailIcon />
+            Email
+          </a>
+        )}
+        <span>Not bookable online</span>
+      </div>
     ) : (
       <div className="hf-card-band">
-        <span>Not bookable online · no phone number listed</span>
+        <span>Not bookable online · no contact details listed</span>
       </div>
     );
 
@@ -797,7 +834,7 @@ export default function App() {
                 : ""}
             </div>
           </div>
-          {hut.phone || hut.website ? (
+          {hut.phone || hut.website || hut.email ? (
             <div className="hf-contact">
               {hut.phone ? (
                 <a href={telHref(hut.phone)} className="hf-tap-min" aria-label={`Call ${hut.name}, ${phoneLabel(hut.phone)}`}>
@@ -815,6 +852,12 @@ export default function App() {
                 >
                   <GlobeIcon />
                   <span>{webLabel(hut.website)}</span>
+                </a>
+              ) : null}
+              {hut.email ? (
+                <a href={`mailto:${hut.email}`} className="hf-tap-min" aria-label={`Email ${hut.name}, ${hut.email}`}>
+                  <MailIcon />
+                  <span>{hut.email}</span>
                 </a>
               ) : null}
             </div>
@@ -931,11 +974,14 @@ export default function App() {
   const sortByRoom = !!roomType && roomType !== ROOM_NONE;
   const splitUnlisted = sortByRoom || nights.length > 0;
   const hasBeds = (h) => bedsOf(h) > 0;
+  // Within Unlisted: huts you can actually ask (phone, website or email)
+  // first, then those that list beds. Otherwise the original order holds.
+  const unlistedRank = (h) => (h.phone || h.website || h.email ? 0 : 2) + (hasBeds(h) ? 0 : 1);
   let filtered = huts.filter((h) => passes(h));
   if (splitUnlisted) {
     const listed = filtered.filter((h) => recOf(h));
     const unlisted = filtered.filter((h) => !recOf(h));
-    filtered = [...listed, ...unlisted.filter(hasBeds), ...unlisted.filter((h) => !hasBeds(h))];
+    filtered = [...listed, ...unlisted.sort((a, b) => unlistedRank(a) - unlistedRank(b))];
   }
   const matchCount = splitUnlisted ? filtered.filter((h) => recOf(h)).length : 0;
   const unlistedCount = splitUnlisted ? filtered.length - matchCount : 0;

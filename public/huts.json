@@ -270,7 +270,7 @@
     "sleeping": 57,
     "winterraum": false,
     "phone": "+43 720 702724",
-    "website": null,
+    "website": "http://www.adolf-pichler-huette.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -278,7 +278,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w85134310",
@@ -483,7 +484,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 650 3669333",
     "website": null,
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -491,7 +492,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w990188334",
@@ -621,7 +623,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 2009983",
     "website": "https://www.stiendlalm.at",
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -629,7 +631,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "robert.ortner11@gmail.com",
+    "email_source": "osm"
   },
   {
     "id": "n410575233",
@@ -645,7 +650,7 @@
     "sleeping": 9,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.innsbruck.info/en/food-and-drink/i/almind-alm.html",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -653,7 +658,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "osm",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w192600556",
@@ -676,7 +682,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "office@aflenz-buergeralm.at",
+    "email_source": "osm"
   },
   {
     "id": "w432940923",
@@ -909,14 +917,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": "+436643926027",
-    "website": null,
+    "website": "https://www.facebook.com/people/Alpe-Gsohl-NEU/100027352161926/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "n14087207101",
@@ -1686,7 +1695,7 @@
     "sleeping": 56,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.anton-proksch-haus.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "naturfreunde",
@@ -1694,7 +1703,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w78158759",
@@ -2941,7 +2951,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "office@kohlalm.at",
+    "email_source": "osm"
   },
   {
     "id": "n9038500465",
@@ -3016,7 +3028,9 @@
     "beds_dorm": 20,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "email": "oeblarn@sektion.alpenverein.at",
+    "email_source": "osm"
   },
   {
     "id": "w508275860",
@@ -3363,7 +3377,7 @@
     "sleeping": 44,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.berndlalm.at/gasthof_berndlalm/html/willkommen.html",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -3371,7 +3385,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "n389785715",
@@ -4418,14 +4433,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.schladming-dachstein.at/de/Service/Infos-von-A-Z/Breitlahnhuette_az_340344",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "n1632744583",
@@ -5179,7 +5195,7 @@
     "sleeping": 45,
     "winterraum": false,
     "phone": "+43 664 9127898",
-    "website": null,
+    "website": "http://www.almgasthaus.de/buerglhuette",
     "hr_hut_id": null,
     "elevation_estimated": true,
     "association": "private",
@@ -5187,7 +5203,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w1502438286",
@@ -5299,7 +5316,9 @@
     "beds_dorm": 8,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "email": "huetten@alpenverein-celle.de",
+    "email_source": "osm"
   },
   {
     "id": "n8040189937",
@@ -5548,7 +5567,7 @@
     "sleeping": 60,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.alpenbad-ramsau.at/de/suedwandhuette.html",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -5556,7 +5575,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w124046721",
@@ -5845,7 +5865,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 1918726",
     "website": null,
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -5853,7 +5873,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "info@bodner.tirol",
+    "email_source": "osm"
   },
   {
     "id": "n278013256",
@@ -6093,7 +6116,7 @@
     "sleeping": 39,
     "winterraum": false,
     "phone": "+43 680 23 27 601",
-    "website": null,
+    "website": "http://www.alpenverein.at/wien/huetten/josef-mehrl-huette/dr.josef-mehrl-huette.php",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "alpine_club",
@@ -6106,7 +6129,8 @@
     "beds_dorm": 0,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "website_source": "wikidata"
   },
   {
     "id": "w254569109",
@@ -6152,7 +6176,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "info@steinmannbauer.at",
+    "email_source": "osm"
   },
   {
     "id": "w259204986",
@@ -6354,14 +6380,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": "+43 6416 7333",
-    "website": null,
+    "website": "http://www.ganzenhubhof.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w192980033",
@@ -6838,7 +6865,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 8332932",
     "website": null,
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -6846,7 +6873,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w101989178",
@@ -7030,14 +7058,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://eisenkappler.schutz.haus/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w699210996",
@@ -7507,7 +7536,7 @@
     "warden": "bewirtschaftet",
     "sleeping": 29,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 676 7829081",
     "website": "https://www.kieneck.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -7521,7 +7550,10 @@
     "beds_dorm": 15,
     "beds_emergency": 20,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "phone_source": "osm",
+    "email": "enzianhuette@kieneck.at",
+    "email_source": "osm"
   },
   {
     "id": "n280889033",
@@ -8545,15 +8577,19 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
-    "website": null,
+    "phone": "+43 664 3906640",
+    "website": "https://www.filzmoosalm.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "website_source": "osm",
+    "email": "senner@filzmoosalm.at",
+    "email_source": "osm"
   },
   {
     "id": "n12921387989",
@@ -10351,14 +10387,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://regio.outdooractive.com/oar-oetk-huetten/de/huette/gauermannhuette/13538819/#dmdtab=oax-tab1",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "alpine_club",
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w123243677",
@@ -11277,7 +11314,9 @@
     "beds_dorm": 18,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "email": "gloggnitz@gebirgsverein.at",
+    "email_source": "osm"
   },
   {
     "id": "w126087678",
@@ -12516,7 +12555,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "grossunterberg@a1.net",
+    "email_source": "osm"
   },
   {
     "id": "w131300364",
@@ -13437,7 +13478,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "radka@gmx.at",
+    "email_source": "osm"
   },
   {
     "id": "w209723442",
@@ -14652,14 +14695,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.facebook.com/Heinrich.Krempel.Huette",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "private",
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w171618472",
@@ -14767,7 +14811,9 @@
     "beds_dorm": 39,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "email": "huette@avrohrbach.onmicrosoft.com",
+    "email_source": "osm"
   },
   {
     "id": "w195806367",
@@ -15896,7 +15942,9 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "info@hochmoelbinghuette.at",
+    "email_source": "osm"
   },
   {
     "id": "w266358077",
@@ -16469,14 +16517,17 @@
     "sleeping": null,
     "winterraum": false,
     "phone": "+4369915991228",
-    "website": null,
+    "website": "https://www.hoisnradalm.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "private",
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm",
+    "email": "office@hoisnradalm.at",
+    "email_source": "osm"
   },
   {
     "id": "n389786026",
@@ -16690,7 +16741,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "huber_kaser@gmx.at",
+    "email_source": "osm"
   },
   {
     "id": "w130185829",
@@ -17805,7 +17858,9 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "osm",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "thomas.gfrerer@mallnitz.at",
+    "email_source": "osm"
   },
   {
     "id": "n1634923290",
@@ -18187,14 +18242,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://kaiserkogelhuette.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "alpine_club",
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "n1522699773",
@@ -19284,8 +19340,8 @@
     "warden": "bewirtschaftet",
     "sleeping": 42,
     "winterraum": false,
-    "phone": null,
-    "website": null,
+    "phone": "+43 664 3034647",
+    "website": "https://www.kerschbaumeralm.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -19293,7 +19349,11 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "website_source": "osm",
+    "email": "schutzhaus@kerschbaumeralm.at",
+    "email_source": "osm"
   },
   {
     "id": "w166439527",
@@ -19954,7 +20014,7 @@
     "sleeping": 31,
     "winterraum": false,
     "phone": "+43 664 1008364",
-    "website": null,
+    "website": "http://www.klosterhuette.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "private",
@@ -19962,7 +20022,10 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata",
+    "email": "office@klosterhuette.at",
+    "email_source": "osm"
   },
   {
     "id": "w85804224",
@@ -20264,14 +20327,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.kolmhaus.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w163922893",
@@ -20695,7 +20759,7 @@
     "warden": "bewirtschaftet",
     "sleeping": 10,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 676 9696496",
     "website": "https://www.steiermark.com/de/Hochsteiermark/Urlaub-planen/Ausflugsziele/Sennhuette-auf-der-Kraeuterin_isd_289888",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -20704,7 +20768,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "osm",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w145476032",
@@ -21695,7 +21760,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 6317175",
     "website": "https://www.laussnitzer.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -21703,7 +21768,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w208261958",
@@ -21811,7 +21877,7 @@
     "sleeping": 26,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.lehnberghaus.com/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -21819,7 +21885,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w325783875",
@@ -22938,7 +23005,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "bayer-lurgbauer@aon.at",
+    "email_source": "osm"
   },
   {
     "id": "w150873751",
@@ -23827,7 +23896,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "info@pesbichl.at",
+    "email_source": "osm"
   },
   {
     "id": "w129585073",
@@ -24905,14 +24976,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": "+43 664 3984060",
-    "website": null,
+    "website": "https://www.facebook.com/Mühlbacherhütte-100069917613724",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w430862796",
@@ -26812,7 +26884,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 650 7272762",
     "website": "https://www.obergasteigalm.eu",
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -26820,7 +26892,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w120178713",
@@ -28299,14 +28372,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.pfarrachalm.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w107596102",
@@ -28750,7 +28824,7 @@
     "sleeping": 35,
     "winterraum": false,
     "phone": "+43/6642331079",
-    "website": null,
+    "website": "https://www.alpenverein.at/polinikhuette/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "alpine_club",
@@ -28763,7 +28837,8 @@
     "beds_dorm": 20,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "website_source": "wikidata"
   },
   {
     "id": "w117555481",
@@ -29120,14 +29195,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.lungau.at/de/erleben/sommer/wandern/almhuetten/preber-halterhuette/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "n460355329",
@@ -29848,7 +29924,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "helene_gerstgraser@hotmail.com",
+    "email_source": "osm"
   },
   {
     "id": "w261365838",
@@ -30894,14 +30972,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.sportwoell.at/HTML/06_Rodeln.html",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "private",
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w450754344",
@@ -31408,7 +31487,7 @@
     "sleeping": 26,
     "winterraum": false,
     "phone": "+43 720 51 39 07",
-    "website": null,
+    "website": "http://www.rudolfschoberhuette.at/wandern.htm",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "alpine_club",
@@ -31421,7 +31500,8 @@
     "beds_dorm": 12,
     "beds_emergency": 7,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "website_source": "wikidata"
   },
   {
     "id": "w165503866",
@@ -32199,7 +32279,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "scharfetthof@sbg.at",
+    "email_source": "osm"
   },
   {
     "id": "w129896846",
@@ -32997,7 +33079,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 676 4768246",
     "website": "http://www.troestl.info/schutzhaus-eibl-teichhutte/",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -33005,7 +33087,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "teichhuette@gmx.at",
+    "email_source": "osm"
   },
   {
     "id": "w369996947",
@@ -33378,7 +33463,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 650 2330042",
     "website": "http://schwarzseehuette.at/?page_id=256",
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -33386,7 +33471,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w163711579",
@@ -33977,7 +34063,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "info@seespitzhuette.at",
+    "email_source": "osm"
   },
   {
     "id": "w827811452",
@@ -34979,7 +35067,7 @@
     "sleeping": 8,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "http://www.sonntagalm.at/index.htm",
     "hr_hut_id": null,
     "elevation_estimated": true,
     "association": null,
@@ -34987,7 +35075,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w95534520",
@@ -35305,7 +35394,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 2207577",
     "website": "https://www.stabanthuette.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -35313,7 +35402,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w93589863",
@@ -35543,7 +35633,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "andrelwirt@rauris.net",
+    "email_source": "osm"
   },
   {
     "id": "w84674198",
@@ -36091,7 +36183,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 9670500",
     "website": "https://www.steyrer-huette.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -36099,7 +36191,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "steyrerhuettenharry@gmail.com",
+    "email_source": "osm"
   },
   {
     "id": "w200305337",
@@ -36551,7 +36646,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "info@stubneralm.at",
+    "email_source": "osm"
   },
   {
     "id": "w68085020",
@@ -36566,7 +36663,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 23 29 888",
     "website": "https://www.stuhlalm.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -36574,7 +36671,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "info@stuhlalm.at",
+    "email_source": "osm"
   },
   {
     "id": "n1313054687",
@@ -37086,7 +37186,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 9532278",
     "website": "https://www.huettenland.com",
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -37094,7 +37194,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "n1809101112",
@@ -37236,14 +37337,15 @@
     "sleeping": null,
     "winterraum": false,
     "phone": null,
-    "website": null,
+    "website": "https://www.imst.at/de/infrastrukturen/tarrenton-alm.html",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "osm"
   },
   {
     "id": "w150245424",
@@ -38302,7 +38404,7 @@
     "sleeping": 41,
     "winterraum": false,
     "phone": "+43 5287 87216",
-    "website": null,
+    "website": "http://tuxerjoch.schutz.haus/",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": "private",
@@ -38310,7 +38412,8 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata"
   },
   {
     "id": "w100510700",
@@ -39810,7 +39913,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 1906832",
     "website": null,
     "hr_hut_id": null,
     "elevation_estimated": true,
@@ -39818,7 +39921,8 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm"
   },
   {
     "id": "w986246677",
@@ -40905,7 +41009,7 @@
     "warden": "bewirtschaftet",
     "sleeping": null,
     "winterraum": false,
-    "phone": null,
+    "phone": "+43 664 9300818",
     "website": "https://www.wiesle.at/",
     "hr_hut_id": null,
     "elevation_estimated": false,
@@ -40913,7 +41017,10 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "phone_source": "osm",
+    "email": "info@wiesle.at",
+    "email_source": "osm"
   },
   {
     "id": "w131007811",
@@ -41696,7 +41803,9 @@
     "shower": null,
     "pets": null,
     "winterraum_beds": null,
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "email": "mortnerhof@zedlach.at",
+    "email_source": "osm"
   },
   {
     "id": "n13727172238",
@@ -42840,7 +42949,7 @@
     "sleeping": 47,
     "winterraum": false,
     "phone": "+43 7480 5249",
-    "website": null,
+    "website": "http://www.oetscherschutzhaus.at",
     "hr_hut_id": null,
     "elevation_estimated": false,
     "association": null,
@@ -42848,7 +42957,10 @@
     "pets": null,
     "winterraum_beds": null,
     "sleeping_source": "wikipedia",
-    "warden_source": "inferred"
+    "warden_source": "inferred",
+    "website_source": "wikidata",
+    "email": "oetscherschutzhaus@ready2web.net",
+    "email_source": "osm"
   },
   {
     "id": "n3014349312",

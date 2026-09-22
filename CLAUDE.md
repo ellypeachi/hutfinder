@@ -25,6 +25,8 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | `src/map.css` | Leaflet chrome in the house palette. Must load **after** Leaflet's CSS. |
 | `public/huts.json` | The hut dataset. |
 | `public/availability.json` | Written by a bot. Never edit by hand. |
+| `public/photos.json` + `public/photos/` | Hut photos from Wikimedia Commons, served from our own server. `scripts/fetch_photos.py` picks them, then `scripts/download_photos.py` saves them as WebP and adds the `card`/`full` fields. Always run both, in that order: after `fetch_photos.py` alone, no photos show. |
+| `imprint/`, `privacy/` | The legal pages, plain HTML (Vite entries in `vite.config.js`, styles in `src/legal.css`). |
 | `data/overrides.json` + `apply_overrides.py` | Hand-verified corrections, keyed by hut id. Run `apply_overrides.py` last, after rebuilding `huts.json` (`--check` previews). Fields set here carry `<field>_source: "verified"`, which outranks every other source in the merge scripts. |
 | `data/hr_mapping.json` | Hut ↔ HRS booking matches. Entries with `verified: true` are kept by `match_huts.py` on re-runs. |
 | `scripts/` | Data pipeline: OSM import, HRS matching, availability fetch. |
@@ -92,6 +94,8 @@ basemap.at inside Austria and OpenStreetMap outside it.
 - Data changes go through targeted scripts: run `--check` / `--dry-run` first,
   and match on content, not line numbers.
 - Don't trust grep counts when comments contain the search term. Check the actual output.
+- Nothing loads in visitors' browsers from another server without `privacy/index.html` saying so first.
+  Photos come only from `public/photos/`: don't add a fallback to Wikimedia URLs.
 
 ## How Elly likes to work
 
@@ -108,3 +112,5 @@ basemap.at inside Austria and OpenStreetMap outside it.
 - Scroll-wheel zoom behaviour and marker re-render performance on hover are accepted as they are.
 - On a phone the page is one scroller: the view toggle and map are pinned above
   the list. The draggable bottom sheet was removed.
+- Unknown isn't no. Huts that don't publish room types or free beds (not bookable online) are "Unlisted": they stay in the results when a room
+  type or dates are picked, in a section after the known matches. Only huts known not to match drop out. Attended huts filter with Serviced.
