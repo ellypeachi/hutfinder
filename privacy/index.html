@@ -15,10 +15,11 @@
   Keep this page in step with what the site actually loads. Today that is:
   GitHub Pages (hosting), basemap.at and OpenStreetMap (map tiles), and
   everything else (hut data, photos, fonts) from our own server. Email goes
-  to Gmail. No cookies, no localStorage, no analytics. Adding anything
-  (analytics, a contact form, affiliate links, a newsletter) means a new
-  section here, and for tracking, a consent banner first. Update "Last
-  updated" whenever this page changes.
+  to Gmail. No cookies and no analytics; the only thing in localStorage is
+  the chosen language ("hf-lang", src/i18n.js), which the Cookies section
+  covers. Anything else stored on the device, and anything new loaded from
+  another server, needs a change here first — and tracking would need a
+  consent banner. Update "Last updated" whenever this page changes.
 
   The photos paragraph is only true while the app shows photos from
   public/photos/ (scripts/download_photos.py). Never point it back at
@@ -62,7 +63,8 @@
     <p>The fonts are hosted on this website’s own server. No connection is made to Google or any other font provider.</p>
 
     <h2>Cookies &amp; analytics</h2>
-    <p>This website does not set cookies or store anything on your device, and it does not use analytics, advertising or social media trackers. That is why there is no cookie banner.</p>
+    <p>This website does not set cookies, and it does not use analytics, advertising or social media trackers.</p>
+    <p>The one thing kept on your device is the language you pick from the language menu. Your browser stores it under the name “hf-lang” so the site opens in that language next time. It is only stored if you choose a language yourself, it stays in your browser, and it never reaches us or anyone else. Because it does nothing but what you asked for, it needs no consent, which is why there is no cookie banner. Clearing your browser data removes it.</p>
 
     <h2>Booking and links to other sites</h2>
     <p>When you click “Book online” or open a hut’s website, you leave Hüttenfinder. We don’t pass on any information about you, and we don’t learn whether or what you book. From that point, the other site’s privacy policy applies, for example hut-reservation.org’s. Phone numbers open your phone’s dialler; calls don’t go through Hüttenfinder.</p>
@@ -93,6 +95,7 @@
 
   <footer class="legal-foot">
     <a class="hf-tap" href="/">Back to the map</a>
+    <a class="hf-tap" href="/faq/">FAQ</a>
     <a class="hf-tap" href="/imprint/">Imprint</a>
     <a class="hf-tap" href="/privacy/" aria-current="page">Privacy</a>
   </footer>
