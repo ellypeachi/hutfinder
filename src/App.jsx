@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import DateRange from "./DateRange";
 const TYPE_LABEL = {
@@ -29,6 +29,11 @@ const CLUB_LABEL = {
 const BUCKET_LABEL = { dorm: "Dormitory", shared: "Shared room", priv: "Private room" };
 const BUCKET_ORDER = ["dorm", "shared", "priv"];
 const BUCKET_IDX = { dorm: 0, shared: 1, priv: 2 };
+const BUCKET_PLURAL = { dorm: "dorms", shared: "shared rooms", priv: "private rooms" };
+/* Only huts bookable online publish their room types and free beds. The rest
+   are "unlisted", which is not the same as "no": they stay in the results
+   when a room type or dates are picked, after the huts known to match. */
+const ROOM_NONE = "none";
 
 const REGION_ORDER = [
   "Tirol",
@@ -306,7 +311,7 @@ function Pill({ active, onClick, label, count }) {
   );
 }
 
-function FilterGroup({ label, children }) {
+function FilterGroup({ label, note, children }) {
   /* The little uppercase caption is the group's name on screen; tying the
      pills to it with a labelled group makes it the group's name in a screen
      reader too, so "Serviced" arrives as "Warden: Serviced" rather than on
@@ -333,6 +338,11 @@ function FilterGroup({ label, children }) {
       >
         {children}
       </div>
+      {note ? (
+        <p style={{ margin: "0.1rem 0 0", fontSize: "0.78rem", lineHeight: 1.45, color: "var(--ink-soft)" }}>
+          {note}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -841,47 +851,78 @@ export default function App() {
     );
   };
   const regionOf = (h) => h.region || "Other/Unknown";
+  // "Attended" (bewartet) huts are filtered with Serviced: someone is there.
+  // Their cards still say "Attended".
+  const wardenOf = (h) => (h.warden === "bewartet" ? "bewirtschaftet" : h.warden);
+  const assocOf = (h) => h.association || "unknown";
+
+  // Does a hut with room data offer this bucket? With dates it has to be
+  // free every night; without, the hut simply has to offer it.
+  const roomOk = (rec, idx) => {
+    if (!nights.length) return !!(rec.caps && rec.caps[idx] > 0);
+    for (const d of nights) {
+      const a = nightArr(rec, d);
+      if (!a || !(a[idx] > 0)) return false;
+    }
+    return true;
+  };
+
+  const bedsOf = (h) => (isNumber(h.hr_capacity) ? h.hr_capacity : h.sleeping);
+  const noBeds = (h) => bedsOf(h) === 0;
 
   const passes = (h, skip) => {
     if (skip !== "query" && query && !h.name.toLowerCase().includes(query.toLowerCase()))
       return false;
     if (skip !== "region" && region.length && !region.includes(regionOf(h))) return false;
     if (skip !== "type" && type.length && !type.includes(h.type)) return false;
-    if (skip !== "warden" && warden && h.warden !== warden) return false;
+    if (skip !== "warden" && warden && wardenOf(h) !== warden) return false;
     if (skip !== "elev" && elev.length && !elev.includes(bandOf(h))) return false;
-    if (skip !== "assoc" && assoc && h.association !== assoc) return false;
+    if (skip !== "assoc" && assoc && assocOf(h) !== assoc) return false;
     if (skip !== "shower" && showerOnly && h.shower !== true) return false;
     if (skip !== "bookable" && bookableOnly && !h.hr_hut_id) return false;
 
-    // date filter: every requested night must be open with at least one free bed
+    // date filter: every requested night must be open with at least one free
+    // bed. Huts that don't publish availability are unknown, not full, so
+    // they stay (listed after the huts with space) unless they're known to
+    // have no beds at all.
     if (nights.length) {
       const rec = recOf(h);
-      if (!rec) return false;
-      for (const d of nights) {
+      if (!rec) {
+        if (!avail || noBeds(h)) return false;
+      } else for (const d of nights) {
         const a = nightArr(rec, d);
         if (!a || (a[0] || 0) + (a[1] || 0) + (a[2] || 0) <= 0) return false;
       }
     }
 
-    // room-type filter: with a date, that bucket must be free every night;
-    // without a date, the hut must simply offer that room type
+    // room-type filter: only huts known NOT to have the room type drop out.
+    // Huts that don't list room types stay (the list shows them after the
+    // matches). "Unlisted" on its own keeps only those huts.
     if (skip !== "roomType" && roomType) {
       const rec = recOf(h);
-      if (!rec) return false;
-      const idx = BUCKET_IDX[roomType];
-      if (nights.length) {
-        for (const d of nights) {
-          const a = nightArr(rec, d);
-          if (!a || !(a[idx] > 0)) return false;
-        }
-      } else if (!(rec.caps && rec.caps[idx] > 0)) {
+      if (roomType === ROOM_NONE) {
+        if (rec) return false;
+      } else if (rec && !roomOk(rec, BUCKET_IDX[roomType])) {
         return false;
       }
     }
     return true;
   };
 
-  const filtered = huts.filter((h) => passes(h));
+  /* With a room type or dates picked, the huts known to match come first, then
+     the unlisted huts (no room types or availability online) — those that
+     list beds before those that don't. */
+  const sortByRoom = !!roomType && roomType !== ROOM_NONE;
+  const splitUnlisted = sortByRoom || nights.length > 0;
+  const hasBeds = (h) => bedsOf(h) > 0;
+  let filtered = huts.filter((h) => passes(h));
+  if (splitUnlisted) {
+    const listed = filtered.filter((h) => recOf(h));
+    const unlisted = filtered.filter((h) => !recOf(h));
+    filtered = [...listed, ...unlisted.filter(hasBeds), ...unlisted.filter((h) => !hasBeds(h))];
+  }
+  const matchCount = splitUnlisted ? filtered.filter((h) => recOf(h)).length : 0;
+  const unlistedCount = splitUnlisted ? filtered.length - matchCount : 0;
 
   const facet = (skip, keyFn) => {
     const counts = {};
@@ -894,35 +935,25 @@ export default function App() {
   };
   const regionCounts = facet("region", regionOf);
   const typeCounts = facet("type", (h) => h.type);
-  const wardenCounts = facet("warden", (h) => h.warden);
+  const wardenCounts = facet("warden", wardenOf);
   const elevCounts = facet("elev", bandOf);
-  const assocCounts = facet("assoc", (h) => h.association || "unknown");
+  const assocCounts = facet("assoc", assocOf);
   const showerCount = huts.filter((h) => passes(h, "shower") && h.shower === true).length;
   const bookableCount = huts.filter((h) => passes(h, "bookable") && h.hr_hut_id).length;
 
-  // room-type counts: a hut can offer several types, so count each bucket it qualifies for
-  const roomTypeCounts = { dorm: 0, shared: 0, priv: 0 };
+  // room-type counts: a hut can offer several types, so count each bucket it
+  // qualifies for; huts without room data count once, under "Unlisted"
+  const roomTypeCounts = { dorm: 0, shared: 0, priv: 0, [ROOM_NONE]: 0 };
   if (avail) {
     for (const h of huts) {
       if (!passes(h, "roomType")) continue;
       const rec = recOf(h);
-      if (!rec) continue;
+      if (!rec) {
+        roomTypeCounts[ROOM_NONE]++;
+        continue;
+      }
       for (const k of BUCKET_ORDER) {
-        const idx = BUCKET_IDX[k];
-        let okB;
-        if (nights.length) {
-          okB = true;
-          for (const d of nights) {
-            const a = nightArr(rec, d);
-            if (!a || !(a[idx] > 0)) {
-              okB = false;
-              break;
-            }
-          }
-        } else {
-          okB = rec.caps && rec.caps[idx] > 0;
-        }
-        if (okB) roomTypeCounts[k]++;
+        if (roomOk(rec, BUCKET_IDX[k])) roomTypeCounts[k]++;
       }
     }
   }
@@ -951,12 +982,15 @@ export default function App() {
   };
 
   const WARDEN_LABEL = { bewirtschaftet: "Serviced", bewartet: "Attended", selbstversorger: "Self-service" };
+  // Chip and "Drop …" wording, where "Unlisted" needs saying what it is
+  const roomLabel = (k) => (k === ROOM_NONE ? "Room type unlisted" : BUCKET_LABEL[k] || k);
+  const assocLabel = (a) => (a === "unknown" ? "Association unlisted" : ASSOC_LABEL[a] || a);
   const activeChips = [];
   if (query) activeChips.push({ k: "q", label: `“${query}”`, clear: () => setQuery("") });
   for (const r of region)
     activeChips.push({ k: "region:" + r, label: r, clear: () => toggle(region, setRegion, r) });
   if (roomType)
-    activeChips.push({ k: "roomType", label: BUCKET_LABEL[roomType] || roomType, clear: () => setRoomType(null) });
+    activeChips.push({ k: "roomType", label: roomLabel(roomType), clear: () => setRoomType(null) });
   if (bookableOnly)
     activeChips.push({ k: "bookable", label: "Bookable online", clear: () => setBookableOnly(false) });
   for (const t of type)
@@ -971,7 +1005,7 @@ export default function App() {
       clear: () => toggle(elev, setElev, e),
     });
   }
-  if (assoc) activeChips.push({ k: "assoc", label: ASSOC_LABEL[assoc] || assoc, clear: () => setAssoc(null) });
+  if (assoc) activeChips.push({ k: "assoc", label: assocLabel(assoc), clear: () => setAssoc(null) });
   if (showerOnly) activeChips.push({ k: "shower", label: "Shower", clear: () => setShowerOnly(false) });
 
   // EMPTY_STATE
@@ -1011,7 +1045,7 @@ export default function App() {
       label: WARDEN_LABEL[warden] || warden,
       clear: () => setWarden(null),
     },
-    { skip: "assoc", on: !!assoc, label: ASSOC_LABEL[assoc] || assoc, clear: () => setAssoc(null) },
+    { skip: "assoc", on: !!assoc, label: assocLabel(assoc), clear: () => setAssoc(null) },
     { skip: "shower", on: showerOnly, label: "Shower", clear: () => setShowerOnly(false) },
     {
       skip: "bookable",
@@ -1022,7 +1056,7 @@ export default function App() {
     {
       skip: "roomType",
       on: !!roomType,
-      label: BUCKET_LABEL[roomType] || roomType,
+      label: roomLabel(roomType),
       clear: () => setRoomType(null),
     },
     { skip: "query", on: !!query, label: "\u201c" + query + "\u201d", clear: () => setQuery("") },
@@ -1052,8 +1086,18 @@ export default function App() {
   const countLine =
     status === "ready"
       ? nights.length
-        ? `${filtered.length} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
-        : `${filtered.length} of ${huts.length} huts`
+        ? roomType === ROOM_NONE
+          ? `${filtered.length} unlisted huts${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}`
+          : `${matchCount} huts with space${rangeLabel ? `, ${rangeLabel}` : ""} · ${nightsLabel}${
+              unlistedCount > 0 ? ` · ${unlistedCount} unlisted` : ""
+            }`
+        : `${filtered.length} of ${huts.length} huts${
+            unlistedCount > 0
+              ? matchCount > 0
+                ? ` · ${matchCount} with ${BUCKET_PLURAL[roomType]} first`
+                : ` · none known to have ${BUCKET_PLURAL[roomType]}`
+              : ""
+          }`
       : "";
 
   /* The count is the only thing a screen reader would notice changing when a
@@ -1369,19 +1413,17 @@ export default function App() {
             </FilterGroup>
 
             {avail && (
-              <FilterGroup label="Room type">
+              <FilterGroup label="Room type" note="A hut with dorms and private rooms counts under both.">
                 <Pill active={!roomType} onClick={() => setRoomType(null)} label="Any" />
-                {BUCKET_ORDER.map((k) =>
-                  true ? (
-                    <Pill
-                      key={k}
-                      active={roomType === k}
-                      onClick={() => setRoomType(roomType === k ? null : k)}
-                      label={BUCKET_LABEL[k]}
-                      count={roomTypeCounts[k] || 0}
-                    />
-                  ) : null
-                )}
+                {[...BUCKET_ORDER, ROOM_NONE].map((k) => (
+                  <Pill
+                    key={k}
+                    active={roomType === k}
+                    onClick={() => setRoomType(roomType === k ? null : k)}
+                    label={k === ROOM_NONE ? "Unlisted" : BUCKET_LABEL[k]}
+                    count={roomTypeCounts[k] || 0}
+                  />
+                ))}
               </FilterGroup>
             )}
 
@@ -1491,8 +1533,12 @@ export default function App() {
                         zIndex: 1000,
                         background: "var(--cream)",
                         overflowY: "auto",
-                        padding: "1rem 1rem 2rem",
+                        padding: "1rem 1rem 0",
                         outline: "none",
+                        /* A column, so the Show button can sit at the bottom
+                           of the screen even when the filters are short. */
+                        display: "flex",
+                        flexDirection: "column",
                       }
                     : {
                         border: "1px solid var(--hair)",
@@ -1512,22 +1558,43 @@ export default function App() {
                   }}
                 >
                   <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>More filters</span>
-                  <button
-                    onClick={closeMore}
-                    className="hf-tap"
-                    style={{
-                      background: "var(--blue)",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "var(--radius)",
-                      padding: "0.5rem 1.1rem",
-                      fontSize: "0.9rem",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                    }}
-                  >
-                    Done
-                  </button>
+                  {isNarrow ? (
+                    /* On a phone, Show N huts at the bottom closes the overlay;
+                       this is the quiet way out. */
+                    <button
+                      onClick={closeMore}
+                      aria-label="Close more filters"
+                      className="hf-tap"
+                      style={{
+                        background: "transparent",
+                        color: "var(--ink)",
+                        border: "none",
+                        padding: "0.35rem 0.6rem",
+                        fontSize: "1.3rem",
+                        lineHeight: 1,
+                        cursor: "pointer",
+                      }}
+                    >
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={closeMore}
+                      className="hf-tap"
+                      style={{
+                        background: "var(--blue)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "var(--radius)",
+                        padding: "0.5rem 1.1rem",
+                        fontSize: "0.9rem",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Done
+                    </button>
+                  )}
                 </div>
 
             <FilterGroup label="Booking">
@@ -1567,7 +1634,9 @@ export default function App() {
                   />
                 ) : null
               )}
-              {true ? (
+              {/* Every hut has an elevation today (some estimated), so this
+                  only appears if the data ever has gaps again. */}
+              {elevCounts[ELEV_UNKNOWN] > 0 || elev.includes(ELEV_UNKNOWN) ? (
                 <Pill
                   active={elev.includes(ELEV_UNKNOWN)}
                   onClick={() => toggle(elev, setElev, ELEV_UNKNOWN)}
@@ -1594,17 +1663,15 @@ export default function App() {
 
             <FilterGroup label="Association">
               <Pill active={!assoc} onClick={() => setAssoc(null)} label="All" />
-              {["alpine_club", "private"].map((a) =>
-                true ? (
-                  <Pill
-                    key={a}
-                    active={assoc === a}
-                    onClick={() => setAssoc(assoc === a ? null : a)}
-                    label={ASSOC_LABEL[a] || a}
-                    count={assocCounts[a] || 0}
-                  />
-                ) : null
-              )}
+              {["alpine_club", "naturfreunde", "private", "unknown"].map((a) => (
+                <Pill
+                  key={a}
+                  active={assoc === a}
+                  onClick={() => setAssoc(assoc === a ? null : a)}
+                  label={a === "unknown" ? "Unlisted" : ASSOC_LABEL[a] || a}
+                  count={assocCounts[a] || 0}
+                />
+              ))}
             </FilterGroup>
 
             <FilterGroup label="Amenities">
@@ -1615,6 +1682,72 @@ export default function App() {
                 count={showerCount}
               />
             </FilterGroup>
+
+            {isNarrow ? (
+              /* The result count on the button, so the number people act on
+                 is the one they tap. Clear only resets what is in this panel. */
+              <div
+                style={{
+                  position: "sticky",
+                  bottom: 0,
+                  marginTop: "auto",
+                  marginInline: "-1rem",
+                  padding: "0.75rem 1rem 1rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "0.75rem",
+                  background: "var(--cream)",
+                  borderTop: "1px solid var(--hair)",
+                  boxShadow: "0 -8px 12px -10px rgba(58, 42, 32, 0.22)",
+                }}
+              >
+                {moreCount > 0 ? (
+                  <button
+                    onClick={() => {
+                      setBookableOnly(false);
+                      setType([]);
+                      setElev([]);
+                      setWarden(null);
+                      setAssoc(null);
+                      setShowerOnly(false);
+                    }}
+                    className="hf-tap"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--ink)",
+                      textDecoration: "underline",
+                      fontSize: "0.9rem",
+                      padding: "0 0.25rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Clear
+                  </button>
+                ) : (
+                  <span />
+                )}
+                <button
+                  onClick={closeMore}
+                  className="hf-tap"
+                  style={{
+                    flexGrow: 1,
+                    maxWidth: 240,
+                    background: "var(--blue)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "var(--radius)",
+                    padding: "0.8rem 1rem",
+                    fontSize: "0.97rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  {`Show ${filtered.length} ${filtered.length === 1 ? "hut" : "huts"}`}
+                </button>
+              </div>
+            ) : null}
               </div>
             ) : null}
 
@@ -1750,14 +1883,46 @@ export default function App() {
               </div>
             ) : (
               <ul className="hf-cards" style={{ listStyle: "none", padding: 0, margin: "1rem 0 0" }}>
-                {visible.map((hut) => (
-                  /* The card used to be one big role="button" with links
+                {visible.map((hut, i) => (
+                  <Fragment key={hut.id}>
+                  {splitUnlisted && i === matchCount ? (
+                    /* Where the huts known to match end and the unlisted
+                       ones (no room types or availability online) begin. */
+                    <li
+                      style={{
+                        gridColumn: "1 / -1",
+                        padding: "1.1rem 0.1rem 0.2rem",
+                        marginTop: i > 0 ? "0.35rem" : 0,
+                        borderTop: i > 0 ? "1px solid var(--hair)" : "none",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          margin: 0,
+                          fontFamily: "var(--font-ui)",
+                          fontVariationSettings: "normal",
+                          fontSize: "1rem",
+                          lineHeight: 1.4,
+                          fontWeight: 700,
+                        }}
+                      >
+                        {`Unlisted · ${unlistedCount} ${unlistedCount === 1 ? "hut" : "huts"}`}
+                      </h3>
+                      <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", lineHeight: 1.5, color: "var(--ink-soft)" }}>
+                        {nights.length
+                          ? sortByRoom
+                            ? `Bed availability unknown. They may have ${BUCKET_PLURAL[roomType]} free too. Call or check the hut’s website to ask.`
+                            : "Bed availability unknown. Call or check the hut’s website to ask about your dates."
+                          : `Bed availability unknown. They may have ${BUCKET_PLURAL[roomType]} too. Call or check the hut’s website to ask.`}
+                      </p>
+                    </li>
+                  ) : null}
+                  {/* The card used to be one big role="button" with links
                      inside it — a button whose name was the entire card, and
                      which is not allowed to contain links. The hut name now
                      carries the button; clicking anywhere on the card still
-                     opens it, for a mouse. */
+                     opens it, for a mouse. */}
                   <li
-                    key={hut.id}
                     onMouseEnter={() => setHoveredId(hut.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => setSelected(hut)}
@@ -1779,6 +1944,7 @@ export default function App() {
                   >
                     {hutCard(hut, () => setSelected(hut))}
                   </li>
+                  </Fragment>
                 ))}
               </ul>
             )}
