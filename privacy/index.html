@@ -13,13 +13,18 @@
 
 <!--
   Keep this page in step with what the site actually loads. Today that is:
-  GitHub Pages (hosting), basemap.at and OpenStreetMap (map tiles), Wikimedia
-  (hut photos, hotlinked), fonts from our own server. No cookies, no
-  localStorage, no analytics. Adding anything (analytics, a contact form,
-  affiliate links, a newsletter) means a new section here, and for tracking,
-  a consent banner first. Update "Last updated" whenever this page changes.
+  GitHub Pages (hosting), basemap.at and OpenStreetMap (map tiles), and
+  everything else (hut data, photos, fonts) from our own server. Email goes
+  to Gmail. No cookies, no localStorage, no analytics. Adding anything
+  (analytics, a contact form, affiliate links, a newsletter) means a new
+  section here, and for tracking, a consent banner first. Update "Last
+  updated" whenever this page changes.
 
-  Fill in the [bracketed] address and email; they match imprint/index.html.
+  The photos paragraph is only true while the app shows photos from
+  public/photos/ (scripts/download_photos.py). Never point it back at
+  Wikimedia's servers without rewriting that paragraph.
+
+  Name, address and email match imprint/index.html.
 -->
 
 <body>
@@ -34,10 +39,9 @@
 
     <h2>Controller</h2>
     <p>
-      Eliza Li<br>
-      [Street and number]<br>
-      [Postcode] Vienna, Austria<br>
-      Email: <a href="mailto:[hello@hutfinder.at]">[hello@hutfinder.at]</a>
+      Eliza Lee<br>
+      Ottakring, Vienna, Austria<br>
+      Email: <a href="mailto:hutfinder.at@gmail.com">hutfinder.at@gmail.com</a>
     </p>
 
     <h2>Hosting</h2>
@@ -52,13 +56,7 @@
     <p>To deliver the tiles, these providers receive your IP address, browser information, the address of this website and which part of the map you are viewing. The legal basis is our legitimate interest in showing the huts on a map (Art. 6(1)(f) GDPR). The OpenStreetMap Foundation serves tiles through the Fastly content delivery network, so requests may also be processed outside the UK. See the <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap Foundation’s privacy policy</a>.</p>
 
     <h2>Hut photos</h2>
-    <p>Hut photos are loaded directly from Wikimedia Commons, run by the Wikimedia Foundation, Inc., 1 Montgomery Street, Suite 1600, San Francisco, CA 94104, USA. When a photo is shown, your browser connects to Wikimedia’s servers, which receive your IP address and browser information. The legal basis is our legitimate interest in showing what each hut looks like (Art. 6(1)(f) GDPR). Wikimedia may process this data in the USA. See the <a href="https://foundation.wikimedia.org/wiki/Policy:Privacy_policy">Wikimedia Foundation’s privacy policy</a>.</p>
-    <!--
-      Once the photos are stored in public/photos/ instead of loaded from
-      Wikimedia, replace the paragraph above with:
-
-      <p>Hut photos come from Wikimedia Commons and are stored on this website’s own server. No connection to Wikimedia is made when you view them.</p>
-    -->
+    <p>Hut photos come from Wikimedia Commons and are stored on this website’s own server. No connection to Wikimedia is made when you view them.</p>
 
     <h2>Fonts</h2>
     <p>The fonts are hosted on this website’s own server. No connection is made to Google or any other font provider.</p>
@@ -70,19 +68,19 @@
     <p>When you click “Book online” or open a hut’s website, you leave Hüttenfinder. We don’t pass on any information about you, and we don’t learn whether or what you book. From that point, the other site’s privacy policy applies, for example hut-reservation.org’s. Phone numbers open your phone’s dialler; calls don’t go through Hüttenfinder.</p>
 
     <h2>Information about huts</h2>
-    <p>For each hut, Hüttenfinder shows details such as its location, facilities, phone number, email address and website. This information comes from public sources: OpenStreetMap, Wikidata, Wikipedia, the Österreichischer Alpenverein and hut-reservation.org. Where a phone number or email address belongs to a person, for example a hut warden, it is personal data. We publish it so hikers can reach and book the hut, which is in the interest of both hikers and huts (Art. 6(1)(f) GDPR). If you run a hut and want your details corrected or removed, or you object to their publication (Art. 21 GDPR), email <a href="mailto:[hello@hutfinder.at]">[hello@hutfinder.at]</a> and we will act promptly.</p>
+    <p>For each hut, Hüttenfinder shows details such as its location, facilities, phone number, email address and website. This information comes from public sources: OpenStreetMap, Wikidata, Wikipedia, the Österreichischer Alpenverein and hut-reservation.org. Where a phone number or email address belongs to a person, for example a hut warden, it is personal data. We publish it so hikers can reach and book the hut, which is in the interest of both hikers and huts (Art. 6(1)(f) GDPR). If you run a hut and want your details corrected or removed, or you object to their publication (Art. 21 GDPR), email <a href="mailto:hutfinder.at@gmail.com">hutfinder.at@gmail.com</a> and we will act promptly.</p>
 
     <h2>Contacting us</h2>
-    <p>If you email us, we process your email address and the contents of your message only to handle and reply to your enquiry (legal basis: Art. 6(1)(b) or (f) GDPR). We don’t share it, and we delete it once the matter is resolved unless we have to keep it for legal reasons.</p>
+    <p>If you email us, we process your email address and the contents of your message only to handle and reply to your enquiry (legal basis: Art. 6(1)(b) or (f) GDPR). Our email is hosted by Gmail, a service of Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Ireland, so your message is stored on Google’s servers. We don’t share it with anyone else, and we delete it once the matter is resolved unless we have to keep it for legal reasons.</p>
 
     <h2>Data transfers outside the EU</h2>
-    <p>GitHub, Inc. is certified under the EU-U.S. Data Privacy Framework, which the European Commission recognises as providing an adequate level of protection (Art. 45 GDPR). The United Kingdom is covered by an EU adequacy decision.</p>
+    <p>GitHub, Inc. and Google LLC, which may process Gmail data in the USA, are certified under the EU-U.S. Data Privacy Framework, which the European Commission recognises as providing an adequate level of protection (Art. 45 GDPR). The United Kingdom is covered by an EU adequacy decision.</p>
 
     <h2>Automated decisions</h2>
     <p>We don’t use automated decision-making or profiling.</p>
 
     <h2>Your rights</h2>
-    <p>You have the right to access, correct or delete your personal data, to restrict its processing, to data portability and to object to processing (Art. 15–21 GDPR). To use them, email <a href="mailto:[hello@hutfinder.at]">[hello@hutfinder.at]</a>. You also have the right to lodge a complaint with a supervisory authority. In Austria, this is the Datenschutzbehörde, Barichgasse 40–42, 1030 Vienna, <a href="https://www.dsb.gv.at">dsb.gv.at</a>.</p>
+    <p>You have the right to access, correct or delete your personal data, to restrict its processing, to data portability and to object to processing (Art. 15–21 GDPR). To use them, email <a href="mailto:hutfinder.at@gmail.com">hutfinder.at@gmail.com</a>. You also have the right to lodge a complaint with a supervisory authority. In Austria, this is the Datenschutzbehörde, Barichgasse 40–42, 1030 Vienna, <a href="https://www.dsb.gv.at">dsb.gv.at</a>.</p>
 
     <h2>Security</h2>
     <p>This site is only served over encrypted HTTPS connections. If a data breach occurs, we will notify the Datenschutzbehörde and, where required, the people affected (Art. 33 and 34 GDPR).</p>
@@ -90,7 +88,7 @@
     <h2>Changes to this policy</h2>
     <p>We update this policy when the site changes, for example when a new service is added. The version on this page is always the current one.</p>
 
-    <p class="legal-updated">Last updated: [date of publication]</p>
+    <p class="legal-updated">Last updated: 22 September 2026</p>
   </main>
 
   <footer class="legal-foot">

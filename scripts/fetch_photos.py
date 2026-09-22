@@ -4,8 +4,9 @@ fetch_photos.py — choose one photo per hut from Wikimedia Commons.
 
 Writes public/photos.json: one freely licensed photo per hut, with the credit
 line its licence asks for. Hut photos on other sites (Alpenverein pages, HRS,
-hut websites, bergwelten) are copyrighted, so this uses Commons only. The
-images themselves stay on Wikimedia's servers: we store thumbnail URLs.
+hut websites, bergwelten) are copyrighted, so this uses Commons only. This
+script stores thumbnail URLs; run scripts/download_photos.py afterwards to
+copy the images to public/photos/, which is where the app loads them from.
 
 How the photo for a hut is chosen:
   1. A hand pick in data/photo_picks.json always wins. "file": null there
