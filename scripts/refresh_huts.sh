@@ -12,7 +12,7 @@
 #
 # After each step it shows what changed and asks before going on. Answer
 # anything but y to stop. Undo everything with:
-#     git restore public/huts.json data/
+#     git restore public/huts.json public/hut_texts.json data/
 #
 # Not included:
 #   - data/hrs_catalog.json, the hut-reservation.org hut list. It was saved by
@@ -28,9 +28,9 @@
 set -u
 cd "$(dirname "$0")/.." || exit 1
 
-UNDO="Undo everything with:  git restore public/huts.json data/"
+UNDO="Undo everything with:  git restore public/huts.json public/hut_texts.json data/"
 
-if ! git diff --quiet -- public/huts.json data/; then
+if ! git diff --quiet -- public/huts.json public/hut_texts.json data/; then
   echo "public/huts.json or data/ has changes that aren't committed."
   echo "Commit or restore them first, so 'git restore' can always take you back."
   exit 1
@@ -60,7 +60,7 @@ run() {  # one script; if it fails, stop the whole refresh
 ask() {  # show what has changed so far, then go on only on y
   echo
   echo "--- changed so far:"
-  git --no-pager diff --stat -- public/huts.json data/
+  git --no-pager diff --stat -- public/huts.json public/hut_texts.json data/
   read -r -p "$1 [y/N] " answer
   case "$answer" in
     y|Y) ;;
@@ -86,7 +86,10 @@ echo "Matches marked \"review\" above are not used until someone checks them"
 echo "and sets \"verified\": true in data/hr_mapping.json."
 ask "3/7 Matching done. Merge hut-reservation.org into huts.json?"
 run scripts/merge_hrs.py
-ask "Merged. Go on to the ÖAV register?"
+# The huts' own descriptions, in every language they have them in, plus our
+# Dutch and Czech from data/note_translations.json.
+run scripts/build_hut_texts.py
+ask "Merged, hut texts written. Go on to the ÖAV register?"
 
 # 4. ÖAV register: beds, shower and winter room outrank OSM.
 run fetch_alpenverein.py
@@ -114,7 +117,7 @@ run apply_overrides.py
 cleanup
 echo
 echo "Done. What changed:"
-git --no-pager diff --stat -- public/huts.json data/
+git --no-pager diff --stat -- public/huts.json public/hut_texts.json data/
 echo
-echo "Check it with npm run dev, then commit public/huts.json and data/."
+echo "Check it with npm run dev, then commit public/huts.json, public/hut_texts.json and data/."
 echo "$UNDO"

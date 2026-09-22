@@ -62,7 +62,10 @@ def main():
         hut["hr_price_pdf"] = rec.get("price_pdf")
         hut["hr_half_board_eur"] = rec.get("half_board_eur")
         hut["hr_photo"] = rec.get("photo")
-        hut["hr_notes"] = rec.get("notes")
+        # hut texts live in public/hut_texts.json, which the site loads when
+        # the first hut pop-up opens. They are six languages of paragraphs
+        # that nothing in the list needs. 
+        hut.pop("hr_notes", None)
         # fill contact gaps only where OSM had nothing
         if not hut.get("website") and rec.get("website"):
             hut["website"] = rec["website"]
@@ -79,6 +82,7 @@ def main():
     print("with hr_capacity:", sum(1 for h in huts if h.get("hr_capacity")))
     print("with dog policy: ", sum(1 for h in huts if h.get("hr_dogs") is not None))
     print("with price PDF:  ", sum(1 for h in huts if h.get("hr_price_pdf")))
+    print("hut texts:        now in public/hut_texts.json — run scripts/build_hut_texts.py")
     print(f"\nWrote {HUTS}  (backup: {HUTS.with_suffix('.json.hrsbak')})")
 
 

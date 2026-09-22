@@ -1,22 +1,22 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import DateRange from "./DateRange";
-const TYPE_LABEL = {
-  schutzhuette: "Schutzhütte",
-  alm: "Alm",
-  jausenstation: "Jausenstation",
-};
+import { useI18n } from "./i18n";
+import LanguageMenu from "./LanguageMenu";
+/* The data's own values on the left, a strings key on the right. Anything
+   the strings file doesn't cover falls back to the raw value rather than
+   vanishing. */
+const TYPE_KEYS = ["schutzhuette", "alm", "jausenstation"];
+const typeLabel = (t, k) => (TYPE_KEYS.includes(k) ? t(`type.${k}`) : k);
 
-const WARDEN_LABEL = {
-  bewirtschaftet: "Serviced",
-  selbstversorger: "Self-service",
-};
+const WARDEN_KEYS = ["bewirtschaftet", "bewartet", "selbstversorger"];
+const wardenLabel = (t, k) => (WARDEN_KEYS.includes(k) ? t(`warden.${k}`) : k);
 
-const ASSOC_LABEL = {
-  alpine_club: "Alpine club",
-  naturfreunde: "Naturfreunde",
-  private: "Private",
-};
+const ASSOC_KEYS = ["alpine_club", "naturfreunde", "private"];
+const assocName = (t, k) => (ASSOC_KEYS.includes(k) ? t(`assoc.${k}`) : k);
+
+// Region names are place names and stay as they are; only the catch-all is text.
+const regionLabel = (t, r) => (r === "Other/Unknown" ? t("region.other") : r);
 
 const CLUB_LABEL = {
   OEAV: "ÖAV",
@@ -26,14 +26,18 @@ const CLUB_LABEL = {
 };
 
 // Room-type buckets — snapshot arrays are ordered [dorm, shared, private]
-const BUCKET_LABEL = { dorm: "Dormitory", shared: "Shared room", priv: "Private room" };
 const BUCKET_ORDER = ["dorm", "shared", "priv"];
 const BUCKET_IDX = { dorm: 0, shared: 1, priv: 2 };
-const BUCKET_PLURAL = { dorm: "dorms", shared: "shared rooms", priv: "private rooms" };
+const bucketLabel = (t, k) => t(`bucket.${k}`);
+const bucketPlural = (t, k) => t(`bucketPlural.${k}`);
 /* Only huts bookable online publish their room types and free beds. The rest
    are "unlisted", which is not the same as "no": they stay in the results
    when a room type or dates are picked, after the huts known to match. */
 const ROOM_NONE = "none";
+
+/* The languages a hut writes its own description in, most complete first.
+   Dutch and Czech are ours, so they are not in this list. */
+const HUT_TEXT_LANGS = ["de", "en", "fr", "it"];
 
 const REGION_ORDER = [
   "Tirol",
@@ -49,12 +53,20 @@ const REGION_ORDER = [
 ];
 
 const ELEV_BANDS = [
-  { key: "e1", label: "< 1,000 m", lo: -Infinity, hi: 1000 },
-  { key: "e2", label: "1,000–1,500 m", lo: 1000, hi: 1500 },
-  { key: "e3", label: "1,500–2,000 m", lo: 1500, hi: 2000 },
-  { key: "e4", label: "2,000–2,500 m", lo: 2000, hi: 2500 },
-  { key: "e5", label: "2,500 m +", lo: 2500, hi: Infinity },
+  { key: "e1", lo: -Infinity, hi: 1000 },
+  { key: "e2", lo: 1000, hi: 1500 },
+  { key: "e3", lo: 1500, hi: 2000 },
+  { key: "e4", lo: 2000, hi: 2500 },
+  { key: "e5", lo: 2500, hi: Infinity },
 ];
+/* "1,000–1,500 m" in English, "1.000–1.500 m" in German — the separator is
+   the formatter's, not ours. */
+const bandLabel = (t, nf, band) =>
+  t(`elev.${band.key}`, {
+    n: nf(band.key === "e1" ? band.hi : band.lo),
+    a: nf(band.lo),
+    b: nf(band.hi),
+  });
 const ELEV_UNKNOWN = "unknown";
 
 const RESULT_LIMIT = 300;
@@ -92,11 +104,6 @@ function fmtISO(s) {
   return `${d}.${m}.${y}`;
 }
 
-// Hut counts with a thousands separator: "1,524", not "1524".
-function fmtN(n) {
-  return n.toLocaleString("en");
-}
-
 function toISO(d) {
   const p = (n) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
@@ -113,9 +120,9 @@ function nextDayISO(iso) {
 }
 
 // snapshot timestamp (UTC ISO) shown in Austrian local time, DST-aware, with zone label
-function fmtGenerated(iso) {
+function fmtGenerated(iso, locale) {
   try {
-    return new Date(iso).toLocaleString("en-GB", {
+    return new Date(iso).toLocaleString(locale, {
       timeZone: "Europe/Vienna",
       day: "2-digit",
       month: "2-digit",
@@ -133,21 +140,23 @@ function fmtGenerated(iso) {
    three and the pop-up all of them. Anything the data doesn't know is left
    out rather than shown as "unknown", and an inferred value says so
    ("Usually serviced"). */
-function hutTags(hut) {
+function hutTags(hut, t) {
   const tags = [];
   if (hut.club) tags.push({ label: CLUB_LABEL[hut.club] || hut.club, club: true });
-  else if (hut.association) tags.push({ label: ASSOC_LABEL[hut.association] || hut.association });
+  else if (hut.association) tags.push({ label: assocName(t, hut.association) });
   const beds = isNumber(hut.hr_capacity) ? hut.hr_capacity : hut.sleeping;
-  if (beds > 0) tags.push({ label: `${beds} beds` });
-  else if (beds === 0) tags.push({ label: "No overnight" });
+  if (beds > 0) tags.push({ label: t("tag.beds", { count: beds, n: beds }) });
+  else if (beds === 0) tags.push({ label: t("tag.noOvernight") });
   if (hut.warden === "bewirtschaftet") {
-    tags.push({ label: hut.warden_source === "inferred" ? "Usually serviced" : "Serviced" });
-  } else if (hut.warden === "bewartet") tags.push({ label: "Attended" });
-  else if (hut.warden === "selbstversorger") tags.push({ label: "Self-service" });
-  if (hut.shower === true) tags.push({ label: "Shower" });
-  if (hut.winterraum === true) tags.push({ label: "Winter room" });
-  if (hut.hr_dogs === true) tags.push({ label: "Dogs welcome" });
-  else if (hut.hr_dogs === false) tags.push({ label: "No dogs" });
+    tags.push({
+      label: hut.warden_source === "inferred" ? t("tag.usuallyServiced") : t("warden.bewirtschaftet"),
+    });
+  } else if (hut.warden === "bewartet") tags.push({ label: t("warden.bewartet") });
+  else if (hut.warden === "selbstversorger") tags.push({ label: t("warden.selbstversorger") });
+  if (hut.shower === true) tags.push({ label: t("tag.shower") });
+  if (hut.winterraum === true) tags.push({ label: t("tag.winterRoom") });
+  if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome") });
+  else if (hut.hr_dogs === false) tags.push({ label: t("tag.noDogs") });
   return tags;
 }
 
@@ -239,30 +248,58 @@ function MailIcon() {
    line (the float trick behind .hf-desc in tokens.css). The button only
    appears when the text is actually cut off; that is measured in a ref
    callback once the paragraph is laid out. */
-function Description({ text }) {
+function Description({ text, source }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [cut, setCut] = useState(false);
+  /* Showing the hut's own words instead of ours. Only possible where we did
+     the translating — Dutch and Czech. */
+  const [orig, setOrig] = useState(false);
+  const shown = orig && source ? source.text : text;
   const measure = (el) => {
     if (!el || open) return;
     const isCut = el.scrollHeight > el.clientHeight + 1;
     if (isCut !== cut) setCut(isCut);
   };
   return (
+    <>
     <div className="hf-desc-wrap">
       <p ref={measure} className={open ? "hf-desc is-open" : "hf-desc"}>
         {!open && cut ? (
           <button type="button" className="hf-more" aria-expanded="false" onClick={() => setOpen(true)}>
-            <span>Read more</span>
+            <span>{t("detail.readMore")}</span>
           </button>
         ) : null}
-        {text}
+        {shown}
         {open ? (
           <button type="button" className="hf-more" aria-expanded="true" onClick={() => setOpen(false)}>
-            <span>Show less</span>
+            <span>{t("detail.showLess")}</span>
           </button>
         ) : null}
       </p>
     </div>
+    {/* The note waits until the text is open: on a closed card it would be a
+        line of doubt under two lines nobody has read yet. A description short
+        enough that it was never cut has no "Read more" to wait for, so the
+        note shows straight away. */}
+    {source && (open || !cut) ? (
+      <p className="hf-translated">
+        {orig
+          ? t("detail.sourceNote", { language: t(`language.${source.code}`) })
+          : t("detail.translatedNote")}
+        {" · "}
+        <button
+          type="button"
+          onClick={() => {
+            setOrig(!orig);
+            setOpen(true);
+          }}
+        >
+          <span>{orig ? t("detail.showTranslation") : t("detail.showOriginal")}</span>
+        </button>
+      </p>
+    ) : null}
+    </>
   );
 }
 
@@ -383,9 +420,13 @@ function useIsNarrow(max = 860) {
   return narrow;
 }
 export default function App() {
+  /* nf is the old fmtN under its new name: the same thousands separator,
+     now the active language's. */
+  const { t, nf: fmtN, locale, lang } = useI18n();
   const [huts, setHuts] = useState([]);
   const [avail, setAvail] = useState(null);
   const [photos, setPhotos] = useState({}); // hut id -> Commons photo, from photos.json
+  const [hutTexts, setHutTexts] = useState(null); // hr_hut_id -> the hut's text per language
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState([]); // MULTI_SELECT
@@ -571,6 +612,38 @@ export default function App() {
       .catch(() => setPhotos({}));
   }, []);
 
+  /* The huts' own descriptions: six languages of paragraphs that only a
+     pop-up ever shows, so they load when the first one opens instead of
+     holding up the list. Missing file, or a hut that isn't in it: the card
+     simply has no description, as before. */
+  useEffect(() => {
+    if (!selected || hutTexts) return undefined;
+    let alive = true;
+    fetch(`${import.meta.env.BASE_URL}hut_texts.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => alive && setHutTexts((data && data.texts) || {}))
+      .catch(() => alive && setHutTexts({}));
+    return () => {
+      alive = false;
+    };
+  }, [selected, hutTexts]);
+
+  /* Which text a hut shows, and whether it is ours. The hut's own languages
+     come first in the fallback: German is usually the original, English its
+     own translation of it. */
+  const hutText = (hut) => {
+    const entry = hutTexts && hut.hr_hut_id ? hutTexts[String(hut.hr_hut_id)] : null;
+    if (!entry) return hut.hr_notes ? { text: hut.hr_notes } : null;
+    const code = [lang, "en", ...HUT_TEXT_LANGS].find((c) => entry[c]);
+    if (!code) return null;
+    const ours = (entry.translated || []).includes(code);
+    const srcCode = ours ? HUT_TEXT_LANGS.find((c) => c !== code && entry[c]) : null;
+    return {
+      text: entry[code],
+      source: srcCode ? { code: srcCode, text: entry[srcCode] } : null,
+    };
+  };
+
   const nights = nightsBetween(from, to);
 
   const recOf = (h) => (h.hr_hut_id && avail && avail.huts ? avail.huts[h.hr_hut_id] : null);
@@ -611,9 +684,9 @@ export default function App() {
       return (
         <div>
           <div style={{ fontSize: "0.8rem", marginBottom: "0.45rem" }}>
-            <span style={{ color: "var(--ink)", fontWeight: 700 }}>Free {rangeLabel}</span>
+            <span style={{ color: "var(--ink)", fontWeight: 700 }}>{t("avail.free", { range: rangeLabel })}</span>
             {nights.length > 1 ? (
-              <span style={{ color: "var(--ink-soft)" }}> · fewest across your nights</span>
+              <span style={{ color: "var(--ink-soft)" }}>{t("avail.fewest")}</span>
             ) : null}
           </div>
           {BUCKET_ORDER.map((k) => {
@@ -632,10 +705,10 @@ export default function App() {
               >
                 <span style={{ color: "var(--ink-soft)" }}>
                   <Dot n={n} />
-                  {BUCKET_LABEL[k]}
+                  {bucketLabel(t, k)}
                 </span>
                 <span style={{ color: bedColor(n), fontWeight: 700 }}>
-                  {n > 0 ? `${n} ${n === 1 ? "bed" : "beds"}` : "Full"}
+                  {n > 0 ? t("avail.beds", { count: n, n }) : t("avail.full")}
                 </span>
               </div>
             );
@@ -647,11 +720,11 @@ export default function App() {
       return (
         <span style={{ color: "var(--ink-soft)" }}>
           <Dot n={nf.free} />
-          Next free: {fmtISO(nf.date)} ({nf.free} beds)
+          {t("avail.nextFree", { date: fmtISO(nf.date), n: nf.free })}
         </span>
       );
     }
-    if (rec) return <span style={{ color: "var(--ink-soft)" }}>No open dates in the next months</span>;
+    if (rec) return <span style={{ color: "var(--ink-soft)" }}>{t("avail.none")}</span>;
     return null;
   };
 
@@ -661,7 +734,7 @@ export default function App() {
       target="_blank"
       rel="noreferrer"
       onClick={(e) => e.stopPropagation()}
-      aria-label={`Book ${hut.name} online (opens in a new tab)`}
+      aria-label={t("book.aria", { hut: hut.name })}
       className="hf-tap"
       style={{
         background: "var(--blue)",
@@ -674,7 +747,7 @@ export default function App() {
         whiteSpace: "nowrap",
       }}
     >
-      Book online →
+      {t("book.online")}
     </a>
   );
 
@@ -686,13 +759,13 @@ export default function App() {
         <a
           href={telHref(hut.phone)}
           onClick={(e) => e.stopPropagation()}
-          aria-label={`Call ${hut.name}, ${phoneLabel(hut.phone)}`}
+          aria-label={t("call.aria", { hut: hut.name, phone: phoneLabel(hut.phone) })}
           className="hf-call hf-tap"
         >
           <PhoneIcon />
-          Call {phoneLabel(hut.phone)}
+          {t("call.label", { phone: phoneLabel(hut.phone) })}
         </a>
-        <span>Not bookable online</span>
+        <span>{t("band.notBookable")}</span>
       </div>
     ) : hut.website || hut.email ? (
       /* No phone number, but a website or an email is still a way to ask. */
@@ -703,33 +776,33 @@ export default function App() {
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
-            aria-label={`${hut.name} website, ${webLabel(hut.website)} (opens in a new tab)`}
+            aria-label={t("contact.websiteAria", { hut: hut.name, host: webLabel(hut.website) })}
             className="hf-call hf-tap"
           >
             <GlobeIcon />
-            Website
+            {t("contact.website")}
           </a>
         ) : (
           <a
             href={`mailto:${hut.email}`}
             onClick={(e) => e.stopPropagation()}
-            aria-label={`Email ${hut.name}, ${hut.email}`}
+            aria-label={t("contact.emailAria", { hut: hut.name, email: hut.email })}
             className="hf-call hf-tap"
           >
             <MailIcon />
-            Email
+            {t("contact.email")}
           </a>
         )}
-        <span>Not bookable online</span>
+        <span>{t("band.notBookable")}</span>
       </div>
     ) : (
       <div className="hf-card-band">
-        <span>Not bookable online · no contact details listed</span>
+        <span>{t("band.notBookableNoContact")}</span>
       </div>
     );
 
   const metaLine = (hut) =>
-    `${TYPE_LABEL[hut.type] || hut.type}${
+    `${typeLabel(t, hut.type)}${
       isNumber(hut.elevation) ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}` : ""
     }`;
 
@@ -739,7 +812,7 @@ export default function App() {
      button whose name is every word inside it. */
   const hutCard = (hut, open) => {
     const photo = photos[hut.id];
-    const tags = hutTags(hut).slice(0, 3);
+    const tags = hutTags(hut, t).slice(0, 3);
     return (
       <>
         <div className="hf-card-head">
@@ -752,7 +825,7 @@ export default function App() {
               alt=""
               loading="lazy"
               decoding="async"
-              title={`Photo: ${photo.credit} · ${photo.license}`}
+              title={`${t("detail.photoCredit")} ${photo.credit} · ${photo.license}`}
             />
           ) : null}
           <div className="hf-card-title">
@@ -773,7 +846,7 @@ export default function App() {
               </button>
             </div>
             <div className="hf-card-meta">{metaLine(hut)}</div>
-            {hut.region ? <div className="hf-card-meta">{hut.region}</div> : null}
+            {hut.region ? <div className="hf-card-meta">{regionLabel(t, hut.region)}</div> : null}
           </div>
           <ChevronIcon />
         </div>
@@ -794,8 +867,10 @@ export default function App() {
      the hut's own description, and the booking row as it has always been. */
   const hutDetail = (hut) => {
     const photo = photos[hut.id];
-    const notes = hut.hr_notes ? plainText(hut.hr_notes) : "";
-    const tags = hutTags(hut);
+    const own = hutText(hut);
+    const notes = own ? plainText(own.text) : "";
+    const source = own && own.source ? { code: own.source.code, text: plainText(own.source.text) } : null;
+    const tags = hutTags(hut, t);
     return (
       <>
         {photo ? (
@@ -808,7 +883,8 @@ export default function App() {
               alt={hut.name}
             />
             <p className="hf-credit">
-              Photo: {photo.credit} · <span style={{ whiteSpace: "nowrap" }}>{photo.license}</span>
+              {t("detail.photoCredit")} {photo.credit} ·{" "}
+              <span style={{ whiteSpace: "nowrap" }}>{photo.license}</span>
             </p>
           </>
         ) : null}
@@ -827,8 +903,8 @@ export default function App() {
           <div>
             <h2 className="hf-detail-name">{hut.name}</h2>
             <div className="hf-card-meta" style={{ fontSize: "0.9rem" }}>
-              {TYPE_LABEL[hut.type] || hut.type}
-              {hut.region ? ` · ${hut.region}` : ""}
+              {typeLabel(t, hut.type)}
+              {hut.region ? ` · ${regionLabel(t, hut.region)}` : ""}
               {isNumber(hut.elevation)
                 ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
                 : ""}
@@ -837,7 +913,7 @@ export default function App() {
           {hut.phone || hut.website || hut.email ? (
             <div className="hf-contact">
               {hut.phone ? (
-                <a href={telHref(hut.phone)} className="hf-tap-min" aria-label={`Call ${hut.name}, ${phoneLabel(hut.phone)}`}>
+                <a href={telHref(hut.phone)} className="hf-tap-min" aria-label={t("call.aria", { hut: hut.name, phone: phoneLabel(hut.phone) })}>
                   <PhoneIcon />
                   <span>{phoneLabel(hut.phone)}</span>
                 </a>
@@ -848,14 +924,14 @@ export default function App() {
                   target="_blank"
                   rel="noreferrer"
                   className="hf-tap-min"
-                  aria-label={`${hut.name} website, ${webLabel(hut.website)} (opens in a new tab)`}
+                  aria-label={t("contact.websiteAria", { hut: hut.name, host: webLabel(hut.website) })}
                 >
                   <GlobeIcon />
                   <span>{webLabel(hut.website)}</span>
                 </a>
               ) : null}
               {hut.email ? (
-                <a href={`mailto:${hut.email}`} className="hf-tap-min" aria-label={`Email ${hut.name}, ${hut.email}`}>
+                <a href={`mailto:${hut.email}`} className="hf-tap-min" aria-label={t("contact.emailAria", { hut: hut.name, email: hut.email })}>
                   <MailIcon />
                   <span>{hut.email}</span>
                 </a>
@@ -865,8 +941,8 @@ export default function App() {
           {tags.length ? <Tags tags={tags} /> : null}
           {notes ? (
             <div>
-              <div className="hf-label">Description</div>
-              <Description key={hut.id} text={notes} />
+              <div className="hf-label">{t("detail.description")}</div>
+              <Description key={hut.id} text={notes} source={source} />
             </div>
           ) : null}
           {hut.hr_hut_id ? (
@@ -882,21 +958,21 @@ export default function App() {
                 {bookButton(hut)}
                 <span>
                   {hut.club ? CLUB_LABEL[hut.club] || hut.club : null}
-                  {isNumber(hut.hr_half_board_eur) ? ` · half board €${hut.hr_half_board_eur}` : ""}
-                  {hut.hr_dogs === true ? " · dogs welcome" : hut.hr_dogs === false ? " · no dogs" : ""}
+                  {isNumber(hut.hr_half_board_eur) ? t("detail.halfBoard", { n: hut.hr_half_board_eur }) : ""}
+                  {hut.hr_dogs === true ? t("detail.dogsWelcome") : hut.hr_dogs === false ? t("detail.noDogs") : ""}
                 </span>
                 {hut.hr_price_pdf ? (
                   <a
                     href={hut.hr_price_pdf}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={`${hut.name} price list, PDF (opens in a new tab)`}
+                    aria-label={t("detail.priceListAria", { hut: hut.name })}
                     /* Sits in a row of its own rather than inside a sentence,
                        so the inline-link exemption doesn't cover it. */
                     className="hf-tap"
                     style={{ color: "var(--blue-deep)", fontWeight: 600, textDecoration: "none" }}
                   >
-                    <span style={{ borderBottom: "1px solid var(--powder)" }}>price list</span>
+                    <span style={{ borderBottom: "1px solid var(--powder)" }}>{t("detail.priceList")}</span>
                   </a>
                 ) : null}
               </div>
@@ -1043,32 +1119,45 @@ export default function App() {
     setQuery("");
   };
 
-  const WARDEN_LABEL = { bewirtschaftet: "Serviced", bewartet: "Attended", selbstversorger: "Self-service" };
   // Chip and "Drop …" wording, where "Unlisted" needs saying what it is
-  const roomLabel = (k) => (k === ROOM_NONE ? "Room type unlisted" : BUCKET_LABEL[k] || k);
-  const assocLabel = (a) => (a === "unknown" ? "Association unlisted" : ASSOC_LABEL[a] || a);
+  const roomLabel = (k) => (k === ROOM_NONE ? t("label.roomTypeUnlisted") : bucketLabel(t, k));
+  const assocLabel = (a) => (a === "unknown" ? t("label.assocUnlisted") : assocName(t, a));
   const activeChips = [];
-  if (query) activeChips.push({ k: "q", label: `“${query}”`, clear: () => setQuery("") });
+  if (query)
+    activeChips.push({ k: "q", label: t("chip.query", { q: query }), clear: () => setQuery("") });
   for (const r of region)
-    activeChips.push({ k: "region:" + r, label: r, clear: () => toggle(region, setRegion, r) });
+    activeChips.push({
+      k: "region:" + r,
+      label: regionLabel(t, r),
+      clear: () => toggle(region, setRegion, r),
+    });
   if (roomType)
     activeChips.push({ k: "roomType", label: roomLabel(roomType), clear: () => setRoomType(null) });
   if (bookableOnly)
-    activeChips.push({ k: "bookable", label: "Bookable online", clear: () => setBookableOnly(false) });
-  for (const t of type)
-    activeChips.push({ k: "type:" + t, label: TYPE_LABEL[t] || t, clear: () => toggle(type, setType, t) });
+    activeChips.push({
+      k: "bookable",
+      label: t("pill.bookableOnline"),
+      clear: () => setBookableOnly(false),
+    });
+  for (const ty of type)
+    activeChips.push({
+      k: "type:" + ty,
+      label: typeLabel(t, ty),
+      clear: () => toggle(type, setType, ty),
+    });
   if (warden)
-    activeChips.push({ k: "warden", label: WARDEN_LABEL[warden] || warden, clear: () => setWarden(null) });
+    activeChips.push({ k: "warden", label: wardenLabel(t, warden), clear: () => setWarden(null) });
   for (const e of elev) {
     const band = ELEV_BANDS.find((b) => b.key === e);
     activeChips.push({
       k: "elev:" + e,
-      label: band ? band.label : "Elevation unknown",
+      label: band ? bandLabel(t, fmtN, band) : t("elev.unknown"),
       clear: () => toggle(elev, setElev, e),
     });
   }
   if (assoc) activeChips.push({ k: "assoc", label: assocLabel(assoc), clear: () => setAssoc(null) });
-  if (showerOnly) activeChips.push({ k: "shower", label: "Shower", clear: () => setShowerOnly(false) });
+  if (showerOnly)
+    activeChips.push({ k: "shower", label: t("tag.shower"), clear: () => setShowerOnly(false) });
 
   // EMPTY_STATE
   const shortenStay = () => {
@@ -1084,35 +1173,45 @@ export default function App() {
   };
   const blockers = [];
   if (nights.length)
-    blockers.push(nights.length === 1 ? "1 night" : nights.length + " consecutive nights");
+    blockers.push(t("empty.nights", { count: nights.length, n: nights.length }));
   for (const c of activeChips) blockers.push(c.label);
 
   // UNBLOCKERS
   const elevLabel = (e) => {
     const b = ELEV_BANDS.find((x) => x.key === e);
-    return b ? b.label : "Elevation unknown";
+    return b ? bandLabel(t, fmtN, b) : t("elev.unknown");
   };
   const filterCategories = [
-    { skip: "region", on: region.length > 0, label: region.join(" or "), clear: () => setRegion([]) },
+    {
+      skip: "region",
+      on: region.length > 0,
+      label: region.map((r) => regionLabel(t, r)).join(t("word.or")),
+      clear: () => setRegion([]),
+    },
     {
       skip: "type",
       on: type.length > 0,
-      label: type.map((t) => TYPE_LABEL[t] || t).join(" or "),
+      label: type.map((ty) => typeLabel(t, ty)).join(t("word.or")),
       clear: () => setType([]),
     },
-    { skip: "elev", on: elev.length > 0, label: elev.map(elevLabel).join(" or "), clear: () => setElev([]) },
+    {
+      skip: "elev",
+      on: elev.length > 0,
+      label: elev.map(elevLabel).join(t("word.or")),
+      clear: () => setElev([]),
+    },
     {
       skip: "warden",
       on: !!warden,
-      label: WARDEN_LABEL[warden] || warden,
+      label: wardenLabel(t, warden),
       clear: () => setWarden(null),
     },
     { skip: "assoc", on: !!assoc, label: assocLabel(assoc), clear: () => setAssoc(null) },
-    { skip: "shower", on: showerOnly, label: "Shower", clear: () => setShowerOnly(false) },
+    { skip: "shower", on: showerOnly, label: t("tag.shower"), clear: () => setShowerOnly(false) },
     {
       skip: "bookable",
       on: bookableOnly,
-      label: "Bookable online",
+      label: t("pill.bookableOnline"),
       clear: () => setBookableOnly(false),
     },
     {
@@ -1121,7 +1220,7 @@ export default function App() {
       label: roomLabel(roomType),
       clear: () => setRoomType(null),
     },
-    { skip: "query", on: !!query, label: "\u201c" + query + "\u201d", clear: () => setQuery("") },
+    { skip: "query", on: !!query, label: t("chip.query", { q: query }), clear: () => setQuery("") },
   ];
   const unblockers =
     filtered.length === 0
@@ -1135,11 +1234,11 @@ export default function App() {
 
   const visible = filtered.slice(0, RESULT_LIMIT);
   const hiddenCount = filtered.length - visible.length;
-  const generated = avail && avail.generated ? fmtGenerated(avail.generated) : null;
+  const generated = avail && avail.generated ? fmtGenerated(avail.generated, locale) : null;
 
   const rangeLabel = from && to ? `${fmtISO(from)}–${fmtISO(to)}` : "";
   const nightsLabel = nights.length
-    ? `${nights.length} ${nights.length === 1 ? "night" : "nights"}`
+    ? t("date.nights", { count: nights.length, n: nights.length })
     : "";
 
   /* rangeLabel is empty until check-out is chosen, and with the shared
@@ -1156,18 +1255,20 @@ export default function App() {
       ? ["", ""]
       : nights.length
       ? roomType === ROOM_NONE
-        ? [`${fmtN(filtered.length)} unlisted huts`, rangeTail]
+        ? [t("count.unlistedHuts", { n: fmtN(filtered.length) }), rangeTail]
         : [
-            `${fmtN(matchCount)} huts with space`,
-            `${rangeTail}${unlistedCount > 0 ? ` · ${fmtN(unlistedCount)} unlisted` : ""}`,
+            t("count.withSpace", { n: fmtN(matchCount) }),
+            `${rangeTail}${
+              unlistedCount > 0 ? t("count.unlistedTail", { n: fmtN(unlistedCount) }) : ""
+            }`,
           ]
       : [
-          allShown ? `${fmtN(huts.length)} huts` : fmtN(filtered.length),
-          `${allShown ? "" : ` of ${fmtN(huts.length)} huts`}${
+          allShown ? t("count.huts", { n: fmtN(huts.length) }) : fmtN(filtered.length),
+          `${allShown ? "" : t("count.ofHuts", { n: fmtN(huts.length) })}${
             unlistedCount > 0
               ? matchCount > 0
-                ? ` · ${fmtN(matchCount)} with ${BUCKET_PLURAL[roomType]} first`
-                : ` · none known to have ${BUCKET_PLURAL[roomType]}`
+                ? t("count.roomFirst", { n: fmtN(matchCount), rooms: bucketPlural(t, roomType) })
+                : t("count.noneKnown", { rooms: bucketPlural(t, roomType) })
               : ""
           }`,
         ];
@@ -1253,7 +1354,7 @@ export default function App() {
   const viewToggle = (
     <div
       role="group"
-      aria-label="View"
+      aria-label={t("view.aria")}
       style={{
         display: "flex",
         gap: isNarrow ? 8 : 6,
@@ -1261,9 +1362,9 @@ export default function App() {
       }}
     >
       {[
-        ["list", "List"],
-        ["split", "Split"],
-        ["map", "Map"],
+        ["list", t("view.list")],
+        ["split", t("view.split")],
+        ["map", t("view.map")],
       ].map(([k, label]) => (
         <button
           key={k}
@@ -1377,7 +1478,7 @@ export default function App() {
             flex: "0 0 auto",
           }}
         />
-        {isNarrow ? "bookable" : "bookable online"}
+        {isNarrow ? t("legend.bookableShort") : t("legend.bookable")}
       </span>
       <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
         <span
@@ -1390,7 +1491,7 @@ export default function App() {
             flex: "0 0 auto",
           }}
         />
-        {isNarrow ? "contact hut" : "contact the hut directly"}
+        {isNarrow ? t("legend.contactShort") : t("legend.contact")}
       </span>
     </div>
   );
@@ -1402,7 +1503,7 @@ export default function App() {
          and carries the main landmark — otherwise the page would have none,
          and the skip link would be pointing at nothing in particular. */
       role={showList ? "region" : "main"}
-      aria-label="Map of matching huts"
+      aria-label={t("map.aria")}
       tabIndex={-1}
       style={{
         outline: "none",
@@ -1431,11 +1532,7 @@ export default function App() {
           focus. Arrow keys pan and zoom the map itself; opening a hut is
           done from the list, which holds the same huts. Said out loud here
           so a screen reader isn't left guessing at an unlabelled canvas. */}
-      <p className="hf-vh">
-        Map of the matching huts. Pins can be panned and zoomed with the arrow
-        keys and the plus and minus keys, but cannot be opened from the
-        keyboard — use the hut list, where every hut opens the same details.
-      </p>
+      <p className="hf-vh">{t("map.srNote")}</p>
       <MapPanel
         huts={filtered}
         onSelect={setSelected}
@@ -1456,28 +1553,44 @@ export default function App() {
           page loads. In Map view there is no list to skip to, so it aims at
           the map instead. */}
       <a className="hf-skip" href={showList ? "#results" : "#hut-map"}>
-        {showList ? "Skip to hut results" : "Skip to the map"}
+        {showList ? t("skip.results") : t("skip.map")}
       </a>
       <div style={shellStyle}>
         <header style={leftCol(1)}>
-        <h1 style={{ margin: "0 0 0.5rem" }}>
-          <img
-            src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
-            alt="Hüttenfinder"
-            style={{ height: 30, display: "block" }}
-          />
-        </h1>
+        {/* The wordmark, with the language control at the other end of the
+            row. On a 360px phone the wordmark is about 187px and the control
+            about 60px, so the two share one line. */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            margin: "0 0 0.5rem",
+          }}
+        >
+          <h1 style={{ margin: 0 }}>
+            <img
+              src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
+              alt="Hüttenfinder"
+              style={{ height: 30, display: "block" }}
+            />
+          </h1>
+          <LanguageMenu />
+        </div>
         {/* What the site is, in a line: Austria only, and what you do here.
             About 280px at 16px, so it stays on one line on a 360px phone. */}
         <p style={{ color: "var(--ink-soft)", margin: "0 0 1.25rem", lineHeight: 1.5 }}>
-          Find and book mountain huts in Austria.
+          {t("site.tagline")}
         </p>
         <span className="hf-vh" role="status">{announced}</span>
 
-        {status === "loading" && <p>Loading huts…</p>}
+        {status === "loading" && <p>{t("status.loading")}</p>}
         {status === "error" && (
           <p style={{ color: "var(--burgundy)" }}>
-            Couldn't load huts.json — check it's in the <code>public</code> folder.
+            {t("status.errorBefore")}
+            <code>public</code>
+            {t("status.errorAfter")}
           </p>
         )}
 
@@ -1489,8 +1602,8 @@ export default function App() {
             <input
               type="text"
               id="hut-search"
-              aria-label="Search huts by name"
-              placeholder="Search by name…"
+              aria-label={t("search.aria")}
+              placeholder={t("search.placeholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="hf-tap-min"
@@ -1503,7 +1616,7 @@ export default function App() {
               }}
             />
 
-            <FilterGroup label="Available (nights)">
+            <FilterGroup label={t("filter.available")}>
               <DateRange
                 from={from}
                 to={to}
@@ -1516,39 +1629,40 @@ export default function App() {
               />
               {from && !avail && (
                 <span style={{ color: "var(--burgundy)", fontSize: "0.8rem", marginLeft: "0.5rem" }}>
-                  availability.json didn’t load — run fetch_availability.py
+                  {t("avail.notLoaded")}
                 </span>
               )}
               {generated && (
                 <div style={{ color: "var(--ink-soft)", fontSize: "0.72rem", marginTop: "0.35rem", width: "100%" }}>
-                  {nights.length > 1 ? `${nights.length} nights · ` : ""}availability as of {generated}
+                  {nights.length > 1 ? t("avail.nightsPrefix", { n: nights.length }) : ""}
+                  {t("avail.asOf", { time: generated })}
                 </div>
               )}
             </FilterGroup>
 
 
-            <FilterGroup label="Region">
-              <Pill active={!region.length} onClick={() => setRegion([])} label="All" />
+            <FilterGroup label={t("filter.region")}>
+              <Pill active={!region.length} onClick={() => setRegion([])} label={t("pill.all")} />
               {presentRegions.map((r) => (
                 <Pill
                   key={r}
                   active={region.includes(r)}
                   onClick={() => toggle(region, setRegion, r)}
-                  label={r}
+                  label={regionLabel(t, r)}
                   count={regionCounts[r] || 0}
                 />
               ))}
             </FilterGroup>
 
             {avail && (
-              <FilterGroup label="Room type" note="A hut with dorms and private rooms counts under both.">
-                <Pill active={!roomType} onClick={() => setRoomType(null)} label="Any" />
+              <FilterGroup label={t("filter.roomType")} note={t("filter.roomTypeNote")}>
+                <Pill active={!roomType} onClick={() => setRoomType(null)} label={t("pill.any")} />
                 {[...BUCKET_ORDER, ROOM_NONE].map((k) => (
                   <Pill
                     key={k}
                     active={roomType === k}
                     onClick={() => setRoomType(roomType === k ? null : k)}
-                    label={k === ROOM_NONE ? "Unlisted" : BUCKET_LABEL[k]}
+                    label={k === ROOM_NONE ? t("pill.unlisted") : bucketLabel(t, k)}
                     count={roomTypeCounts[k] || 0}
                   />
                 ))}
@@ -1576,7 +1690,7 @@ export default function App() {
                 marginBottom: "1rem",
               }}
             >
-              More filters
+              {t("more.button")}
               {moreCount > 0 ? (
                 <>
                   {/* The badge is a bare number on screen; spelled out for a
@@ -1595,7 +1709,7 @@ export default function App() {
                     {moreCount}
                   </span>
                   <span className="hf-vh">
-                    {`${moreCount} ${moreCount === 1 ? "filter" : "filters"} applied`}
+                    {t("more.applied", { count: moreCount, n: moreCount })}
                   </span>
                 </>
               ) : null}
@@ -1616,7 +1730,7 @@ export default function App() {
                   <button
                     key={c.k}
                     onClick={c.clear}
-                    aria-label={`Remove filter ${c.label}`}
+                    aria-label={t("chip.removeAria", { label: c.label })}
                     className="hf-tap"
                     style={{
                       display: "inline-flex",
@@ -1651,7 +1765,7 @@ export default function App() {
                    dialog semantics would be a lie. */
                 role={isNarrow ? "dialog" : undefined}
                 aria-modal={isNarrow ? true : undefined}
-                aria-label={isNarrow ? "More filters" : undefined}
+                aria-label={isNarrow ? t("more.button") : undefined}
                 tabIndex={isNarrow ? -1 : undefined}
                 style={
                   isNarrow
@@ -1685,13 +1799,13 @@ export default function App() {
                     marginBottom: "1rem",
                   }}
                 >
-                  <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>More filters</span>
+                  <span style={{ fontWeight: 700, fontSize: "0.95rem" }}>{t("more.button")}</span>
                   {isNarrow ? (
                     /* On a phone, Show N huts at the bottom closes the overlay;
                        this is the quiet way out. */
                     <button
                       onClick={closeMore}
-                      aria-label="Close more filters"
+                      aria-label={t("more.closeAria")}
                       className="hf-tap"
                       style={{
                         background: "transparent",
@@ -1720,44 +1834,44 @@ export default function App() {
                         cursor: "pointer",
                       }}
                     >
-                      Done
+                      {t("more.done")}
                     </button>
                   )}
                 </div>
 
-            <FilterGroup label="Booking">
+            <FilterGroup label={t("filter.booking")}>
               <Pill
                 active={bookableOnly}
                 onClick={() => setBookableOnly(!bookableOnly)}
-                label="Bookable online"
+                label={t("pill.bookableOnline")}
                 count={bookableCount}
               />
             </FilterGroup>
 
-            <FilterGroup label="Type">
-              <Pill active={!type.length} onClick={() => setType([])} label="All" />
-              {["schutzhuette", "alm", "jausenstation"].map((t) =>
+            <FilterGroup label={t("filter.type")}>
+              <Pill active={!type.length} onClick={() => setType([])} label={t("pill.all")} />
+              {["schutzhuette", "alm", "jausenstation"].map((ty) =>
                 true ? (
                   <Pill
-                    key={t}
-                    active={type.includes(t)}
-                    onClick={() => toggle(type, setType, t)}
-                    label={TYPE_LABEL[t] || t}
-                    count={typeCounts[t] || 0}
+                    key={ty}
+                    active={type.includes(ty)}
+                    onClick={() => toggle(type, setType, ty)}
+                    label={typeLabel(t, ty)}
+                    count={typeCounts[ty] || 0}
                   />
                 ) : null
               )}
             </FilterGroup>
 
-            <FilterGroup label="Elevation">
-              <Pill active={!elev.length} onClick={() => setElev([])} label="All" />
+            <FilterGroup label={t("filter.elevation")}>
+              <Pill active={!elev.length} onClick={() => setElev([])} label={t("pill.all")} />
               {ELEV_BANDS.map((b) =>
                 true ? (
                   <Pill
                     key={b.key}
                     active={elev.includes(b.key)}
                     onClick={() => toggle(elev, setElev, b.key)}
-                    label={b.label}
+                    label={bandLabel(t, fmtN, b)}
                     count={elevCounts[b.key] || 0}
                   />
                 ) : null
@@ -1768,45 +1882,45 @@ export default function App() {
                 <Pill
                   active={elev.includes(ELEV_UNKNOWN)}
                   onClick={() => toggle(elev, setElev, ELEV_UNKNOWN)}
-                  label="Elevation unknown"
+                  label={t("elev.unknown")}
                   count={elevCounts[ELEV_UNKNOWN] || 0}
                 />
               ) : null}
             </FilterGroup>
 
-            <FilterGroup label="Warden">
-              <Pill active={!warden} onClick={() => setWarden(null)} label="All" />
+            <FilterGroup label={t("filter.warden")}>
+              <Pill active={!warden} onClick={() => setWarden(null)} label={t("pill.all")} />
               {["bewirtschaftet", "selbstversorger"].map((w) =>
                 true ? (
                   <Pill
                     key={w}
                     active={warden === w}
                     onClick={() => setWarden(warden === w ? null : w)}
-                    label={WARDEN_LABEL[w] || w}
+                    label={wardenLabel(t, w)}
                     count={wardenCounts[w] || 0}
                   />
                 ) : null
               )}
             </FilterGroup>
 
-            <FilterGroup label="Association">
-              <Pill active={!assoc} onClick={() => setAssoc(null)} label="All" />
+            <FilterGroup label={t("filter.association")}>
+              <Pill active={!assoc} onClick={() => setAssoc(null)} label={t("pill.all")} />
               {["alpine_club", "naturfreunde", "private", "unknown"].map((a) => (
                 <Pill
                   key={a}
                   active={assoc === a}
                   onClick={() => setAssoc(assoc === a ? null : a)}
-                  label={a === "unknown" ? "Unlisted" : ASSOC_LABEL[a] || a}
+                  label={a === "unknown" ? t("pill.unlisted") : assocName(t, a)}
                   count={assocCounts[a] || 0}
                 />
               ))}
             </FilterGroup>
 
-            <FilterGroup label="Amenities">
+            <FilterGroup label={t("filter.amenities")}>
               <Pill
                 active={showerOnly}
                 onClick={() => setShowerOnly(!showerOnly)}
-                label="Has shower"
+                label={t("pill.hasShower")}
                 count={showerCount}
               />
             </FilterGroup>
@@ -1851,7 +1965,7 @@ export default function App() {
                       cursor: "pointer",
                     }}
                   >
-                    Clear
+                    {t("more.clear")}
                   </button>
                 ) : (
                   <span />
@@ -1872,7 +1986,7 @@ export default function App() {
                     cursor: "pointer",
                   }}
                 >
-                  {`Show ${fmtN(filtered.length)} ${filtered.length === 1 ? "hut" : "huts"}`}
+                  {t("more.show", { count: filtered.length, n: fmtN(filtered.length) })}
                 </button>
               </div>
             ) : null}
@@ -1894,7 +2008,7 @@ export default function App() {
                   marginBottom: "1.25rem",
                 }}
               >
-                Clear filters
+                {t("clear.filters")}
               </button>
             )}
             {!showList && countBar}
@@ -1912,15 +2026,15 @@ export default function App() {
                  everything and is how you move around the page, so it should
                  not be loose content sitting outside every landmark. */
               <nav
-                aria-label="View"
+                aria-label={t("view.aria")}
                 style={{ display: "flex", gap: 8, alignItems: "stretch" }}
               >
                 <div style={{ flex: "1 1 auto", minWidth: 0 }}>{viewToggle}</div>
                 {scrolledDown && (
                   <button
                     onClick={scrollToTop}
-                    aria-label="Back to the top of the page"
-                    title="Back to top"
+                    aria-label={t("top.aria")}
+                    title={t("top.title")}
                     style={{
                       flex: "0 0 44px",
                       minHeight: 44,
@@ -1963,35 +2077,37 @@ export default function App() {
               >
                 <p style={{ margin: 0, fontWeight: 700, fontSize: "1.05rem" }}>
                   {from && !avail
-                    ? "Availability data didn't load"
+                    ? t("empty.noAvail")
                     : nights.length > 1
-                    ? `Nothing free for all ${nights.length} nights`
+                    ? t("empty.nothingFreeNights", { n: nights.length })
                     : nights.length === 1
-                    ? "Nothing free that night"
-                    : "No huts match"}
+                    ? t("empty.nothingFreeNight")
+                    : t("empty.noMatch")}
                 </p>
                 <p style={{ margin: "0.5rem 0 0", color: "var(--ink-soft)", fontSize: "0.9rem" }}>
                   {from && !avail
-                    ? "The bed counts are missing, so nothing can be shown as available. This is a data problem, not an empty search."
+                    ? t("empty.noAvailNote")
                     : blockers.length
-                    ? `Searching for: ${blockers.join(" · ")}`
-                    : "There is nothing to show."}
+                    ? t("empty.searchingFor", { list: blockers.join(" · ") })
+                    : t("empty.nothingToShow")}
                 </p>
                 {from && !avail ? null : (
                   <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.15rem" }}>
                     {nights.length > 1 ? (
                       <button onClick={shortenStay} className="hf-tap" style={{ background: "var(--blue)", color: "#fff", border: "none", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer" }}>
-                        {nights.length === 2 ? "Try 1 night" : `Try ${nights.length - 1} nights`}
+                        {nights.length === 2
+                          ? t("empty.tryOneNight")
+                          : t("empty.tryNights", { n: nights.length - 1 })}
                       </button>
                     ) : null}
                     {unblockers.map((u) => (
                       <button key={u.skip} onClick={u.clear} className="hf-tap" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
-                        {`Drop ${u.label} · ${u.n} ${u.n === 1 ? "hut" : "huts"}`}
+                        {t("empty.drop", { count: u.n, label: u.label, n: u.n })}
                       </button>
                     ))}
                     {anyNonDate ? (
                       <button onClick={clearAll} className="hf-tap" style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}>
-                        Clear filters
+                        {t("clear.filters")}
                       </button>
                     ) : null}
                     {from ? (
@@ -2003,7 +2119,7 @@ export default function App() {
                         className="hf-tap"
                         style={{ background: "transparent", color: "var(--ink)", border: "1px solid var(--line-control)", borderRadius: "var(--radius)", padding: "0.55rem 1rem", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}
                       >
-                        Clear dates
+                        {t("clear.dates")}
                       </button>
                     ) : null}
                   </div>
@@ -2037,14 +2153,14 @@ export default function App() {
                           fontWeight: 700,
                         }}
                       >
-                        {`Unlisted · ${fmtN(unlistedCount)} ${unlistedCount === 1 ? "hut" : "huts"}`}
+                        {t("unlisted.heading", { count: unlistedCount, n: fmtN(unlistedCount) })}
                       </h3>
                       <p style={{ margin: "0.2rem 0 0", fontSize: "0.85rem", lineHeight: 1.5, color: "var(--ink-soft)" }}>
                         {nights.length
                           ? sortByRoom
-                            ? `Bed availability unknown. They may have ${BUCKET_PLURAL[roomType]} free too. Call or check the hut’s website to ask.`
-                            : "Bed availability unknown. Call or check the hut’s website to ask about your dates."
-                          : `Room types unknown. They may have ${BUCKET_PLURAL[roomType]} too. Call or check the hut’s website to ask.`}
+                            ? t("unlisted.noteDatesRoom", { rooms: bucketPlural(t, roomType) })
+                            : t("unlisted.noteDates")
+                          : t("unlisted.noteRoom", { rooms: bucketPlural(t, roomType) })}
                       </p>
                     </li>
                   ) : null}
@@ -2068,12 +2184,12 @@ export default function App() {
 
             {hiddenCount > 0 && (
               <p style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
-                Showing the first {RESULT_LIMIT} — narrow the filters to see the other {fmtN(hiddenCount)}.
+                {t("list.showingFirst", { limit: RESULT_LIMIT, n: fmtN(hiddenCount) })}
               </p>
             )}
 
             <p style={{ color: "var(--ink-soft)", fontSize: "0.75rem", marginTop: "1.5rem" }}>
-              * elevation estimated from coordinates
+              {t("list.elevationNote")}
             </p>
             {isNarrow && (
               <button
@@ -2096,7 +2212,7 @@ export default function App() {
                   cursor: "pointer",
                 }}
               >
-                ↑ Back to filters
+                {t("list.backToFilters")}
               </button>
             )}
           </main>
@@ -2127,17 +2243,17 @@ export default function App() {
             }}
           >
             <a className="hf-tap" href={`${import.meta.env.BASE_URL}imprint/`} style={{ color: "inherit" }}>
-              Imprint
+              {t("footer.imprint")}
             </a>
             <a className="hf-tap" href={`${import.meta.env.BASE_URL}privacy/`} style={{ color: "inherit" }}>
-              Privacy
+              {t("footer.privacy")}
             </a>
             <span>
-              Hut data ©{" "}
+              {t("footer.osmBefore")}{" "}
               <a href="https://www.openstreetmap.org/copyright" style={{ color: "inherit" }}>
                 OpenStreetMap
               </a>{" "}
-              contributors
+              {t("footer.osmAfter")}
             </span>
           </div>
         </footer>
@@ -2184,7 +2300,7 @@ export default function App() {
         onClick={closeModal}
         /* "Close" alone is ambiguous once there are two overlays that close.
            The glyph is hidden so the label is all that's read. */
-        aria-label={`Close ${selected.name}`}
+        aria-label={t("detail.closeAria", { hut: selected.name })}
         className="hf-close"
         style={{
           position: "absolute",
