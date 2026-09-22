@@ -11,6 +11,7 @@ venv/
 
 # script backups
 *.osmbak
+*.hrsbak
 *.prebeds
 *.bak
 *.backup*
