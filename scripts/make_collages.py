@@ -3,10 +3,12 @@
 Each hut with a photo gets two paper pieces and the numbers to lay them out:
 
   main    the whole photo on torn white paper, tilted a little
-  second  the hut cut out as a sticker with a white edge, when the cutout is
-          clean; otherwise a closer crop of the same photo on torn paper
+  second  the hut's second photo (inside, or the landscape around it) on torn
+          paper, when one was picked (data/second_photos.json); otherwise the
+          hut cut out as a sticker with a white edge, when the cutout is
+          clean; otherwise a closer crop of the main photo on torn paper
 
-Writes public/collages/<id>-main.webp and -sticker.webp or -zoom.webp, and an
+Writes public/collages/<id>-main.webp and -photo, -sticker or -zoom.webp, and an
 entry per hut in data/collages.json: the pieces, which washi tapes it gets,
 where the sparkles go, and where everything sits in the frame. The page
 builder (scripts/build_hut_pages.mjs) reads that file and draws the rest
@@ -39,6 +41,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC = os.path.join(ROOT, "public")
 OUT_DIR = os.path.join(PUBLIC, "collages")
 DATA = os.path.join(ROOT, "data", "collages.json")
+SECOND = os.path.join(ROOT, "data", "second_photos.json")
 
 PAPER = (255, 253, 248, 255)
 EDGE = (226, 218, 204, 255)
@@ -301,7 +304,17 @@ def place_sparkles(photo, subj, main_w, main_h, photo_box, avoid):
 
 # ---------------------------------------------------------------- one hut
 
-def make(hut, photo_entry, force_kind=None):
+def crop_43(im):
+    """The middle of a photo at 4:3, the shape the second piece is shown in."""
+    w, h = im.size
+    if w / h > 4 / 3:
+        nw = round(h * 4 / 3)
+        return im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+    nh = round(w * 3 / 4)
+    return im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+
+
+def make(hut, photo_entry, force_kind=None, second_photo=None):
     hid = hut["id"]
     src = Image.open(os.path.join(PUBLIC, photo_entry["full"])).convert("RGB")
     sign = 1 if seed_of(hid, "tilt") % 2 else -1
@@ -311,9 +324,17 @@ def make(hut, photo_entry, force_kind=None):
 
     cut = cutout(src)
     mask, why = clean_mask(cut) if cut is not None else (None, "rembg not installed")
-    kind = force_kind or ("sticker" if mask is not None else "zoom")
+    if second_photo is not None and not force_kind:
+        kind, why = "photo", "second photo"
+    else:
+        kind = force_kind or ("sticker" if mask is not None else "zoom")
 
-    if kind == "sticker":
+    if kind == "photo":
+        two = crop_43(second_photo)
+        second, _, _ = torn_piece(two, (0, 0, two.width, two.height), 420, 5.0 * sign,
+                                  seed_of(hid, "photo") % 10**6, border=15)
+        second_w = 460
+    elif kind == "sticker":
         rgba = src.convert("RGBA")
         rgba.putalpha(Image.fromarray((mask * 255).astype(np.uint8)))
         # 1.5x first, so the white edge stays smooth at the size it is shown
@@ -352,7 +373,7 @@ def make(hut, photo_entry, force_kind=None):
     tapes = [
         {"kind": first, "x": 30, "y": 14, "w": 205, "h": 52, "rot": -31 + rnd.uniform(-4, 4)},
     ]
-    if kind == "zoom":
+    if kind in ("zoom", "photo"):
         tapes.append({"kind": third, "x": 1000 - 40 - 180, "y": 5, "w": 180, "h": 49, "rot": 24 + rnd.uniform(-4, 4)})
         tapes.append({"kind": CLEAR, "x": s_left + second_w * 0.3, "y": s_top - 6, "w": 160, "h": 45, "rot": 8 + rnd.uniform(-3, 3)})
     else:
@@ -405,6 +426,7 @@ def main():
         ap.error("give hut ids, --ids-file or --all")
 
     data = json.load(open(DATA, encoding="utf-8")) if os.path.exists(DATA) else {}
+    seconds = json.load(open(SECOND, encoding="utf-8")) if os.path.exists(SECOND) else {}
     os.makedirs(OUT_DIR, exist_ok=True)
     made = 0
     for hid in dict.fromkeys(ids):
@@ -425,10 +447,12 @@ def main():
         if args.check:
             print(f"  {name}: would make a collage")
             continue
-        r = make(hut, ph, "zoom" if hid in args.zoom else None)
+        two = seconds.get(hid) or {}
+        two_img = Image.open(os.path.join(ROOT, two["src"])).convert("RGB") if two.get("src") else None
+        r = make(hut, ph, "zoom" if hid in args.zoom else None, two_img)
         main_path = f"collages/{hid}-main.webp"
         second_path = f"collages/{hid}-{r['kind']}.webp"
-        for old in ("sticker", "zoom"):
+        for old in ("photo", "sticker", "zoom"):
             p = os.path.join(PUBLIC, "collages", f"{hid}-{old}.webp")
             if os.path.exists(p):
                 os.remove(p)

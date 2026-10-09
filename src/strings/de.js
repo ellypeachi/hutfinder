@@ -269,6 +269,8 @@ export const de = {
   "page.expandMap": "Karte vergrößern",
   "page.closeMap": "Karte schließen",
   "page.coords": "{lat}° N, {lng}° O",
+  "page.photos": "Fotos:",
+  "page.and": "und",
   "page.collageBy": "Collage von Hüttenfinder",
   "page.sharedUnder": "geteilt unter {license}",
   "page.footer.data": "Hüttendaten © {osm}-Mitwirkende, Alpenverein und hut-reservation.org.",

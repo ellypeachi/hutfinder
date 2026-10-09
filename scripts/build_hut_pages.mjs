@@ -67,6 +67,7 @@ const avail = readJSON('public/availability.json')
 const photos = readJSON('public/photos.json').photos
 const texts = readJSON('public/hut_texts.json').texts
 const collages = exists('data/collages.json') ? readJSON('data/collages.json') : {}
+const seconds = exists('data/second_photos.json') ? readJSON('data/second_photos.json') : {}
 const only = !ALL && exists('data/hut_pages.json') ? new Set(readJSON('data/hut_pages.json').ids) : null
 
 const textOf = (h) => (h.hr_hut_id != null ? texts[String(h.hr_hut_id)] : null)
@@ -573,15 +574,21 @@ function band(L, h) {
   return { html: `<div class="hp-band"><span>${esc(L.t('page.notBookableNoContact'))}</span></div>`, skip: null }
 }
 
-/* The photo credit. A collage is an adaptation, so it says so; a CC BY-SA
-   photo's collage is shared under CC BY-SA too, as the licence requires. */
-function credit(L, ph, isCollage) {
-  const who = ph.page ? `<a href="${esc(ph.page)}">${esc(ph.credit || '')}</a>` : esc(ph.credit || '')
-  const lic = ph.license_url ? `<a href="${esc(ph.license_url)}">${esc(ph.license)}</a>` : esc(ph.license || '')
-  let s = `${esc(L.t('detail.photoCredit'))} ${who} · ${lic}`
+/* The photo credit, for the main photo and the second one when the collage
+   has it. A collage is an adaptation, so it says so; if either photo is
+   CC BY-SA, the collage is shared under CC BY-SA too, as the licence requires. */
+function credit(L, ph, isCollage, two) {
+  const one = (p) => {
+    const who = p.page ? `<a href="${esc(p.page)}">${esc(p.credit || '')}</a>` : esc(p.credit || '')
+    const lic = p.license_url ? `<a href="${esc(p.license_url)}">${esc(p.license)}</a>` : esc(p.license || '')
+    return `${who} · ${lic}`
+  }
+  let s = two
+    ? `${esc(L.t('page.photos'))} ${one(ph)} ${esc(L.t('page.and'))} ${one(two)}`
+    : `${esc(L.t('detail.photoCredit'))} ${one(ph)}`
   if (isCollage) {
     s += ` · ${esc(L.t('page.collageBy'))}`
-    if (/^CC BY-SA/i.test(ph.license || ''))
+    if ([ph, two].some((p) => p && /^CC BY-SA/i.test(p.license || '')))
       s += `, ${esc(L.t('page.sharedUnder', { license: '' }).trim())} <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>`
   }
   return `<figcaption class="hp-credit">${s}</figcaption>`
@@ -609,7 +616,7 @@ function figure(L, h) {
     `<img class="hp-second" src="/${esc(s.src)}" width="${s.w}" height="${s.h}" alt="" style="left:${pct(s.x / 10)};top:${pct((s.y / fh) * 100)};width:${pct(s.width / 10)}"/>` +
     c.tapes.map((tp) => tape(tp, fh)).join('') +
     (labels.length ? `<div class="hp-labels" aria-hidden="true" style="top:${pct((c.label_top / fh) * 100)}">${labels.map((x) => `<span>${esc(x)}</span>`).join('')}</div>` : '') +
-    `</div>${credit(L, ph, true)}</figure>`
+    `</div>${credit(L, ph, true, s.kind === 'photo' && seconds[h.id] && seconds[h.id].file ? seconds[h.id] : null)}</figure>`
   )
 }
 

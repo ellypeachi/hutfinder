@@ -270,6 +270,8 @@ export const en = {
   "page.expandMap": "Expand the map",
   "page.closeMap": "Close the map",
   "page.coords": "{lat}° N, {lng}° E",
+  "page.photos": "Photos:",
+  "page.and": "and",
   "page.collageBy": "collage by Hüttenfinder",
   "page.sharedUnder": "shared under {license}",
   "page.footer.data": "Hut data © {osm} contributors, the Alpenverein and hut-reservation.org.",
