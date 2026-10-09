@@ -352,8 +352,7 @@ function titleOf(L, h) {
 }
 
 function descriptionOf(L, h) {
-  const kind = isBookable(h) ? 'book' : contactKind(h) === 'none' ? 'none' : h.phone ? 'call' : 'contact'
-  const end = L.t(`page.meta.${kind}`)
+  const end = L.t(isBookable(h) ? 'page.meta.book' : 'page.meta.info')
   const tries = [
     `${opening(L, h, { meta: true })} ${end}`,
     `${opening(L, h, { meta: true, rooms: false })} ${end}`,

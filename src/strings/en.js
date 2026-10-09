@@ -210,9 +210,8 @@ export const en = {
   "page.title.nearby": "{name} ({elev}): free beds nearby",
   "page.title.nearbyShort": "{name}: free beds nearby",
   "page.meta.book": "See which nights still have free beds and book directly online.",
-  "page.meta.call": "Online booking isn’t available, so call the hut or see which huts nearby still have free beds.",
-  "page.meta.contact": "Online booking isn’t available, so contact the hut or see which huts nearby still have free beds.",
-  "page.meta.none": "Online booking isn’t available. See which huts nearby still have free beds.",
+  // Huts not bookable online: the result says what the page offers, not what the hut lacks.
+  "page.meta.info": "View all the hut’s details and see which huts nearby still have free beds.",
   // The opening sentence, built from these pieces in this order:
   // "An ÖAV hut" + " at 1,736 m" + " in Salzburg" + " with 113 beds" + ", from dorms to private rooms" + "."
   // The search description uses the same pieces without the elevation.

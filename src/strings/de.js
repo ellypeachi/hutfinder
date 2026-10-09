@@ -209,9 +209,8 @@ export const de = {
   "page.title.nearby": "{name} ({elev}): freie Betten in der Nähe",
   "page.title.nearbyShort": "{name}: freie Betten in der Nähe",
   "page.meta.book": "Schau nach, wann noch Betten frei sind, und buch direkt online.",
-  "page.meta.call": "Online buchen geht hier nicht: Ruf direkt an oder schau, welche Hütten in der Nähe noch Betten frei haben.",
-  "page.meta.contact": "Online buchen geht hier nicht: Frag bei der Hütte nach oder schau, welche Hütten in der Nähe noch Betten frei haben.",
-  "page.meta.none": "Online buchen geht hier nicht. Schau, welche Hütten in der Nähe noch Betten frei haben.",
+  // Hütten ohne Online-Buchung: das Suchergebnis sagt, was die Seite bietet, nicht was der Hütte fehlt.
+  "page.meta.info": "Hier findest du alle Infos zur Hütte und siehst, welche Hütten in der Nähe noch Betten frei haben.",
   // Der erste Satz, aus diesen Teilen in dieser Reihenfolge:
   // "Eine ÖAV-Hütte" + " auf 1.736 m" + " in Salzburg" + " mit 113 Betten" + ", vom Matratzenlager bis zum Privatzimmer" + "."
   // Die Suchbeschreibung nimmt dieselben Teile ohne Höhe und ohne Artikel.
