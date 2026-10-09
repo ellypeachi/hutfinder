@@ -341,7 +341,7 @@ function summary(L, h) {
 }
 
 function titleOf(L, h) {
-  const kind = isBookable(h) ? 'book' : contactKind(h) === 'none' ? 'nearby' : 'contact'
+  const kind = isBookable(h) ? 'book' : 'info'
   const el = elevText(L, h)
   const tries = [
     el ? L.t(`page.title.${kind}`, { name: h.name, elev: el }) : null,

@@ -205,13 +205,11 @@ export const en = {
   // Search result title and description; {elev} is already "1,736 m".
   "page.title.book": "{name} ({elev}): free beds and online booking",
   "page.title.bookShort": "{name}: free beds and online booking",
-  "page.title.contact": "{name} ({elev}): contact and free beds nearby",
-  "page.title.contactShort": "{name}: contact and free beds nearby",
-  "page.title.nearby": "{name} ({elev}): free beds nearby",
-  "page.title.nearbyShort": "{name}: free beds nearby",
-  "page.meta.book": "See which nights still have free beds and book directly online.",
+  "page.title.info": "{name} ({elev}): hut information and availability",
+  "page.title.infoShort": "{name}: hut information and availability",
+  "page.meta.book": "Check availability and book directly online.",
   // Huts not bookable online: the result says what the page offers, not what the hut lacks.
-  "page.meta.info": "View all the hut’s details and see which huts nearby still have free beds.",
+  "page.meta.info": "View all the hut’s details including location, amenities, and more.",
   // The opening sentence, built from these pieces in this order:
   // "An ÖAV hut" + " at 1,736 m" + " in Salzburg" + " with 113 beds" + ", from dorms to private rooms" + "."
   // The search description uses the same pieces without the elevation.

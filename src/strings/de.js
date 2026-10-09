@@ -204,13 +204,11 @@ export const de = {
   // scripts/build_hut_pages.mjs. Die App selbst zeigt diese Texte nie.
   "page.title.book": "{name} ({elev}): freie Betten & online buchen",
   "page.title.bookShort": "{name}: freie Betten & online buchen",
-  "page.title.contact": "{name} ({elev}): Kontakt & freie Betten in der Nähe",
-  "page.title.contactShort": "{name}: Kontakt & freie Betten in der Nähe",
-  "page.title.nearby": "{name} ({elev}): freie Betten in der Nähe",
-  "page.title.nearbyShort": "{name}: freie Betten in der Nähe",
-  "page.meta.book": "Schau nach, wann noch Betten frei sind, und buch direkt online.",
+  "page.title.info": "{name} ({elev}): Hütteninfos & Verfügbarkeit",
+  "page.title.infoShort": "{name}: Hütteninfos & Verfügbarkeit",
+  "page.meta.book": "Prüf die Verfügbarkeit und buch direkt online.",
   // Hütten ohne Online-Buchung: das Suchergebnis sagt, was die Seite bietet, nicht was der Hütte fehlt.
-  "page.meta.info": "Hier findest du alle Infos zur Hütte und siehst, welche Hütten in der Nähe noch Betten frei haben.",
+  "page.meta.info": "Hier findest du alle Infos zur Hütte, inklusive Lage, Ausstattung und mehr.",
   // Der erste Satz, aus diesen Teilen in dieser Reihenfolge:
   // "Eine ÖAV-Hütte" + " auf 1.736 m" + " in Salzburg" + " mit 113 Betten" + ", vom Matratzenlager bis zum Privatzimmer" + "."
   // Die Suchbeschreibung nimmt dieselben Teile ohne Höhe und ohne Artikel.
