@@ -1,0 +1,449 @@
+{
+ "w121262261": {
+  "main": {
+   "w": 834,
+   "h": 602,
+   "src": "collages/w121262261-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 636,
+   "x": 617.5,
+   "y": 541.8,
+   "width": 402.5157232704403,
+   "src": "collages/w121262261-sticker.webp"
+  },
+  "frame_h": 941.8,
+  "main_h": 721.8,
+  "label_top": 546.8,
+  "tapes": [
+   {
+    "kind": "terracotta-dots",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -33.5
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 20.6
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    217.1,
+    233.9
+   ],
+   "single": [
+    649.1,
+    221.9
+   ]
+  }
+ },
+ "w127908485": {
+  "main": {
+   "w": 836,
+   "h": 662,
+   "src": "collages/w127908485-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 612,
+   "h": 330,
+   "x": 460,
+   "y": 656.0,
+   "width": 560,
+   "src": "collages/w127908485-sticker.webp"
+  },
+  "frame_h": 957.9,
+  "main_h": 791.9,
+  "label_top": 616.9,
+  "tapes": [
+   {
+    "kind": "terracotta-dots",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -29.3
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 26.8
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    638.1,
+    353.7
+   ],
+   "single": [
+    338.1,
+    365.7
+   ]
+  }
+ },
+ "w135297090": {
+  "main": {
+   "w": 834,
+   "h": 602,
+   "src": "collages/w135297090-main.webp"
+  },
+  "second": {
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 558.8,
+   "width": 440,
+   "src": "collages/w135297090-zoom.webp"
+  },
+  "frame_h": 921.1,
+  "main_h": 721.8,
+  "label_top": 546.8,
+  "tapes": [
+   {
+    "kind": "red-gingham",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -33.2
+   },
+   {
+    "kind": "green-gingham",
+    "x": 780,
+    "y": 5,
+    "w": 180,
+    "h": 49,
+    "rot": 26.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 552.8,
+    "w": 160,
+    "h": 45,
+    "rot": 9.4
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    457.1,
+    401.9
+   ],
+   "single": [
+    181.1,
+    293.9
+   ]
+  }
+ },
+ "w432940923": {
+  "main": {
+   "w": 832,
+   "h": 593,
+   "src": "collages/w432940923-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 272,
+   "x": 340,
+   "y": 582.7,
+   "width": 680,
+   "src": "collages/w432940923-sticker.webp"
+  },
+  "frame_h": 871.7,
+  "main_h": 712.7,
+  "label_top": 537.7,
+  "tapes": [
+   {
+    "kind": "blue-wave",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -31.4
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 20.6
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    744.1,
+    282.1
+   ],
+   "single": [
+    96.1,
+    330.1
+   ]
+  }
+ },
+ "w78158759": {
+  "main": {
+   "w": 836,
+   "h": 662,
+   "src": "collages/w78158759-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 387,
+   "x": 460,
+   "y": 639.5,
+   "width": 560,
+   "src": "collages/w78158759-sticker.webp"
+  },
+  "frame_h": 978.1,
+  "main_h": 791.9,
+  "label_top": 616.9,
+  "tapes": [
+   {
+    "kind": "red-floral",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -34.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 24.7
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    86.1,
+    293.7
+   ],
+   "single": [
+    458.1,
+    305.7
+   ]
+  }
+ },
+ "w83122419": {
+  "main": {
+   "w": 836,
+   "h": 662,
+   "src": "collages/w83122419-main.webp"
+  },
+  "second": {
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w83122419-zoom.webp"
+  },
+  "frame_h": 991.1,
+  "main_h": 791.9,
+  "label_top": 616.9,
+  "tapes": [
+   {
+    "kind": "blue-gingham",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -32.2
+   },
+   {
+    "kind": "terracotta-dots",
+    "x": 780,
+    "y": 5,
+    "w": 180,
+    "h": 49,
+    "rot": 26.3
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 5.9
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    794.1,
+    341.7
+   ],
+   "single": [
+    542.1,
+    521.7
+   ]
+  }
+ },
+ "w83191764": {
+  "main": {
+   "w": 832,
+   "h": 597,
+   "src": "collages/w83191764-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 462,
+   "x": 465.9,
+   "y": 537.5,
+   "width": 554.1125541125541,
+   "src": "collages/w83191764-sticker.webp"
+  },
+  "frame_h": 937.5,
+  "main_h": 717.5,
+  "label_top": 542.5,
+  "tapes": [
+   {
+    "kind": "blue-wave",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -30.9
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 26.5
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    324.1,
+    138.1
+   ],
+   "single": [
+    624.1,
+    390.1
+   ]
+  }
+ },
+ "w84131545": {
+  "main": {
+   "w": 832,
+   "h": 598,
+   "src": "collages/w84131545-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 283,
+   "x": 341.6,
+   "y": 583.8,
+   "width": 678.4452296819788,
+   "src": "collages/w84131545-sticker.webp"
+  },
+  "frame_h": 883.8,
+  "main_h": 718.8,
+  "label_top": 543.8,
+  "tapes": [
+   {
+    "kind": "blue-gingham",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -34.1
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 20.1
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    792.1,
+    258.1
+   ],
+   "single": [
+    540.1,
+    450.1
+   ]
+  }
+ },
+ "w85132012": {
+  "main": {
+   "w": 834,
+   "h": 602,
+   "src": "collages/w85132012-main.webp"
+  },
+  "second": {
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 558.8,
+   "width": 440,
+   "src": "collages/w85132012-zoom.webp"
+  },
+  "frame_h": 921.1,
+  "main_h": 721.8,
+  "label_top": 546.8,
+  "tapes": [
+   {
+    "kind": "butter-stripes",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -30.6
+   },
+   {
+    "kind": "pink-dots",
+    "x": 780,
+    "y": 5,
+    "w": 180,
+    "h": 49,
+    "rot": 26.2
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 552.8,
+    "w": 160,
+    "h": 45,
+    "rot": 9.3
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    517.1,
+    257.9
+   ],
+   "single": [
+    145.1,
+    281.9
+   ]
+  }
+ }
+}

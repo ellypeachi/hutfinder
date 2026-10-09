@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second photo picker</title>
+<!--
+  Template for data/second-photo-picker.html, which scripts/make_second_photo_picker.py
+  fills in. Open the written file in a browser: it looks up each hut's photos on
+  Wikimedia Commons itself, one request at a time, so nothing has to be fetched
+  beforehand.
+-->
+<style>
+  :root {
+    --cream: #F4F0E8; --card: #FBF9F4; --ink: #3A2A20; --ink-soft: #6E5A4B;
+    --hair: #E0D8CA; --line-control: #8C7C68; --blue: #35648F; --blue-deep: #2C5378;
+    --radius: 4px;
+    --font-display: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+    --font-ui: 'Figtree Variable', 'Figtree', system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 15px/1.45 var(--font-ui); }
+  a { color: var(--blue-deep); }
+  button, input { font: inherit; color: inherit; }
+
+  header { position: sticky; top: 0; z-index: 2; background: var(--cream); border-bottom: 1px solid var(--hair); }
+  .bar { max-width: 1180px; margin: 0 auto; padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+  h1 { font: 600 24px/1.1 var(--font-display); margin: 0; }
+  .sub { color: var(--ink-soft); font-size: 13px; }
+  .progress { font-weight: 600; }
+  .spacer { flex: 1; }
+  .primary { background: var(--blue); color: #fff; border: 0; border-radius: var(--radius); padding: 8px 14px; cursor: pointer; font-weight: 600; }
+  .primary:hover { background: var(--blue-deep); }
+  .primary:disabled { opacity: .6; cursor: progress; }
+  .quiet { background: none; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 10px; cursor: pointer; }
+  .quiet:hover { border-color: var(--ink); }
+  .quiet[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+
+  main { max-width: 1180px; margin: 0 auto; padding: 8px 20px 80px; }
+  .note { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 10px 14px; margin: 14px 0; font-size: 14px; }
+  .note button { background: none; border: 0; padding: 0; color: var(--blue-deep); text-decoration: underline; cursor: pointer; }
+  .note:empty { display: none; }
+
+  section.hut { background: var(--card); border: 1px solid var(--hair); border-radius: var(--radius); padding: 16px 18px 18px; margin: 14px 0; }
+  .hut-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .hut-head h2 { font: 600 20px/1.2 var(--font-display); margin: 0; }
+  .meta { color: var(--ink-soft); font-size: 13px; }
+  .status { margin: 6px 0 12px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+  .status strong { font-weight: 600; }
+  .paste { display: inline-flex; gap: 6px; }
+  .paste input { width: 240px; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 8px; background: #fff; }
+  .msg { flex-basis: 100%; font-size: 13px; color: var(--ink-soft); }
+  .msg:empty { display: none; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .tile { display: flex; flex-direction: column; gap: 5px; }
+  .frame { padding: 0; border: 0; background: var(--hair); border-radius: var(--radius); aspect-ratio: 4 / 3; overflow: hidden; outline-offset: 2px; }
+  button.frame { cursor: pointer; }
+  button.frame:hover { outline: 2px solid var(--line-control); }
+  button.frame[aria-pressed="true"] { outline: 3px solid var(--blue); }
+  button.frame:disabled { cursor: not-allowed; opacity: .55; }
+  .frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .tile.main .frame { outline: 1px dashed var(--line-control); }
+  .cap { font-size: 12.5px; line-height: 1.35; }
+  .why { color: var(--ink-soft); font-size: 12px; }
+  .chip { display: inline-block; font-size: 11.5px; font-weight: 600; border: 1px solid var(--line-control); border-radius: 999px; padding: 0 7px; margin-right: 4px; }
+  .chip.pick { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .empty { color: var(--ink-soft); font-size: 14px; margin: 4px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div>
+      <h1>Second photo picker</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="spacer"></div>
+    <button type="button" class="primary" id="export">Download for Claude</button>
+  </div>
+</header>
+<main>
+  <div class="note">
+    Each hut's collage gets a second photo next to its main one: inside the hut, or the
+    landscape around it. Click a photo to pick it, and click it again to undo. The first tile
+    is the main photo the hut already has. Frames are cropped to 4:3, the way the collage
+    will show them.
+    <br>When you're done, click <strong>Download for Claude</strong> and attach the file in the
+    chat. It holds your picks and the photos themselves.
+  </div>
+  <div class="note" id="draft-note"></div>
+  <div class="note" id="export-note" role="status"></div>
+  <div id="huts"></div>
+</main>
+
+<script>
+const DATA = /*DATA*/null;
+const API = 'https://commons.wikimedia.org/w/api.php';
+const DRAFT_KEY = 'hf-second-photo-picks';
+const USABLE = /^(CC BY(-SA)? \d|CC0|Public domain|Copyrighted free use)/i;
+// Filename words that hint at what a photo shows, to help pick.
+const HINTS = [
+  ['inside', /\binnen|interior|gaststube|gastraum|\bstube\b|zimmer|matratzenlager|\blager\b|\bdorm|k(ü|ue)che|kitchen|speisesaal|inside/i],
+  ['view', /blick|aussicht|panorama|\bview\b|\bsee\b|\blake\b|gipfel|summit|\btal\b|valley/i],
+];
+
+const picks = {};          // id -> {file, page, credit, license, license_url} | {file: null}
+for (const h of DATA.huts) if (h.saved) picks[h.id] = h.saved;
+let draft = {};
+try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}') || {}; } catch (e) { draft = {}; }
+const draftCount = Object.keys(draft).length;
+for (const [id, v] of Object.entries(draft)) { if (v === 'none-chosen') delete picks[id]; else picks[id] = v; }
+const saveDraft = (id, v) => { draft[id] = v; try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage off */ } };
+
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else if (v != null && v !== false) n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k);
+  return n;
+};
+const fold = s => String(s).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+  .normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '');
+const plain = html => { const d = new DOMParser().parseFromString(String(html || ''), 'text/html'); return (d.body.textContent || '').replace(/\s+/g, ' ').trim(); };
+const commonsPage = t => 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(t.replace(/ /g, '_'));
+
+// Wikimedia asks for one request at a time from tools like this.
+let chain = Promise.resolve();
+function api(params) {
+  const run = async () => {
+    const u = new URL(API);
+    for (const [k, v] of Object.entries({ format: 'json', formatversion: '2', origin: '*', ...params })) u.searchParams.set(k, v);
+    const r = await fetch(u);
+    if (!r.ok) throw new Error('Commons answered ' + r.status);
+    await new Promise(res => setTimeout(res, 150));
+    return r.json();
+  };
+  const p = chain.then(run, run);
+  chain = p.catch(() => {});
+  return p;
+}
+
+const INFO = { prop: 'imageinfo', iiprop: 'url|size|mime|extmetadata', iiurlwidth: '400',
+  iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|DateTimeOriginal' };
+
+function candidate(page, source) {
+  const ii = page.imageinfo && page.imageinfo[0];
+  if (!ii) return null;
+  const m = ii.extmetadata || {};
+  const license = (m.LicenseShortName && m.LicenseShortName.value) || '';
+  const reasons = [];
+  if (!/^image\/(jpeg|png|webp)$/.test(ii.mime)) reasons.push('not a photo file');
+  if (!USABLE.test(license)) reasons.push(license ? `licence ${license} can't be used` : 'no licence given');
+  if (ii.width < 800) reasons.push('small (' + ii.width + ' px)');
+  const date = plain(m.DateTimeOriginal && m.DateTimeOriginal.value).slice(0, 10);
+  return {
+    file: page.title, page: ii.descriptionurl || commonsPage(page.title), thumb: ii.thumburl || ii.url,
+    credit: plain(m.Artist && m.Artist.value) || 'unknown', license, license_url: (m.LicenseUrl && m.LicenseUrl.value) || '',
+    date, source, usable: reasons.every(r => r.startsWith('small')), reasons,
+    hints: HINTS.filter(([, re]) => re.test(page.title)).map(([w]) => w),
+  };
+}
+
+async function filesIn(cat) {
+  const j = await api({ action: 'query', generator: 'categorymembers', gcmtitle: cat, gcmtype: 'file', gcmlimit: '60', ...INFO });
+  return (j.query && j.query.pages) || [];
+}
+
+/* A hut's candidates: the photos in the Commons categories its main photo is
+   filed under (the ones named after the hut), and in their subcategories
+   (often "Interior of …"). If that finds little, a Commons search for the
+   name fills in, marked as such. */
+async function findCandidates(hut) {
+  const out = new Map();
+  const add = (pages, source) => { for (const p of pages) { if (p.title === hut.main.file || out.has(p.title)) continue; const c = candidate(p, source); if (c) out.set(p.title, c); } };
+  const name = fold(hut.name);
+  const words = hut.name.split(/[\s\-–]+/).map(fold).filter(w => w.length >= 4 && !['huette', 'haus', 'alm', 'hutte'].includes(w));
+  const named = c => { const f = fold(c.replace(/^Category:/, '')); return f.includes(name) || (words.length && words.every(w => f.includes(w))); };
+  let cats = [];
+  if (hut.main.file) {
+    const j = await api({ action: 'query', prop: 'categories', titles: hut.main.file, clshow: '!hidden', cllimit: 'max' });
+    const pg = j.query && j.query.pages && j.query.pages[0];
+    cats = ((pg && pg.categories) || []).map(c => c.title).filter(named).slice(0, 3);
+  }
+  for (const cat of cats) {
+    add(await filesIn(cat), cat.replace(/^Category:/, ''));
+    const s = await api({ action: 'query', list: 'categorymembers', cmtitle: cat, cmtype: 'subcat', cmlimit: '10' });
+    for (const sub of ((s.query && s.query.categorymembers) || []).slice(0, 4)) add(await filesIn(sub.title), sub.title.replace(/^Category:/, ''));
+  }
+  if (out.size < 4) {
+    const j = await api({ action: 'query', generator: 'search', gsrsearch: `"${hut.name}" filetype:bitmap`, gsrnamespace: '6', gsrlimit: '24', ...INFO });
+    add((j.query && j.query.pages) || [], 'search');
+  }
+  return { cats, list: [...out.values()].sort((a, b) => (b.usable - a.usable) || (b.hints.length - a.hints.length) || (b.date || '').localeCompare(a.date || '')) };
+}
+
+const state = {};   // id -> {loading, error, cats, list}
+
+function progress() {
+  const chosen = DATA.huts.filter(h => picks[h.id]).length;
+  document.getElementById('progress').textContent = `${chosen} of ${DATA.huts.length} decided`;
+}
+function render() {
+  const root = document.getElementById('huts');
+  root.textContent = '';
+  for (const hut of DATA.huts) root.append(section(hut));
+  progress();
+}
+// Redraw one hut only, so a link half-typed into another hut's box survives.
+function renderHut(hut) {
+  const old = document.getElementById('hut-' + hut.id);
+  if (old) old.replaceWith(section(hut)); else render();
+  progress();
+}
+
+function section(hut) {
+  const st = state[hut.id] || {};
+  const p = picks[hut.id];
+  const status = p && p.file ? [el('strong', {}, 'Second photo: '), p.file.slice(5)]
+    : p ? [el('strong', {}, 'No second photo'), ' — the collage keeps its cut-out or close-up']
+    : [el('strong', {}, 'Not decided yet')];
+  const msg = el('span', { class: 'msg', role: 'status' });
+  const input = el('input', { type: 'text', placeholder: 'Or paste a Wikimedia Commons link', 'aria-label': `Commons file for ${hut.name}` });
+  const usePasted = async () => {
+    const t = fileTitle(input.value);
+    if (!t) { msg.textContent = 'That isn’t a Wikimedia Commons file. Only Commons photos can be used without the owner’s permission.'; return; }
+    msg.textContent = 'Looking it up…';
+    try {
+      const j = await api({ action: 'query', titles: t, ...INFO });
+      const c = candidate(j.query.pages[0], 'pasted');
+      if (!c) { msg.textContent = 'Commons has no file by that name.'; return; }
+      if (!c.usable) { msg.textContent = 'That photo can’t be used: ' + c.reasons.join(', ') + '.'; return; }
+      st.list = [c, ...(st.list || []).filter(x => x.file !== c.file)];
+      choose(hut, c);
+    } catch (e) { msg.textContent = 'Couldn’t reach Commons: ' + e.message; }
+  };
+
+  const tiles = [];
+  tiles.push(el('div', { class: 'tile main' },
+    el('div', { class: 'frame' }, hut.main.thumb ? el('img', { src: hut.main.thumb, alt: '', loading: 'lazy' }) : null),
+    el('div', { class: 'cap' }, el('span', { class: 'chip' }, 'Main photo'), 'already in the collage')));
+  for (const c of st.list || []) {
+    const picked = p && p.file === c.file;
+    tiles.push(el('div', { class: 'tile' },
+      el('button', { type: 'button', class: 'frame', 'aria-pressed': String(picked), disabled: !c.usable, title: c.file.slice(5),
+        onclick: () => picked ? undecide(hut) : choose(hut, c) }, el('img', { src: c.thumb, alt: c.file.slice(5), loading: 'lazy' })),
+      el('div', { class: 'cap' },
+        picked ? el('span', { class: 'chip pick' }, 'Your pick') : null,
+        c.hints.map(h => el('span', { class: 'chip' }, h)),
+        `${c.date ? c.date.slice(0, 4) : 'no date'} · ${c.license || '?'} · `,
+        el('a', { href: c.page, target: '_blank', rel: 'noopener' }, 'Commons ↗')),
+      el('div', { class: 'why' }, c.source === 'search' ? 'found by searching the name' : c.source === 'pasted' ? 'pasted' : 'in ' + c.source),
+      c.reasons.length ? el('div', { class: 'why' }, c.reasons.join(', ')) : null));
+  }
+
+  let body;
+  if (st.loading) body = el('p', { class: 'empty' }, 'Looking for photos on Commons…');
+  else if (st.error) body = el('p', { class: 'empty' }, 'Couldn’t reach Commons: ' + st.error + ' ', el('button', { type: 'button', class: 'quiet', onclick: () => load(hut, true) }, 'Try again'));
+  else body = el('div', {},
+    el('div', { class: 'grid' }, tiles),
+    st.list && !st.list.length ? el('p', { class: 'empty' }, 'No other photos of this hut on Commons. Paste one if you find it.') : null);
+
+  return el('section', { class: 'hut', id: 'hut-' + hut.id },
+    el('div', { class: 'hut-head' },
+      el('h2', {}, hut.name),
+      el('span', { class: 'meta' }, [hut.type, hut.region, hut.elevation ? Math.round(hut.elevation).toLocaleString('de-DE') + ' m' : null].filter(Boolean).join(' · '))),
+    el('div', { class: 'status' },
+      el('span', {}, ...status),
+      el('button', { type: 'button', class: 'quiet', 'aria-pressed': String(!!p && !p.file), onclick: () => (p && !p.file) ? undecide(hut) : choose(hut, null) }, 'No second photo'),
+      el('span', { class: 'paste' }, input, el('button', { type: 'button', class: 'quiet', onclick: usePasted }, 'Use')),
+      msg),
+    body);
+}
+
+function choose(hut, c) {
+  picks[hut.id] = c ? { file: c.file, page: c.page, credit: c.credit, license: c.license, license_url: c.license_url } : { file: null };
+  saveDraft(hut.id, picks[hut.id]);
+  renderHut(hut);
+}
+function undecide(hut) { delete picks[hut.id]; saveDraft(hut.id, 'none-chosen'); renderHut(hut); }
+
+async function load(hut, force) {
+  if (state[hut.id] && !force && !state[hut.id].error) return;
+  state[hut.id] = { loading: true };
+  renderHut(hut);
+  try {
+    const r = await findCandidates(hut);
+    state[hut.id] = { cats: r.cats, list: r.list };
+    const p = picks[hut.id];
+    if (p && p.file && !r.list.some(c => c.file === p.file)) {
+      const j = await api({ action: 'query', titles: p.file, ...INFO });
+      const c = candidate(j.query.pages[0], 'pasted');
+      if (c) state[hut.id].list.unshift(c);
+    }
+  } catch (e) { state[hut.id] = { error: e.message }; }
+  renderHut(hut);
+}
+
+// Same rules as fileTitle() in scripts/photo_picker_template.html.
+function fileTitle(s) {
+  s = String(s || '').trim();
+  try { s = decodeURIComponent(s); } catch (e) { /* leave as typed */ }
+  s = s.replace(/^(file|datei|image|bild):\s*(?=https?:)/i, '');
+  if (/^https?:/i.test(s)) {
+    const m = s.match(/commons\.(?:m\.)?wikimedia\.org\/wiki\/(?:Special:FilePath\/)?((?:File|Datei):[^?#]+|[^?#/:]+\.\w{3,4})/i)
+      || s.match(/wikipedia\.org\/wiki\/[^#]*#\/media\/((?:File|Datei|Bild):[^?#]+)/i)
+      || s.match(/upload\.wikimedia\.org\/wikipedia\/commons\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/?#]+)/i);
+    if (!m) return null;
+    s = m[1];
+  }
+  s = s.replace(/^(file|datei|image|bild):/i, '').replace(/_/g, ' ').trim();
+  return s ? 'File:' + s[0].toUpperCase() + s.slice(1) : null;
+}
+
+/* The download holds the picks and each picked photo at 1280 px, so Claude can
+   make the collages without reaching Commons. */
+async function exportAll() {
+  const btn = document.getElementById('export');
+  const note = document.getElementById('export-note');
+  btn.disabled = true;
+  const out = { _readme: 'Second photos for the hut collages, made with data/second-photo-picker.html. Attach this file in the chat.', generated: new Date().toISOString(), picks: {} };
+  const failed = [];
+  const ids = DATA.huts.map(h => h.id).filter(id => picks[id]);
+  let n = 0;
+  for (const id of ids) {
+    const p = picks[id];
+    const name = DATA.huts.find(h => h.id === id).name;
+    note.textContent = `Fetching photo ${++n} of ${ids.length}…`;
+    if (!p.file) { out.picks[id] = { _name: name, file: null }; continue; }
+    const entry = { _name: name, ...p, image: null };
+    try {
+      const j = await api({ action: 'query', titles: p.file, prop: 'imageinfo', iiprop: 'url', iiurlwidth: '1280' });
+      const ii = j.query.pages[0].imageinfo[0];
+      const r = await fetch(ii.thumburl || ii.url);
+      if (!r.ok) throw new Error(r.status);
+      const blob = await r.blob();
+      entry.image = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = rej; fr.readAsDataURL(blob); });
+    } catch (e) { failed.push(name); }
+    out.picks[id] = entry;
+  }
+  const blob = new Blob([JSON.stringify(out, null, 1) + '\n'], { type: 'application/json' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: 'second_photos.json' });
+  document.body.append(a); a.click(); a.remove();
+  note.textContent = failed.length
+    ? `Downloaded second_photos.json. The photo for ${failed.join(', ')} couldn't be fetched; the pick is in the file anyway, so send it as it is.`
+    : `Downloaded second_photos.json with ${ids.length} decision${ids.length === 1 ? '' : 's'}. Attach it in the chat.`;
+  btn.disabled = false;
+}
+
+document.getElementById('sub').textContent = `${DATA.huts.length} huts · ${DATA.label}`;
+document.getElementById('export').addEventListener('click', exportAll);
+if (draftCount) {
+  const note = document.getElementById('draft-note');
+  note.append(`Restored ${draftCount} choice${draftCount === 1 ? '' : 's'} from your last visit. `,
+    el('button', { type: 'button', onclick: () => { try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* */ } location.reload(); } }, 'Start over'));
+}
+render();
+// Load the huts one after another, top first.
+(async () => { for (const h of DATA.huts) await load(h); })();
+</script>
+</body>
+</html>

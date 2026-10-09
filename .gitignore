@@ -20,3 +20,5 @@ venv/
 
 # written by scripts/fetch_photos.py --picker
 data/photo-picker.html
+# written by scripts/make_second_photo_picker.py
+data/second-photo-picker.html

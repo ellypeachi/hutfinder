@@ -1,0 +1,576 @@
+/* ============================================================
+   Hut pages — /de/hut/<slug>/ and /en/hut/<slug>/
+   ------------------------------------------------------------
+   One static page per hut, written by scripts/build_hut_pages.mjs
+   from the data files, so search engines and people without
+   JavaScript get the whole page. src/hutpage.js only adds the
+   month switch on a phone and the map.
+
+   Phone layout below 720px: the collage comes first, the bed
+   calendar shows one month at a time, and the map sits under
+   the nearby huts instead of beside them.
+   ============================================================ */
+
+.hp {
+  min-height: 100vh;
+  background: var(--cream);
+}
+.hp a { color: var(--blue-deep); }
+.hp a:hover { color: var(--ink); }
+
+.hp-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: var(--s-5);
+  padding-right: var(--s-5);
+}
+
+/* An underlined link: the line is a powder rule under the words, as in the app. */
+.hp-u { border-bottom: 1px solid var(--powder); }
+a:hover > .hp-u { border-bottom-color: currentColor; }
+
+.hp-icon { flex-shrink: 0; }
+
+
+/* ---- header ---------------------------------------------------------- */
+
+.hp-head { border-bottom: 1px solid var(--hair); }
+.hp-head .hp-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3) var(--s-5);
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+.hp-mark { display: flex; align-items: center; }
+.hp-mark img { display: block; height: 26px; }
+.hp-head-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: var(--t-meta);
+}
+.hp-head-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.hp-lang { color: var(--ink) !important; }
+.hp-short { display: none; }
+
+
+/* ---- the top: name, facts, booking, collage ------------------------------ */
+
+.hp-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-7);
+  padding-top: 20px;
+  padding-bottom: 64px;
+}
+
+.hp-crumbs {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.hp-crumbs a { color: var(--ink-soft); }
+.hp-crumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 6px; }
+.hp-crumbs li + li::before { content: "›"; margin-right: 6px; }
+
+.hp-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+}
+.hp-facts {
+  flex: 1 1 440px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+/* No photo: the facts keep to a reading width instead of stretching. */
+.hp-top-solo .hp-facts { max-width: 680px; }
+
+.hp-name {
+  font-size: var(--t-section);
+  line-height: var(--lh-section);
+  font-variation-settings: var(--fr-head);
+}
+.hp-meta { margin: 6px 0 0; color: var(--ink-soft); font-size: 15px; }
+.hp-summary { margin: 0; }
+
+.hp-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  font-size: var(--t-meta);
+}
+.hp-contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+@media (pointer: fine) {
+  .hp-contact a { min-height: 32px; }
+}
+
+.hp-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hair);
+  font-size: var(--t-meta);
+  color: var(--ink-soft);
+}
+.hp-band a:not(.hp-btn):not(.hp-btn-line) { font-weight: 600; text-decoration: none; }
+
+.hp-btn,
+.hp-btn-line {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.hp .hp-btn { background: var(--blue); color: #fff; }
+.hp .hp-btn:hover { background: var(--blue-deep); color: #fff; }
+.hp .hp-btn-line { border: 1px solid var(--line-control); color: var(--ink); padding: 0 16px; }
+.hp .hp-btn-line:hover { border-color: var(--ink); }
+
+
+/* ---- the collage ---------------------------------------------------------
+   Everything is placed in percent of the frame, which build_hut_pages.mjs
+   works out from data/collages.json, and sized in cqw (a percent of the
+   frame's width), so the whole collage scales as one picture. */
+
+.hp-figure {
+  flex: 1 1 560px;
+  min-width: 0;
+  max-width: 640px;
+  margin: 0;
+}
+.hp-collage {
+  position: relative;
+  container-type: inline-size;
+}
+.hp-collage > * { position: absolute; }
+.hp-piece { left: 0; top: 0; width: 100%; }
+.hp-piece img, .hp-second { display: block; width: 100%; height: auto; }
+
+.hp-spark {
+  position: absolute;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 1.5px rgba(58, 42, 32, 0.4));
+}
+
+.hp-labels {
+  left: 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4cqw;
+}
+.hp-labels span {
+  background: #FFFDF8;
+  color: var(--ink);
+  font-family: var(--font-display);
+  line-height: 1.1;
+  font-variation-settings: var(--fr-mark);
+  box-shadow: 0 2px 6px rgba(58, 42, 32, 0.18);
+  white-space: nowrap;
+}
+.hp-labels span:first-child { padding: 0.13em 0.53em 0.2em; font-size: 5.2cqw; transform: rotate(-3deg); }
+.hp-labels span + span { margin-left: 7.6cqw; padding: 0.14em 0.64em 0.23em; font-size: 3.8cqw; transform: rotate(2deg); }
+
+/* A plain photo: no collage for this hut (see make_collages.py). */
+.hp-photo { display: block; width: 100%; height: auto; border-radius: var(--radius); }
+
+.hp-credit {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.hp-credit a { color: var(--ink-soft); white-space: nowrap; }
+
+
+/* ---- washi tape ------------------------------------------------------------
+   A strip with ragged ends. Two patterns (wave, flowers) are SVG and drawn
+   by the page builder; the rest are backgrounds. */
+
+.hp-tape {
+  clip-path: polygon(0 12%, 3% 0, 97% 6%, 100% 20%, 97% 36%, 100% 54%, 97% 72%, 100% 90%, 96% 100%, 4% 94%, 0 80%, 3% 62%, 0 44%, 3% 26%);
+}
+svg.hp-tape { clip-path: none; }
+.tape-clear-blue { background: rgba(220, 232, 244, 0.82); }
+.tape-blue-gingham { background-color: rgba(198, 218, 240, 0.85); background-image: linear-gradient(90deg, rgba(53, 100, 143, 0.26) 50%, transparent 50%), linear-gradient(rgba(53, 100, 143, 0.26) 50%, transparent 50%); background-size: 10px 10px; }
+.tape-green-gingham { background-color: rgba(212, 226, 196, 0.88); background-image: linear-gradient(90deg, rgba(110, 145, 85, 0.24) 50%, transparent 50%), linear-gradient(rgba(110, 145, 85, 0.24) 50%, transparent 50%); background-size: 8px 8px; }
+.tape-red-gingham { background-color: rgba(252, 232, 230, 0.92); background-image: linear-gradient(90deg, rgba(190, 48, 58, 0.36) 50%, transparent 50%), linear-gradient(rgba(190, 48, 58, 0.36) 50%, transparent 50%); background-size: 10px 10px; }
+.tape-orange-dots { background-color: rgba(240, 170, 96, 0.92); background-image: radial-gradient(circle, rgba(255, 253, 248, 0.95) 1.6px, transparent 2px); background-size: 8px 8px; background-position: 2px 3px; }
+.tape-pink-dots { background-color: rgba(252, 238, 234, 0.95); background-image: radial-gradient(circle, rgba(212, 110, 96, 0.9) 1.3px, transparent 1.7px), radial-gradient(circle, rgba(212, 110, 96, 0.9) 1.3px, transparent 1.7px); background-size: 14px 14px; background-position: 0 0, 7px 7px; }
+.tape-plum-dots { background-color: rgba(94, 30, 58, 0.95); background-image: radial-gradient(circle, rgba(255, 253, 248, 0.95) 1.5px, transparent 1.9px); background-size: 12px 10px; background-position: 3px 2px; }
+.tape-grid-check { background-color: rgba(253, 249, 244, 0.95); background-image: linear-gradient(90deg, rgba(222, 120, 140, 0.6) 1px, transparent 1px), linear-gradient(rgba(222, 120, 140, 0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(224, 170, 60, 0.6) 1px, transparent 1px), linear-gradient(rgba(224, 170, 60, 0.6) 1px, transparent 1px); background-size: 9px 9px; background-position: 0 0, 0 0, 4px 4px, 4px 4px; }
+.tape-terracotta-stripes { background: repeating-linear-gradient(135deg, rgba(200, 112, 92, 0.95) 0 9px, rgba(255, 250, 244, 0.95) 9px 11px); }
+.tape-mustard-stripes { background: repeating-linear-gradient(120deg, rgba(214, 160, 66, 0.95) 0 12px, rgba(255, 250, 240, 0.95) 12px 15px); }
+.tape-blush-pinstripe { background: repeating-linear-gradient(0deg, rgba(232, 188, 176, 0.95) 0 2px, rgba(255, 248, 244, 0.95) 2px 4px); }
+.tape-pink-bands { background: repeating-linear-gradient(115deg, rgba(240, 192, 202, 0.92) 0 14px, rgba(226, 112, 146, 0.88) 14px 26px); }
+.tape-gold-dots { background-color: rgba(255, 252, 245, 0.96); background-image: radial-gradient(circle, rgba(212, 168, 60, 0.95) 1.6px, transparent 2px); background-size: 8px 8px; }
+.tape-terracotta-dots { background-color: rgba(196, 106, 87, 0.95); background-image: radial-gradient(circle, rgba(255, 250, 240, 0.95) 2.2px, transparent 2.7px); background-size: 13px 12px; background-position: 2px 3px; }
+.tape-butter-stripes { background: repeating-linear-gradient(0deg, rgba(237, 234, 154, 0.9) 0 2px, rgba(255, 252, 238, 0.95) 2px 5px); }
+
+
+/* ---- sections ------------------------------------------------------------ */
+
+.hp-section { display: flex; flex-direction: column; gap: 14px; }
+.hp-h2 {
+  font-family: var(--font-ui);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  font-variation-settings: normal;
+}
+.hp-note { margin: 0; font-size: var(--t-label); color: var(--ink-soft); }
+.hp-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+
+
+/* ---- free beds ------------------------------------------------------------- */
+
+.hp-cal {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+}
+.hp-cal-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px 16px;
+}
+.hp-cal-range { margin: 0; font-size: 14px; font-weight: 600; }
+
+.hp-dow,
+.hp-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.hp-dow { margin-bottom: 5px; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.hp-weeks { display: flex; flex-direction: column; gap: 5px; }
+
+.hp-day {
+  min-height: 104px;
+  min-width: 0;
+  padding: 8px 9px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+.hp-day-open,
+.hp-day-closed { border: 1px solid var(--hair); border-radius: var(--radius); }
+.hp-day-open { background: var(--cream); }
+.hp-day-closed { justify-content: space-between; }
+.hp-num { font-size: 18px; line-height: 1; font-weight: 600; }
+.hp-day-open .hp-num { color: var(--ink); }
+
+.hp-row { display: flex; align-items: center; gap: 6px; }
+.hp-row b { margin-left: auto; font-weight: 700; }
+
+.hp-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  font-size: var(--t-label);
+  color: var(--ink-soft);
+}
+.hp-legend > span { display: inline-flex; align-items: center; gap: 5px; }
+.hp-legend-phone { display: none; }
+.hp-cal-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+/* The phone calendar: one month at a time. Without JavaScript every month is
+   shown, one under the other. */
+.hp-months { display: none; }
+.hp-month + .hp-month { margin-top: 18px; }
+.hp-js .hp-month[data-hidden] { display: none; }
+.hp-month-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: -6px -6px 6px;
+}
+.hp-month-name { margin: 0; font-size: 14px; font-weight: 600; }
+.hp-month-head .hp-step { visibility: hidden; }
+.hp-js .hp-month-head .hp-step { visibility: visible; }
+.hp-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.hp-step:disabled { color: var(--ink-soft); cursor: default; opacity: 0.45; }
+.hp-keys {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.hp-keys > span { display: inline-flex; align-items: center; gap: 5px; }
+
+
+/* ---- the hut's own text --------------------------------------------------- */
+
+.hp-desc { max-width: 680px; }
+.hp-desc .hp-h2 { margin-bottom: 6px; }
+.hp-desc p { margin: 0; }
+.hp-desc p + p { margin-top: 10px; }
+.hp-desc .hp-note { margin-top: 6px; }
+
+
+/* ---- huts nearby ---------------------------------------------------------- */
+
+.hp-near {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: stretch;
+}
+.hp-cards {
+  flex: 1 1 320px;
+  max-width: 380px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hp-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.9rem;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(58, 42, 32, 0.07), 0 3px 10px rgba(58, 42, 32, 0.06);
+  transition: border-color var(--dur) var(--ease);
+}
+.hp-card:has(.hp-card-link:hover) { border-color: var(--blue); }
+.hp-card-name { font-weight: 600; font-size: 1.05rem; line-height: 1.3; color: var(--ink); }
+.hp .hp-card-link { color: var(--ink); text-decoration: none; }
+/* The name's link covers the whole card, so the card is one tap; Book and
+   Call sit above it and stay their own links. */
+.hp-card-link::after { content: ""; position: absolute; inset: 0; border-radius: 8px; }
+.hp-card .hf-card-band { position: relative; }
+.hp-card .hf-card-band a { position: relative; z-index: 1; }
+.hp-card .hp-btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+@media (pointer: coarse) { .hp-card .hp-btn { min-height: 44px; } }
+
+.hp-mapcol {
+  flex: 999 1 520px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hp-mapbox {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 560px;
+  background: var(--map-void, #EDE7DC);
+  border: 1px solid var(--hair);
+  border-radius: 8px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.hp-map { position: absolute; inset: 0; }
+.hp-map-legend {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 6px 10px;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink);
+  pointer-events: none;
+}
+.hp-map-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.hp-pin { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 1px #fff; }
+.hp-pin-muted { width: 9px; height: 9px; background: var(--map-pin-muted, #9C8B7D); }
+.hp-map-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.hp-map-foot button,
+.hp-map-close {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue-deep);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hp-map-close {
+  position: absolute;
+  z-index: 2;
+  right: 12px;
+  top: 12px;
+  padding: 0 14px;
+  min-height: 44px;
+  background: var(--card);
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+.hp-map-close[hidden] { display: none; }
+.hp-mapbox.is-open {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+.hp-more { align-self: flex-start; font-weight: 600; text-decoration: none; }
+
+
+/* ---- footer ---------------------------------------------------------------- */
+
+.hp-foot { border-top: 1px solid var(--hair); }
+.hp-foot .hp-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 32px;
+  padding-top: var(--s-5);
+  padding-bottom: 40px;
+  font-size: var(--t-label);
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+.hp-foot-text { max-width: 620px; display: flex; flex-direction: column; gap: 4px; }
+.hp-foot-links { display: flex; gap: 18px; }
+.hp-foot-links a { color: var(--ink-soft); }
+
+
+/* ---- phone ------------------------------------------------------------------ */
+
+@media (max-width: 720px) {
+  .hp-wrap { padding-left: var(--s-4); padding-right: var(--s-4); }
+  .hp-head .hp-wrap { padding-top: 8px; padding-bottom: 8px; gap: 12px; }
+  .hp-mark { min-height: 44px; }
+  .hp-mark img { height: 22px; }
+  .hp-head-links { gap: 8px; font-size: 14px; }
+  .hp-head-links a { min-height: 44px; min-width: 44px; justify-content: center; }
+  .hp-long { display: none; }
+  .hp-short { display: inline; }
+
+  .hp-main { gap: 34px; padding-top: 0; padding-bottom: 40px; }
+  .hp-crumbs { margin: 0; padding: 10px 0; font-size: 13px; }
+  .hp-top { gap: 14px; }
+  .hp-figure { order: -1; flex-basis: 100%; max-width: none; margin: 4px -4px 0; }
+  .hp-facts { flex-basis: 100%; gap: 14px; }
+  .hp-name { font-size: var(--t-name); line-height: var(--lh-name); font-variation-settings: var(--fr-name); }
+  .hp-meta { margin-top: 4px; font-size: 14.5px; }
+  .hp-summary, .hp-desc p { font-size: 15px; }
+  .hp-band { gap: 8px 16px; padding-top: 12px; font-size: 14px; }
+  .hp-credit { font-size: 11.5px; }
+
+  .hp-section { gap: 10px; }
+  .hp-h2 { font-size: 18px; }
+  .hp-section-head { flex-direction: column; gap: 2px; }
+
+  .hp-cal { padding: 10px; gap: 10px; }
+  .hp-cal-top, .hp-weeks-view { display: none; }
+  .hp-months { display: block; }
+  .hp-cal-foot { flex-direction: column; align-items: stretch; }
+  .hp-legend-wide { display: none; }
+  .hp-legend-phone { display: inline-flex; justify-content: center; font-size: 12.5px; }
+  .hp-cal-foot .hp-btn { align-self: flex-start; }
+
+  .hp-near { flex-direction: column; gap: 12px; }
+  .hp-cards { max-width: none; flex-basis: auto; }
+  .hp-mapcol { flex-basis: auto; margin-top: 6px; }
+  .hp-mapbox { flex: none; min-height: 0; height: 320px; }
+  .hp-map-legend { left: 10px; top: 10px; flex-direction: column; gap: 2px; padding: 6px 9px; font-size: 11.5px; }
+
+  .hp-foot .hp-wrap { flex-direction: column; padding-top: 20px; padding-bottom: 32px; font-size: 12.5px; }
+  .hp-foot-links a { min-height: 44px; display: inline-flex; align-items: center; }
+}
+
+/* The phone month grid: smaller cells, an icon per room type instead of its
+   name, and regular-weight numbers, which are easier on the eyes when every
+   cell has three. */
+.hp-months .hp-dow, .hp-months .hp-week, .hp-months .hp-weeks { gap: 3px; }
+.hp-months .hp-dow { margin-bottom: 3px; font-size: 11.5px; }
+.hp-months .hp-day { min-height: 78px; padding: 5px 4px; gap: 5px; font-size: 11.5px; }
+.hp-months .hp-num { font-size: 13.5px; font-weight: 700; }
+.hp-months .hp-day-past .hp-num,
+.hp-months .hp-day-closed .hp-num { font-weight: 600; }
+.hp-months .hp-row { gap: 3px; }
+.hp-months .hp-row b { margin-left: 0; font-weight: 400; }
