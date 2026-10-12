@@ -32,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import swap_photos as sw  # noqa: E402  (the file layout and helpers are shared)
 
 ROOT = sw.ROOT
+USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use')   # as in add_second_photos.py
 
 
 def main():
@@ -48,6 +49,11 @@ def main():
     a = ap.parse_args()
     if not a.file.startswith('File:'):
         sys.exit('--file must be the Commons file name, starting with "File:"')
+    # Every hut page shows its photos as a collage, which is a changed version
+    # of them, so only licences that allow that and ask nothing more than a
+    # credit (and share-alike) will do. The GFDL wants its whole text along.
+    if not a.license.startswith(USABLE) or 'NC' in a.license or 'ND' in a.license:
+        sys.exit(f'{a.license}: a collage can’t use a photo under this licence. Pick another photo.')
 
     huts = json.loads((ROOT / 'public' / 'huts.json').read_text(encoding='utf-8'))
     data = json.loads(sw.PHOTOS_JSON.read_text(encoding='utf-8'))
