@@ -578,18 +578,17 @@ function band(L, h) {
    has it. A collage is an adaptation, so it says so; if either photo is
    CC BY-SA, the collage is shared under CC BY-SA too, as the licence requires. */
 function credit(L, ph, isCollage, two) {
-  const one = (p) => {
-    const who = p.page ? `<a href="${esc(p.page)}">${esc(p.credit || '')}</a>` : esc(p.credit || '')
-    const lic = p.license_url ? `<a href="${esc(p.license_url)}">${esc(p.license)}</a>` : esc(p.license || '')
-    return `${who} · ${lic}`
-  }
+  // Plain text, no links, the same as the photo credit in the app's pop-up.
+  // A licence name stays on one line, so "CC BY-SA" never breaks at its hyphen.
+  const lic = (name) => `<span class="hp-nowrap">${esc(name || '')}</span>`
+  const one = (p) => `${esc(p.credit || '')} · ${lic(p.license)}`
   let s = two
     ? `${esc(L.t('page.photos'))} ${one(ph)} ${esc(L.t('page.and'))} ${one(two)}`
     : `${esc(L.t('detail.photoCredit'))} ${one(ph)}`
   if (isCollage) {
     s += ` · ${esc(L.t('page.collageBy'))}`
     if ([ph, two].some((p) => p && /^CC BY-SA/i.test(p.license || '')))
-      s += `, ${esc(L.t('page.sharedUnder', { license: '' }).trim())} <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>`
+      s += `, ${esc(L.t('page.sharedUnder', { license: '' }).trim())} ${lic('CC BY-SA 4.0')}`
   }
   return `<figcaption class="hp-credit">${s}</figcaption>`
 }
