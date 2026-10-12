@@ -31,6 +31,18 @@ for (const cal of document.querySelectorAll('[data-months]')) {
   show(0)
 }
 
+/* Room type pills on the phone calendar: the days show the free beds of the
+   type picked, or of all types together. */
+for (const months of document.querySelectorAll('[data-months]')) {
+  const pills = [...months.querySelectorAll('.hp-type')]
+  for (const pill of pills) {
+    pill.addEventListener('click', () => {
+      months.dataset.show = pill.dataset.type
+      for (const p of pills) p.setAttribute('aria-pressed', String(p === pill))
+    })
+  }
+}
+
 /* The map. Leaflet and the tiles load only once the map is near the screen,
    so a visitor who reads the top of the page and books loads neither. */
 const box = document.querySelector('[data-map]')
