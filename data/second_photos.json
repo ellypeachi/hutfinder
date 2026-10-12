@@ -581,11 +581,11 @@
  },
  "w121648748": {
   "_name": "Tuxerjoch Haus",
-  "file": "File:Tuxerjochhütte mit Gefrorener Wand (33638).jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Tuxerjochh%C3%BCtte_mit_Gefrorener_Wand_(33638).jpg",
-  "credit": "Foto: Sammlung Risch-Lau, Vorarlberger Landesbibliothek",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0",
+  "file": "File:Tuxerjochhaus.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ATuxerjochhaus.jpg",
+  "credit": "Tiia Monto",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0/deed.en",
   "src": "data/second_photos/w121648748.webp",
   "_checked": "2026-10-12"
  },
@@ -3137,6 +3137,16 @@
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w85800219.webp",
+  "_checked": "2026-10-12"
+ },
+ "w85800333": {
+  "_name": "Madlenerhaus",
+  "file": "File:Madlenerhaus August 2018.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File:Madlenerhaus_August_2018.JPG",
+  "credit": "Hejkal",
+  "license": "CC BY-SA 3.0 de",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
+  "src": "data/second_photos/w85800333.webp",
   "_checked": "2026-10-12"
  },
  "w85800400": {
