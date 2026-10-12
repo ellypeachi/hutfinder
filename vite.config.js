@@ -15,6 +15,8 @@ export default defineConfig({
       faq: fileURLToPath(new URL('./faq/index.html', import.meta.url)),
       imprint: fileURLToPath(new URL('./imprint/index.html', import.meta.url)),
       privacy: fileURLToPath(new URL('./privacy/index.html', import.meta.url)),
+      // Only for the hut pages' CSS and JS; see scripts/build_hut_pages.mjs.
+      hutTemplate: fileURLToPath(new URL('./hut-template/index.html', import.meta.url)),
     },
   },
 },
