@@ -3141,13 +3141,9 @@
  },
  "w85800333": {
   "_name": "Madlenerhaus",
-  "file": "File:Madlenerhaus August 2018.JPG",
-  "page": "https://commons.wikimedia.org/wiki/File:Madlenerhaus_August_2018.JPG",
-  "credit": "Hejkal",
-  "license": "CC BY-SA 3.0 de",
-  "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
-  "src": "data/second_photos/w85800333.webp",
-  "_checked": "2026-10-12"
+  "file": null,
+  "_checked": "2026-10-12",
+  "_note": "Madlenerhaus.JPG is GFDL, which a collage cannot use"
  },
  "w85800400": {
   "_name": "Tübinger Hütte",
