@@ -61,15 +61,15 @@
    "src": "collages/w127908485-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 612,
-   "h": 330,
-   "x": 460,
-   "y": 656.0,
-   "width": 560,
-   "src": "collages/w127908485-sticker.webp"
+   "kind": "photo",
+   "w": 538,
+   "h": 443,
+   "x": 560,
+   "y": 621.4,
+   "width": 460,
+   "src": "collages/w127908485-photo.webp"
   },
-  "frame_h": 957.9,
+  "frame_h": 1000.2,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -82,12 +82,20 @@
     "rot": -29.3
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "pink-bands",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 26.8
+   },
+   {
+    "kind": "clear-blue",
+    "x": 698.0,
+    "y": 615.4,
+    "w": 160,
+    "h": 45,
+    "rot": 10.7
    }
   ],
   "sparkles": {
@@ -273,15 +281,15 @@
    "src": "collages/w83122419-main.webp"
   },
   "second": {
-   "kind": "zoom",
+   "kind": "photo",
    "w": 538,
    "h": 443,
-   "x": 580,
-   "y": 628.8,
-   "width": 440,
-   "src": "collages/w83122419-zoom.webp"
+   "x": 560,
+   "y": 621.4,
+   "width": 460,
+   "src": "collages/w83122419-photo.webp"
   },
-  "frame_h": 991.1,
+  "frame_h": 1000.2,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -303,8 +311,8 @@
    },
    {
     "kind": "clear-blue",
-    "x": 712.0,
-    "y": 622.8,
+    "x": 698.0,
+    "y": 615.4,
     "w": 160,
     "h": 45,
     "rot": 5.9
@@ -316,8 +324,8 @@
     341.7
    ],
    "single": [
-    542.1,
-    521.7
+    530.1,
+    509.7
    ]
   }
  },
@@ -328,15 +336,15 @@
    "src": "collages/w83191764-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 462,
-   "x": 465.9,
-   "y": 537.5,
-   "width": 554.1125541125541,
-   "src": "collages/w83191764-sticker.webp"
+   "kind": "photo",
+   "w": 538,
+   "h": 443,
+   "x": 560,
+   "y": 547.1,
+   "width": 460,
+   "src": "collages/w83191764-photo.webp"
   },
-  "frame_h": 937.5,
+  "frame_h": 925.9,
   "main_h": 717.5,
   "label_top": 542.5,
   "tapes": [
@@ -349,12 +357,20 @@
     "rot": -30.9
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-floral",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 26.5
+   },
+   {
+    "kind": "clear-blue",
+    "x": 698.0,
+    "y": 541.1,
+    "w": 160,
+    "h": 45,
+    "rot": 6.0
    }
   ],
   "sparkles": {
@@ -430,15 +446,15 @@
    "src": "collages/w85132012-main.webp"
   },
   "second": {
-   "kind": "zoom",
+   "kind": "photo",
    "w": 538,
    "h": 443,
-   "x": 580,
-   "y": 558.8,
-   "width": 440,
-   "src": "collages/w85132012-zoom.webp"
+   "x": 560,
+   "y": 551.4,
+   "width": 460,
+   "src": "collages/w85132012-photo.webp"
   },
-  "frame_h": 921.1,
+  "frame_h": 930.1,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -460,8 +476,8 @@
    },
    {
     "kind": "clear-blue",
-    "x": 712.0,
-    "y": 552.8,
+    "x": 698.0,
+    "y": 545.4,
     "w": 160,
     "h": 45,
     "rot": 9.3
