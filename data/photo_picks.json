@@ -36,12 +36,30 @@
     "file": "File:Bad-Kissinger-Huette-Aggenstein-2023.jpg",
     "_checked": "2026-09-21"
   },
+  "w674870317": {
+    "_name": "Bergerseehütte",
+    "file": "File:Virgen - Bergerseehütte.jpg",
+    "_checked": "2026-10-12",
+    "_note": "swapped with the second photo"
+  },
+  "n389785723": {
+    "_name": "Bergfriedhütte",
+    "file": "File:Bergfriedhütte, Nebengebäude des ÖAV Alpenvereinhauses, (1780 m ü.A.), Kärnten.jpg",
+    "_checked": "2026-10-12",
+    "_note": "swapped with the second photo"
+  },
   "w508275860": {
     "_name": "Berghaus Kleinwalsertal",
     "file": null,
     "_checked": "2026-09-21",
     "_wanted": "https://www.dav-memmingen.de/fileadmin/_processed_/b/1/csm_Memminger-Huette-web_9b4b57f1d8.jpg",
     "_note": "Photo from another website, so it isn't free to use. Ask the hut for permission, or find one on Commons."
+  },
+  "w39216603": {
+    "_name": "Berndlalm",
+    "file": "File:Berndlalm.jpg",
+    "_checked": "2026-10-12",
+    "_note": "swapped with the second photo"
   },
   "n925572227": {
     "_name": "Biberacher Hütte",
