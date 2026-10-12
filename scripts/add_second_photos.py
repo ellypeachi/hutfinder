@@ -56,6 +56,8 @@ def main():
             print(f'  {name}: skipped, licence "{lic}" can\'t be used')
             continue
         entry = {k: p.get(k) for k in ('file', 'page', 'credit', 'license', 'license_url')}
+        # Commons sometimes gives the author twice ("Unknown authorUnknown author").
+        entry['credit'] = re.sub(r'^(.+?)\s*\1$', r'\1', (entry['credit'] or '').strip()) or 'unknown'
         if not p.get('image'):
             print(f'  {name}: {p["file"]} — the photo itself is missing from the file, so the collage stays as it is')
             if not check:
