@@ -264,7 +264,6 @@ export const de = {
   "page.moreInfo": "Mehr Informationen anzeigen",
   "page.lessInfo": "Weniger anzeigen",
   "page.roomType": "Zimmerart",
-  "page.allRooms": "Alle",
   "page.nearby": "Hütten in der Nähe",
   "page.nearbyBookable": "Hütten in der Nähe, die du online buchen kannst",
   "page.away": "{km} km entfernt",

@@ -406,14 +406,12 @@ const typesOf = (rec) => BUCKETS.map((k, j) => [k, j]).filter(([, j]) => rec.cap
 function cellRows(L, rec, iso, phone) {
   const a = rec.days[iso]
   if (phone) {
-    /* On a phone a day shows one number: the free beds of the room type picked
-       above the calendar, or of all types together. Every type's number is in
-       the page; CSS shows the picked one. */
-    const vals = typesOf(rec).map(([k, j]) => [k, a[j] || 0])
-    if (vals.length > 1) vals.unshift(['all', vals.reduce((sum, [, n]) => sum + n, 0)])
-    return vals
-      .map(([k, n]) => `<span class="hp-v" data-t="${k}">${gauge(n, 9)}<b style="color:${bedColor(n)}">${esc(n > 0 ? L.nf(n) : L.t('avail.full'))}</b></span>`)
-      .join('')
+    /* On a phone a day shows one number: the free beds of the room types
+       picked above the calendar, added up. The page is written with all of
+       them picked; data-beds holds each type's count, so src/hutpage.js can
+       redo the sum when the pick changes. */
+    const n = typesOf(rec).reduce((sum, [, j]) => sum + (a[j] || 0), 0)
+    return `<span class="hp-v" data-beds="${BUCKETS.map((_, j) => a[j] || 0).join(',')}">${gauge(n, 9)}<b style="color:${bedColor(n)}">${esc(n > 0 ? L.nf(n) : L.t('avail.full'))}</b></span>`
   }
   return BUCKETS.map((k, j) => {
     if (!(rec.caps && rec.caps[j] > 0)) return ''
@@ -475,14 +473,14 @@ function bedsSection(L, h) {
     m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`
   }
   const monthName = (m) => L.date(`${m}-01`, { month: 'long', year: 'numeric' })
+  // Room type pills, all picked to start with; any mix can be picked.
   const types = typesOf(rec)
-  const show = types.length > 1 ? 'all' : types[0][0]
-  const pill = (k, label) =>
-    `<button type="button" class="hf-chip hf-pill hp-type" data-type="${k}" aria-pressed="${k === show}">${esc(label)}</button>`
+  const pill = (k, j) =>
+    `<button type="button" class="hf-chip hf-pill hp-type" data-i="${j}" aria-pressed="true">${esc(L.t(`page.short.${k}`))}</button>`
   const keys =
     types.length > 1
-      ? `<div class="hp-types" role="group" aria-label="${esc(L.t('page.roomType'))}">${pill('all', L.t('page.allRooms'))}${types.map(([k]) => pill(k, L.t(`page.short.${k}`))).join('')}</div>`
-      : `<p class="hp-types-one">${esc(L.t(`bucket.${show}`))}</p>`
+      ? `<div class="hp-types" role="group" aria-label="${esc(L.t('page.roomType'))}">${types.map(([k, j]) => pill(k, j)).join('')}</div>`
+      : `<p class="hp-types-one">${esc(L.t(`bucket.${types[0][0]}`))}</p>`
   const months = monthKeys
     .map((m, idx) => {
       const first1 = `${m}-01`
@@ -502,7 +500,7 @@ function bedsSection(L, h) {
       return `<div class="hp-month"><div class="hp-month-head">${step(-1, prev, 'prev')}<p class="hp-month-name">${esc(monthName(m))}</p>${step(1, next, 'chevron')}</div>${dowRow(L)}<div class="hp-weeks">${rows}</div></div>`
     })
     .join('')
-  const phone = `<div class="hp-months" data-months data-show="${show}">${keys}${months}</div>`
+  const phone = `<div class="hp-months" data-months data-full="${esc(L.t('avail.full'))}" data-locale="${NUMBER_LOCALES[L.lang] || L.locale}">${keys}${months}</div>`
 
   return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div></section>`
 }
@@ -527,7 +525,9 @@ function plainParas(html) {
 /* The hut's own text in this language, or else in the first language the hut
    wrote one in, labelled as such. Our own translations (nl, cs) are not used. */
 /* The hut's own text, folded into the intro behind "View more information".
-   It is in the HTML either way, so search engines read it. */
+   It opens above the button, so "Show less" ends up under the text. It is in
+   the HTML either way, so search engines read it; without JavaScript it is
+   simply shown. */
 function moreInfo(L, h) {
   const e = textOf(h)
   if (!e) return ''
@@ -539,8 +539,8 @@ function moreInfo(L, h) {
   const note = code === L.lang ? L.t('page.descSource') : L.t('page.descSourceIn', { language: L.langName(code) })
   const langAttr = code === L.lang ? '' : ` lang="${code}"`
   return (
-    `<details class="hp-info"><summary class="hf-tap-min"><span class="hp-u hp-info-open">${esc(L.t('page.moreInfo'))}</span><span class="hp-u hp-info-close">${esc(L.t('page.lessInfo'))}</span>${icon('chevron', 15, 2)}</summary>` +
-    `<div class="hp-info-body"><div${langAttr}>${paras.map((p) => `<p>${esc(p)}</p>`).join('')}</div><p class="hp-source">${esc(note)}</p></div></details>`
+    `<div class="hp-info"><div class="hp-info-body" id="hut-info"><div${langAttr}>${paras.map((p) => `<p>${esc(p)}</p>`).join('')}</div><p class="hp-source">${esc(note)}</p></div>` +
+    `<button type="button" class="hp-info-btn hf-tap-min" aria-expanded="false" aria-controls="hut-info"><span class="hp-u hp-info-open">${esc(L.t('page.moreInfo'))}</span><span class="hp-u hp-info-close">${esc(L.t('page.lessInfo'))}</span>${icon('chevron', 15, 2)}</button></div>`
   )
 }
 
@@ -730,6 +730,9 @@ function page(L, h, assets) {
 
   const head = [
     '<meta charset="utf-8">',
+    // Before anything renders, so parts that only work with JavaScript (the
+    // folded text, the calendar pills) don't show for a moment first.
+    "<script>document.documentElement.classList.add('hp-js')</script>",
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(desc)}">`,

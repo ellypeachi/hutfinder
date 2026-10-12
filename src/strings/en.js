@@ -265,7 +265,6 @@ export const en = {
   "page.moreInfo": "View more information",
   "page.lessInfo": "Show less",
   "page.roomType": "Room type",
-  "page.allRooms": "All",
   "page.nearby": "Huts nearby",
   "page.nearbyBookable": "Huts nearby you can book online",
   "page.away": "{km} km away",
