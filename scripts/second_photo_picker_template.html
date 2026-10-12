@@ -32,6 +32,11 @@
   .primary { background: var(--blue); color: #fff; border: 0; border-radius: var(--radius); padding: 8px 14px; cursor: pointer; font-weight: 600; }
   .primary:hover { background: var(--blue-deep); }
   .primary:disabled { opacity: .6; cursor: progress; }
+  .seg { display: inline-flex; border: 1px solid var(--line-control); border-radius: var(--radius); overflow: hidden; }
+  .seg button { background: none; border: 0; padding: 6px 12px; cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line-control); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--card); }
+  section.hut[hidden] { display: none; }
   .quiet { background: none; border: 1px solid var(--line-control); border-radius: var(--radius); padding: 5px 10px; cursor: pointer; }
   .quiet:hover { border-color: var(--ink); }
   .quiet[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
@@ -77,6 +82,10 @@
     </div>
     <div class="progress" id="progress"></div>
     <div class="spacer"></div>
+    <div class="seg" role="group" aria-label="Show">
+      <button type="button" id="show-all" aria-pressed="true">All huts</button>
+      <button type="button" id="show-open" aria-pressed="false">Not decided yet</button>
+    </div>
     <button type="button" class="primary" id="export">Download for Claude</button>
   </div>
 </header>
@@ -86,8 +95,10 @@
     landscape around it. Click a photo to pick it, and click it again to undo. The first tile
     is the main photo the hut already has. Frames are cropped to 4:3, the way the collage
     will show them.
-    <br>When you're done, click <strong>Download for Claude</strong> and attach the file in the
-    chat. It holds your picks and the photos themselves.
+    <br>Photos load as you scroll. You don't have to do every hut in one go: whenever you like,
+    click <strong>Download for Claude</strong> and attach the file in the chat. Each download holds
+    the picks you haven't sent yet (up to 40 photos per file, to keep it small enough to attach),
+    with the photos themselves. Your picks stay in this browser until you send them.
   </div>
   <div class="note" id="draft-note"></div>
   <div class="note" id="export-note" role="status"></div>
@@ -112,6 +123,17 @@ try { draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}') || {}; } catch
 const draftCount = Object.keys(draft).length;
 for (const [id, v] of Object.entries(draft)) { if (v === 'none-chosen') delete picks[id]; else picks[id] = v; }
 const saveDraft = (id, v) => { draft[id] = v; try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draft)); } catch (e) { /* storage off */ } };
+
+// What has already gone to Claude, so the next download holds only what's new.
+const SENT_KEY = 'hf-second-photo-sent';
+const PER_FILE = 40;
+const mark = p => (p.file || 'none');
+let sent = {};
+try { sent = JSON.parse(localStorage.getItem(SENT_KEY) || '{}') || {}; } catch (e) { sent = {}; }
+for (const h of DATA.huts) if (h.saved && !(h.id in sent)) sent[h.id] = mark(h.saved);
+const saveSent = () => { try { localStorage.setItem(SENT_KEY, JSON.stringify(sent)); } catch (e) { /* storage off */ } };
+const unsent = () => DATA.huts.map(h => h.id).filter(id => picks[id] && sent[id] !== mark(picks[id]));
+let showOpen = false;
 
 const el = (tag, attrs = {}, ...kids) => {
   const n = document.createElement(tag);
@@ -201,19 +223,48 @@ const state = {};   // id -> {loading, error, cats, list}
 function progress() {
   const chosen = DATA.huts.filter(h => picks[h.id]).length;
   document.getElementById('progress').textContent = `${chosen} of ${DATA.huts.length} decided`;
+  const n = unsent().length;
+  const btn = document.getElementById('export');
+  if (!btn.disabled) btn.textContent = n ? `Download for Claude (${n} new)` : 'Download for Claude';
 }
 function render() {
   const root = document.getElementById('huts');
   root.textContent = '';
-  for (const hut of DATA.huts) root.append(section(hut));
+  for (const hut of DATA.huts) {
+    const sec = section(hut);
+    // "Not decided yet" hides decided huts when it is switched on, not the
+    // moment you pick, so the hut you just decided doesn't jump away.
+    sec.hidden = showOpen && !!picks[hut.id];
+    root.append(sec);
+  }
   progress();
+  loadNear();
 }
 // Redraw one hut only, so a link half-typed into another hut's box survives.
 function renderHut(hut) {
   const old = document.getElementById('hut-' + hut.id);
-  if (old) old.replaceWith(section(hut)); else render();
+  if (!old) return render();
+  const sec = section(hut);
+  sec.hidden = old.hidden;
+  old.replaceWith(sec);
   progress();
 }
+
+/* Photos are looked up for the huts on or near the screen, so opening the
+   page doesn't send hundreds of requests to Commons at once. */
+function loadNear() {
+  const reach = innerHeight * 2;
+  for (const hut of DATA.huts) {
+    if (state[hut.id]) continue;
+    const sec = document.getElementById('hut-' + hut.id);
+    if (!sec || sec.hidden) continue;
+    const r = sec.getBoundingClientRect();
+    if (r.bottom > -reach && r.top < innerHeight + reach) load(hut);
+  }
+}
+let ticking = false;
+addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(() => { ticking = false; loadNear(); }); } }, { passive: true });
+addEventListener('resize', loadNear);
 
 function section(hut) {
   const st = state[hut.id] || {};
@@ -314,15 +365,19 @@ function fileTitle(s) {
   return s ? 'File:' + s[0].toUpperCase() + s.slice(1) : null;
 }
 
-/* The download holds the picks and each picked photo at 1280 px, so Claude can
-   make the collages without reaching Commons. */
-async function exportAll() {
+/* A download holds the decisions not sent yet, with each picked photo at
+   960 px, so Claude can make the collages without reaching Commons. Up to
+   PER_FILE photos go in one file; the rest wait for the next click. */
+async function exportAll(again) {
   const btn = document.getElementById('export');
   const note = document.getElementById('export-note');
+  if (again === true) sent = {};
+  let photosIn = 0;
+  const ids = unsent().filter(id => !picks[id].file || ++photosIn <= PER_FILE);
+  if (!ids.length) { note.textContent = 'Nothing new to send. Pick some photos first.'; return; }
   btn.disabled = true;
   const out = { _readme: 'Second photos for the hut collages, made with data/second-photo-picker.html. Attach this file in the chat.', generated: new Date().toISOString(), picks: {} };
   const failed = [];
-  const ids = DATA.huts.map(h => h.id).filter(id => picks[id]);
   let n = 0;
   for (const id of ids) {
     const p = picks[id];
@@ -331,7 +386,7 @@ async function exportAll() {
     if (!p.file) { out.picks[id] = { _name: name, file: null }; continue; }
     const entry = { _name: name, ...p, image: null };
     try {
-      const j = await api({ action: 'query', titles: p.file, prop: 'imageinfo', iiprop: 'url', iiurlwidth: '1280' });
+      const j = await api({ action: 'query', titles: p.file, prop: 'imageinfo', iiprop: 'url', iiurlwidth: '960' });
       const ii = j.query.pages[0].imageinfo[0];
       const r = await fetch(ii.thumburl || ii.url);
       if (!r.ok) throw new Error(r.status);
@@ -340,25 +395,39 @@ async function exportAll() {
     } catch (e) { failed.push(name); }
     out.picks[id] = entry;
   }
+  let part = 1;
+  try { part = Number(localStorage.getItem('hf-second-photo-part') || '0') + 1; localStorage.setItem('hf-second-photo-part', String(part)); } catch (e) { /* storage off */ }
+  const name = `second_photos-${part}.json`;
   const blob = new Blob([JSON.stringify(out, null, 1) + '\n'], { type: 'application/json' });
-  const a = el('a', { href: URL.createObjectURL(blob), download: 'second_photos.json' });
+  const a = el('a', { href: URL.createObjectURL(blob), download: name });
   document.body.append(a); a.click(); a.remove();
-  note.textContent = failed.length
-    ? `Downloaded second_photos.json. The photo for ${failed.join(', ')} couldn't be fetched; the pick is in the file anyway, so send it as it is.`
-    : `Downloaded second_photos.json with ${ids.length} decision${ids.length === 1 ? '' : 's'}. Attach it in the chat.`;
+  for (const id of ids) sent[id] = mark(picks[id]);
+  saveSent();
   btn.disabled = false;
+  const left = unsent().length;
+  note.textContent = `Downloaded ${name} with ${ids.length} decision${ids.length === 1 ? '' : 's'}. Attach it in the chat. `
+    + (failed.length ? `The photo for ${failed.join(', ')} couldn't be fetched; the pick is in the file anyway. ` : '')
+    + (left ? `${left} more not sent yet: click Download again for the next file. ` : '');
+  note.append(el('button', { type: 'button', onclick: () => exportAll(true) }, 'Download everything again'));
+  progress();
 }
 
 document.getElementById('sub').textContent = `${DATA.huts.length} huts · ${DATA.label}`;
-document.getElementById('export').addEventListener('click', exportAll);
+document.getElementById('export').addEventListener('click', () => exportAll(false));
+const seg = (open) => {
+  showOpen = open;
+  document.getElementById('show-all').setAttribute('aria-pressed', String(!open));
+  document.getElementById('show-open').setAttribute('aria-pressed', String(open));
+  render();
+};
+document.getElementById('show-all').addEventListener('click', () => seg(false));
+document.getElementById('show-open').addEventListener('click', () => seg(true));
 if (draftCount) {
   const note = document.getElementById('draft-note');
   note.append(`Restored ${draftCount} choice${draftCount === 1 ? '' : 's'} from your last visit. `,
     el('button', { type: 'button', onclick: () => { try { localStorage.removeItem(DRAFT_KEY); } catch (e) { /* */ } location.reload(); } }, 'Start over'));
 }
 render();
-// Load the huts one after another, top first.
-(async () => { for (const h of DATA.huts) await load(h); })();
 </script>
 </body>
 </html>

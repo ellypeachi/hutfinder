@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Take in the second_photos.json downloaded from data/second-photo-picker.html.
+"""Take in the second_photos-<n>.json files downloaded from data/second-photo-picker.html.
 
 For each hut it records the pick in data/second_photos.json (file, credit,
 licence, Commons page) and saves the photo to data/second_photos/<id>.webp,
@@ -9,14 +9,15 @@ the second piece of the hut's collage, so it lives in data/, not public/.
 close-up.
 
 Then remake those huts' collages:
-    python3 scripts/add_second_photos.py ~/Downloads/second_photos.json --check
-    python3 scripts/add_second_photos.py ~/Downloads/second_photos.json
+    python3 scripts/add_second_photos.py ~/Downloads/second_photos-*.json --check
+    python3 scripts/add_second_photos.py ~/Downloads/second_photos-*.json
     python3 scripts/make_collages.py <the ids it prints> --force
 """
 import base64
 import datetime
 import io
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,9 +33,13 @@ USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use')
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     check = '--check' in sys.argv
-    if len(args) != 1:
+    if not args:
         sys.exit(__doc__)
-    picks = json.loads(Path(args[0]).expanduser().read_text(encoding='utf-8'))['picks']
+    picks = {}
+    # In download order (second_photos-2 before -10), so a re-sent pick wins.
+    part = lambda a: int(m.group(1)) if (m := re.search(r'-(\d+)\.json$', a)) else 0
+    for a in sorted(args, key=part):
+        picks.update(json.loads(Path(a).expanduser().read_text(encoding='utf-8'))['picks'])
     saved = json.loads(OUT.read_text(encoding='utf-8')) if OUT.exists() else {}
     today = datetime.date.today().isoformat()
     changed = []

@@ -7,8 +7,8 @@ so this script needs no network: it only fills in the huts and their main
 photos. Open the file, pick, click "Download for Claude", and attach the
 downloaded second_photos.json in the chat.
 
-    python3 scripts/make_second_photo_picker.py                     the huts in data/hut_pages.json
-    python3 scripts/make_second_photo_picker.py --all                every hut with a main photo
+    python3 scripts/make_second_photo_picker.py                     every hut with a main photo
+    python3 scripts/make_second_photo_picker.py --pages              only the huts in data/hut_pages.json
     python3 scripts/make_second_photo_picker.py w127908485 w83122419 just these
 """
 import json
@@ -29,10 +29,10 @@ def main():
     pages = ROOT / 'data' / 'hut_pages.json'
     if args:
         ids, label = args, 'the huts named on the command line'
-    elif '--all' in sys.argv or not pages.exists():
-        ids, label = [h['id'] for h in huts], 'every hut with a photo'
-    else:
+    elif '--pages' in sys.argv and pages.exists():
         ids, label = json.loads(pages.read_text(encoding='utf-8'))['ids'], 'the huts in data/hut_pages.json'
+    else:
+        ids, label = [h['id'] for h in sorted(huts, key=lambda h: h['name'].casefold())], 'every hut with a photo, A to Z'
     by_id = {h['id']: h for h in huts}
     rows = []
     for hid in ids:
