@@ -319,10 +319,10 @@ def tidy_credit(credit):
     c = re.sub(r'\s+at \w+ Wikipedia$', '', c)
     # a talk-page signature: "Kai Brühne --Kai11 11:05, 30 July 2005 (UTC)"
     c = re.sub(r'\s*-{1,2}\s*\S+\s+\d{1,2}:\d\d, \d{1,2} \w+ \d{4} \(UTC\)$', '', c)
-    # Friedrich Böhringer gives a note instead of his name; the e-mail address
+    # Böhringer Friedrich gives a note instead of his name; the e-mail address
     # in it is the one in his photos' EXIF, next to his name.
     if c.startswith('Feel free to use my photos, but please mention me as the author'):
-        c = 'Friedrich Böhringer'
+        c = 'Böhringer Friedrich'   # as he signs his Commons uploads
     return c.strip()
 
 

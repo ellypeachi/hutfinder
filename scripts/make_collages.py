@@ -309,13 +309,20 @@ def place_sparkles(photo, subj, main_w, main_h, photo_box, avoid):
 # ---------------------------------------------------------------- one hut
 
 def crop_43(im):
-    """The middle of a photo at 4:3, the shape the second piece is shown in."""
+    """The middle of a photo at 4:3, the shape the second piece is shown in.
+    A tall photo is cropped around its subject instead, the way landscape()
+    crops a tall main photo, so a hut doesn't lose its roof."""
     w, h = im.size
     if w / h > 4 / 3:
         nw = round(h * 4 / 3)
         return im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
     nh = round(w * 3 / 4)
-    return im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+    y0 = (h - nh) // 2
+    if h > w:
+        sb = subject_box(cutout(im))
+        if sb:
+            y0 = int(min(max(0, (sb[1] + sb[3]) / 2 - 0.6 * nh), h - nh))
+    return im.crop((0, y0, w, y0 + nh))
 
 
 def landscape(src, cut):
