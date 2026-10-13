@@ -74,6 +74,7 @@ export const en = {
   "detail.dogsWelcome": " · dogs welcome",
   "detail.noDogs": " · no dogs",
   "detail.priceList": "price list",
+  "detail.hutPageAria": "{hut}: open the hut page",
   "detail.priceListAria": "{hut} price list, PDF (opens in a new tab)",
   "detail.closeAria": "Close {hut}",
   // the note under a description we translated ourselves

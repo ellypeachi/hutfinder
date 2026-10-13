@@ -77,6 +77,7 @@ export const cs = {
   "detail.dogsWelcome": " · psi vítáni",
   "detail.noDogs": " · bez psů",
   "detail.priceList": "ceník",
+  "detail.hutPageAria": "{hut}: otevřít stránku chaty (anglicky)",
   "detail.priceListAria": "Ceník chaty {hut}, PDF (otevře se nová karta)",
   "detail.closeAria": "Zavřít {hut}",
   "detail.translatedNote": "Přeloženo",

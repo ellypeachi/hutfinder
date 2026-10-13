@@ -426,6 +426,7 @@ export default function App() {
   const [huts, setHuts] = useState([]);
   const [avail, setAvail] = useState(null);
   const [photos, setPhotos] = useState({}); // hut id -> Commons photo, from photos.json
+  const [hutSlugs, setHutSlugs] = useState({}); // hut id -> its page's address, from hut_slugs.json
   const [hutTexts, setHutTexts] = useState(null); // hr_hut_id -> the hut's text per language
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
@@ -610,6 +611,12 @@ export default function App() {
         setPhotos(Object.fromEntries(Object.entries(all).filter(([, p]) => p.card && p.full)));
       })
       .catch(() => setPhotos({}));
+    // Each hut page's address (scripts/build_hut_pages.mjs keeps the file).
+    // Without it the cards and pop-up simply have no link to the page.
+    fetch(`${import.meta.env.BASE_URL}hut_slugs.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setHutSlugs((data && data.slugs) || {}))
+      .catch(() => setHutSlugs({}));
   }, []);
 
   /* The huts' own descriptions: six languages of paragraphs that only a
@@ -801,6 +808,11 @@ export default function App() {
       </div>
     );
 
+  /* The hut's own page. Pages exist in German and English, so every other
+     language links to the English one (its link text says so). */
+  const hutPagePath = (hut) =>
+    hutSlugs[hut.id] ? `/${lang === "de" ? "de" : "en"}/hut/${hutSlugs[hut.id]}/` : null;
+
   const metaLine = (hut) =>
     `${typeLabel(t, hut.type)}${
       isNumber(hut.elevation) ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}` : ""
@@ -830,11 +842,16 @@ export default function App() {
           ) : null}
           <div className="hf-card-title">
             <div style={{ fontWeight: 600, fontSize: "1.05rem", lineHeight: 1.3 }}>
-              <button
-                type="button"
+              {/* A real link to the hut's page, so it can be opened in a new
+                 tab or copied, and search engines find it. A plain click
+                 still opens the pop-up. */}
+              <a
+                href={hutPagePath(hut) || undefined}
                 className="hf-cardname"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
                   open();
                 }}
                 /* Keyboard focus lights the card and pans its pin, the same as
@@ -843,7 +860,7 @@ export default function App() {
                 onBlur={() => setHoveredId(null)}
               >
                 {hut.name}
-              </button>
+              </a>
             </div>
             <div className="hf-card-meta">{metaLine(hut)}</div>
             {hut.region ? <div className="hf-card-meta">{regionLabel(t, hut.region)}</div> : null}
@@ -901,7 +918,22 @@ export default function App() {
           }}
         >
           <div>
-            <h2 className="hf-detail-name">{hut.name}</h2>
+            <h2 className="hf-detail-name">
+              {hutPagePath(hut) ? (
+                /* The name opens the hut's page, with the same chevron as a
+                   row in the list: tap to go deeper. */
+                <a
+                  href={hutPagePath(hut)}
+                  className="hf-detail-namelink"
+                  aria-label={t("detail.hutPageAria", { hut: hut.name })}
+                >
+                  <span>{hut.name}</span>
+                  <ChevronIcon />
+                </a>
+              ) : (
+                hut.name
+              )}
+            </h2>
             <div className="hf-card-meta" style={{ fontSize: "0.9rem" }}>
               {typeLabel(t, hut.type)}
               {hut.region ? ` · ${regionLabel(t, hut.region)}` : ""}
@@ -948,7 +980,8 @@ export default function App() {
           {hut.hr_hut_id ? (
             <div
               style={{
-                paddingTop: "0.6rem",
+                marginTop: "0.35rem",
+                paddingTop: "1rem",
                 borderTop: "1px solid var(--hair)",
                 fontSize: "0.85rem",
                 color: "var(--ink-soft)",
@@ -979,7 +1012,7 @@ export default function App() {
               {avail ? <div style={{ marginTop: "0.5rem" }}>{availBlock(hut)}</div> : null}
             </div>
           ) : (
-            callBand(hut)
+            <div className="hf-detail-band">{callBand(hut)}</div>
           )}
         </div>
       </>
@@ -2311,7 +2344,9 @@ export default function App() {
           right: "0.7rem",
           border: "none",
           /* On top of a photo it needs its own backing to stay readable. */
-          background: photos[selected.id] ? "var(--card)" : "none",
+          background: photos[selected.id] ? "color-mix(in srgb, var(--card) 65%, transparent)" : "none",
+          backdropFilter: photos[selected.id] ? "blur(6px)" : "none",
+          WebkitBackdropFilter: photos[selected.id] ? "blur(6px)" : "none",
           borderRadius: photos[selected.id] ? "50%" : 0,
           color: photos[selected.id] ? "var(--ink)" : "var(--ink-soft)",
           fontSize: "1.3rem",

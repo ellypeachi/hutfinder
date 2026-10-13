@@ -73,6 +73,7 @@ export const nl = {
   "detail.dogsWelcome": " · honden welkom",
   "detail.noDogs": " · geen honden",
   "detail.priceList": "prijslijst",
+  "detail.hutPageAria": "{hut}: hutpagina openen (Engels)",
   "detail.priceListAria": "Prijslijst van {hut}, PDF (opent in een nieuw tabblad)",
   "detail.closeAria": "{hut} sluiten",
   "detail.translatedNote": "Vertaald",

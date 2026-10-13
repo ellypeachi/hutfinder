@@ -74,6 +74,7 @@ export const de = {
   "detail.dogsWelcome": " · Hunde willkommen",
   "detail.noDogs": " · keine Hunde",
   "detail.priceList": "Preisliste",
+  "detail.hutPageAria": "{hut}: Hüttenseite öffnen",
   "detail.priceListAria": "Preisliste von {hut}, PDF (öffnet in einem neuen Tab)",
   "detail.closeAria": "{hut} schließen",
   // Die Zeile unter einem Text, den wir übersetzt haben
