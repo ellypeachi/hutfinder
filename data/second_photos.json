@@ -3311,13 +3311,9 @@
  },
  "w85800333": {
   "_name": "Madlenerhaus",
-  "file": "File:Madlenerhaus.JPG",
-  "page": "https://commons.wikimedia.org/wiki/File%3AMadlenerhaus.JPG",
-  "credit": "Vince51",
-  "license": "CC BY-SA 3.0",
-  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
-  "src": "data/second_photos/w85800333.webp",
-  "_checked": "2026-10-13"
+  "file": null,
+  "_checked": "2026-10-13",
+  "_note": "Elly: Madlenerhaus.JPG is the main photo, with a close-up of it as the second piece"
  },
  "w85800400": {
   "_name": "Tübinger Hütte",

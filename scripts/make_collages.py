@@ -2,8 +2,8 @@
 
 Each hut with a photo gets two paper pieces and the numbers to lay them out:
 
-  main    the whole photo on torn white paper, tilted a little (a tall photo
-          is cropped to 4:3 first)
+  main    the whole photo on torn white paper, tilted a little (a photo
+          taller than 5:4 is cropped to 4:3 first)
   second  the hut's second photo (inside, or the landscape around it) on torn
           paper, when one was picked (data/second_photos.json); otherwise the
           hut cut out as a sticker with a white edge, when the cutout is
@@ -326,33 +326,35 @@ def crop_43(im):
 
 
 def landscape(src, cut):
-    """A tall main photo cropped to 4:3, so it takes no more room on the page
-    than the others. The hut sits a little below the middle, which keeps the
-    mountains above it."""
-    if src.height <= src.width:
+    """A main photo taller than 5:4 (a tall one, or a square one) cropped to
+    4:3, so every collage has the same shape. The hut sits a little below the
+    middle, which keeps the mountains above it."""
+    if src.height <= src.width * 0.8:
         return src, cut
     h = round(src.width * 3 / 4)
     sb = subject_box(cut)
     cy = (sb[1] + sb[3]) / 2 if sb else src.height / 2
-    y0 = int(min(max(0, cy - 0.6 * h), src.height - h))
+    # a hut bigger than the crop: the middle of the photo
+    y0 = cy - 0.6 * h if sb and sb[3] - sb[1] < h else (src.height - h) / 2
+    y0 = int(min(max(0, y0), src.height - h))
     box = (0, y0, src.width, y0 + h)
     return src.crop(box), (cut.crop(box) if cut is not None else None)
 
 
 def close_up_box(src, sb):
     """The 4:3 part of the main photo the close-up shows: half its width,
-    or more where the hut is bigger, so the whole hut fits. A hut taller
-    than that keeps its roof and loses its base."""
+    or more where the hut is bigger, so the whole hut fits, but never more
+    than 80%, so it stays a closer view than the main photo. A hut bigger
+    than that is centred, so the close-up shows its front, not just roof."""
     W, H = src.size
     w = W * 0.5
     if sb:
         w = max(w, (sb[2] - sb[0]) * 1.25, (sb[3] - sb[1]) * 1.2 * 4 / 3)
-    w = min(w, W, H * 4 / 3)
+    w = min(w, W * 0.8, H * 4 / 3 * 0.8)
     h = w * 3 / 4
     cx, cy = (((sb[0] + sb[2]) / 2, (sb[1] + sb[3]) / 2) if sb else (W / 2, H / 2))
     x0 = min(max(0, cx - w / 2), W - w)
-    y0 = sb[1] - 0.04 * H if sb and sb[3] - sb[1] > h else cy - h / 2
-    y0 = min(max(0, y0), H - h)
+    y0 = min(max(0, cy - h / 2), H - h)
     return (int(x0), int(y0), int(x0 + w), int(y0 + h))
 
 
