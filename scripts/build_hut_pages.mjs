@@ -14,9 +14,11 @@
    Also writes dist/sitemap.xml: the pages in public/sitemap.xml plus every
    hut page, with its other language as an alternate.
 
-   Which huts get a page: those with a photo or a description of their own
-   (446 of 1,524). data/hut_pages.json, when it exists, narrows that to the
-   ids it lists; it holds the ten-hut test batch for now.
+   Which huts get a page: all of them. Search engines get the ones with a
+   photo, a description of their own or contact details; the others are
+   noindex and left out of the sitemap until they have one of those (see
+   indexable below). data/hut_pages.json, when it exists, narrows the build
+   to the ids it lists. Each page's address is kept in data/hut_slugs.json.
 
    Text comes from src/strings/<code>.js (the "page." keys plus the app's own
    tag, availability and booking strings), so a word changed there changes
@@ -79,14 +81,17 @@ const isBookable = (h) => h.hr_hut_id != null && !!h.hr_booking_url
 const recOf = (h) => (h.hr_hut_id != null && avail.huts ? avail.huts[String(h.hr_hut_id)] || null : null)
 const isNum = (v) => typeof v === 'number' && !Number.isNaN(v)
 
-// Every hut that could have a page, and the ones built this time.
-const eligible = huts.filter((h) => (photos[h.id] && photos[h.id].full) || hasOwnText(h))
+/* Every hut gets a page. A page goes to search engines (indexed, in the
+   sitemap) once the hut has something of its own to show: a photo, its own
+   description, or a way to contact it. The rest are noindex until they do,
+   so hundreds of near-empty pages don't count against the site. The nearby
+   huts on a page come only from huts with a photo or description, as before. */
+const hasPhoto = (h) => !!(photos[h.id] && photos[h.id].full)
+const hasContact = (h) => !!(h.phone || h.website || h.email)
+const indexable = (h) => hasPhoto(h) || hasOwnText(h) || hasContact(h)
+const eligible = huts
+const featured = huts.filter((h) => hasPhoto(h) || hasOwnText(h))
 const built = eligible.filter((h) => !only || only.has(h.id))
-if (only) {
-  for (const id of only) {
-    if (!eligible.some((h) => h.id === id)) console.warn(`  ${id} is in data/hut_pages.json but has no photo or text`)
-  }
-}
 
 /* Slugs: the name in ASCII, lower case. German letters are spelled out
    (ä → ae, ß → ss), everything else loses its accent. */
@@ -99,14 +104,40 @@ function slugify(name) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 }
-const slugs = new Map()
+/* A page's address never changes once it is out, so every hut's slug is
+   kept in data/hut_slugs.json. A hut not in it yet gets its name, or, when
+   another hut already has that, its name and region, then its elevation too
+   (enzianhuette-salzburg-1313). --write-slugs saves the new ones. */
+const SLUGS_FILE = 'data/hut_slugs.json'
+const slugs = new Map(Object.entries(exists(SLUGS_FILE) ? readJSON(SLUGS_FILE).slugs : {}))
 {
-  const seen = new Map()
-  for (const h of eligible) {
-    const s = slugify(h.name)
-    if (seen.has(s)) throw new Error(`Two huts share the slug "${s}": ${seen.get(s)} and ${h.id}. Give one a suffix here.`)
-    seen.set(s, h.id)
+  const taken = new Map([...slugs].map(([id, s]) => [s, id]))
+  const fresh = []
+  // How many huts share a name within one region: those all get their elevation.
+  const sameInRegion = new Map()
+  for (const h of huts) {
+    const k = `${slugify(h.name)}|${h.region}`
+    sameInRegion.set(k, (sameInRegion.get(k) || 0) + 1)
+  }
+  // Huts with a page already first, so the addresses that are live keep their plain name.
+  for (const h of [...featured, ...huts.filter((x) => !featured.includes(x))]) {
+    if (slugs.has(h.id)) continue
+    const base = slugify(h.name)
+    const region = `${base}-${slugify(h.region || '')}`
+    const tries = [base, sameInRegion.get(`${base}|${h.region}`) > 1 ? null : region, `${region}-${Math.round(h.elevation || 0)}`]
+      .filter(Boolean)
+    let s = tries.find((t) => !taken.has(t))
+    for (let n = 2; !s; n++) if (!taken.has(`${tries.at(-1)}-${n}`)) s = `${tries.at(-1)}-${n}`
+    taken.set(s, h.id)
     slugs.set(h.id, s)
+    fresh.push(h)
+  }
+  if (args.includes('--write-slugs')) {
+    const out = Object.fromEntries([...slugs].sort(([a], [b]) => (a < b ? -1 : 1)))
+    fs.writeFileSync(path.join(ROOT, SLUGS_FILE), JSON.stringify({ _note: 'Each hut page\'s address, kept so it never changes. Written by build_hut_pages.mjs --write-slugs.', slugs: out }, null, 1) + '\n')
+    console.log(`${SLUGS_FILE}: ${fresh.length} new, ${slugs.size} in all.`)
+  } else if (fresh.length) {
+    console.warn(`  ${fresh.length} huts have no saved slug yet (${fresh.slice(0, 3).map((h) => slugs.get(h.id)).join(', ')}…): run with --write-slugs and commit ${SLUGS_FILE}.`)
   }
 }
 const builtIds = new Set(built.map((h) => h.id))
@@ -365,7 +396,7 @@ function km(a, b) {
    be booked online points to bookable ones instead, since free beds are what
    its visitor came for. */
 function nearby(h) {
-  const pool = eligible.filter((o) => o.id !== h.id && (isBookable(h) || isBookable(o)))
+  const pool = featured.filter((o) => o.id !== h.id && (isBookable(h) || isBookable(o)))
   return pool
     .map((o) => ({ hut: o, d: km(h, o) }))
     .sort((a, b) => a.d - b.d)
@@ -752,6 +783,7 @@ function page(L, h, assets) {
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(desc)}">`,
+    ...(indexable(h) ? [] : ['<meta name="robots" content="noindex, follow">']),
     '<meta name="theme-color" content="#3A2A20">',
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
     `<link rel="canonical" href="${url}">`,
@@ -815,7 +847,7 @@ function sitemap() {
   const base = fs.readFileSync(path.join(ROOT, 'public/sitemap.xml'), 'utf8')
   const locs = [...base.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])
   const urls = locs.map((l) => `  <url>\n    <loc>${l}</loc>\n  </url>`)
-  for (const h of built) {
+  for (const h of built.filter(indexable)) {
     const alts = [...PAGE_LANGS.map((c) => [c, pageUrl(c, h)]), ['x-default', pageUrl(DEFAULT_LANG, h)]]
       .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
       .join('\n')
