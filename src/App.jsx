@@ -918,7 +918,22 @@ export default function App() {
           }}
         >
           <div>
-            <h2 className="hf-detail-name">{hut.name}</h2>
+            <h2 className="hf-detail-name">
+              {hutPagePath(hut) ? (
+                /* The name opens the hut's page, with the same chevron as a
+                   row in the list: tap to go deeper. */
+                <a
+                  href={hutPagePath(hut)}
+                  className="hf-detail-namelink"
+                  aria-label={t("detail.hutPageAria", { hut: hut.name })}
+                >
+                  <span>{hut.name}</span>
+                  <ChevronIcon />
+                </a>
+              ) : (
+                hut.name
+              )}
+            </h2>
             <div className="hf-card-meta" style={{ fontSize: "0.9rem" }}>
               {typeLabel(t, hut.type)}
               {hut.region ? ` · ${regionLabel(t, hut.region)}` : ""}
@@ -926,26 +941,6 @@ export default function App() {
                 ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
                 : ""}
             </div>
-            {hutPagePath(hut) ? (
-              <a
-                href={hutPagePath(hut)}
-                className="hf-tap-min"
-                style={{
-                  // inline-block, so a two-line label keeps the arrow after its last word
-                  display: "inline-block",
-                  marginTop: "0.35rem",
-                  fontSize: "0.85rem",
-                  fontWeight: 600,
-                  color: "var(--blue-deep)",
-                  textDecoration: "none",
-                }}
-              >
-                <span style={{ borderBottom: "1px solid var(--powder)" }}>
-                  {t(hut.hr_hut_id ? "detail.hutPage" : "detail.hutPageInfo")}
-                </span>
-                <span aria-hidden="true">&nbsp;→</span>
-              </a>
-            ) : null}
           </div>
           {hut.phone || hut.website || hut.email ? (
             <div className="hf-contact">
@@ -985,7 +980,8 @@ export default function App() {
           {hut.hr_hut_id ? (
             <div
               style={{
-                paddingTop: "0.6rem",
+                marginTop: "0.35rem",
+                paddingTop: "1rem",
                 borderTop: "1px solid var(--hair)",
                 fontSize: "0.85rem",
                 color: "var(--ink-soft)",
@@ -1016,7 +1012,7 @@ export default function App() {
               {avail ? <div style={{ marginTop: "0.5rem" }}>{availBlock(hut)}</div> : null}
             </div>
           ) : (
-            callBand(hut)
+            <div className="hf-detail-band">{callBand(hut)}</div>
           )}
         </div>
       </>
@@ -2348,7 +2344,9 @@ export default function App() {
           right: "0.7rem",
           border: "none",
           /* On top of a photo it needs its own backing to stay readable. */
-          background: photos[selected.id] ? "var(--card)" : "none",
+          background: photos[selected.id] ? "color-mix(in srgb, var(--card) 65%, transparent)" : "none",
+          backdropFilter: photos[selected.id] ? "blur(6px)" : "none",
+          WebkitBackdropFilter: photos[selected.id] ? "blur(6px)" : "none",
           borderRadius: photos[selected.id] ? "50%" : 0,
           color: photos[selected.id] ? "var(--ink)" : "var(--ink-soft)",
           fontSize: "1.3rem",
