@@ -208,9 +208,10 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   .hf-close { min-width: 44px; min-height: 44px; }
 }
 
-/* A hut name inside a card: a real button, so the card is reachable and
-   announced as one thing, while the links in the card stay separate
-   stops. Looks exactly like the text it replaces. */
+/* A hut name inside a card: a link to the hut's page (a plain click opens
+   the pop-up), so the card is reachable and announced as one thing, while
+   the links in the card stay separate stops. Looks exactly like the text
+   it replaces. */
 .hf-cardname {
   display: block;
   width: 100%;
@@ -221,6 +222,7 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   font: inherit;
   color: inherit;
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
 }
 

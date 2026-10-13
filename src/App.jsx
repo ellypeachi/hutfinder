@@ -426,6 +426,7 @@ export default function App() {
   const [huts, setHuts] = useState([]);
   const [avail, setAvail] = useState(null);
   const [photos, setPhotos] = useState({}); // hut id -> Commons photo, from photos.json
+  const [hutSlugs, setHutSlugs] = useState({}); // hut id -> its page's address, from hut_slugs.json
   const [hutTexts, setHutTexts] = useState(null); // hr_hut_id -> the hut's text per language
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
@@ -610,6 +611,12 @@ export default function App() {
         setPhotos(Object.fromEntries(Object.entries(all).filter(([, p]) => p.card && p.full)));
       })
       .catch(() => setPhotos({}));
+    // Each hut page's address (scripts/build_hut_pages.mjs keeps the file).
+    // Without it the cards and pop-up simply have no link to the page.
+    fetch(`${import.meta.env.BASE_URL}hut_slugs.json`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setHutSlugs((data && data.slugs) || {}))
+      .catch(() => setHutSlugs({}));
   }, []);
 
   /* The huts' own descriptions: six languages of paragraphs that only a
@@ -801,6 +808,11 @@ export default function App() {
       </div>
     );
 
+  /* The hut's own page. Pages exist in German and English, so every other
+     language links to the English one (its link text says so). */
+  const hutPagePath = (hut) =>
+    hutSlugs[hut.id] ? `/${lang === "de" ? "de" : "en"}/hut/${hutSlugs[hut.id]}/` : null;
+
   const metaLine = (hut) =>
     `${typeLabel(t, hut.type)}${
       isNumber(hut.elevation) ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}` : ""
@@ -830,11 +842,16 @@ export default function App() {
           ) : null}
           <div className="hf-card-title">
             <div style={{ fontWeight: 600, fontSize: "1.05rem", lineHeight: 1.3 }}>
-              <button
-                type="button"
+              {/* A real link to the hut's page, so it can be opened in a new
+                 tab or copied, and search engines find it. A plain click
+                 still opens the pop-up. */}
+              <a
+                href={hutPagePath(hut) || undefined}
                 className="hf-cardname"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                  e.preventDefault();
                   open();
                 }}
                 /* Keyboard focus lights the card and pans its pin, the same as
@@ -843,7 +860,7 @@ export default function App() {
                 onBlur={() => setHoveredId(null)}
               >
                 {hut.name}
-              </button>
+              </a>
             </div>
             <div className="hf-card-meta">{metaLine(hut)}</div>
             {hut.region ? <div className="hf-card-meta">{regionLabel(t, hut.region)}</div> : null}
@@ -909,6 +926,26 @@ export default function App() {
                 ? ` · ${hut.elevation} m${hut.elevation_estimated ? "*" : ""}`
                 : ""}
             </div>
+            {hutPagePath(hut) ? (
+              <a
+                href={hutPagePath(hut)}
+                className="hf-tap-min"
+                style={{
+                  // inline-block, so a two-line label keeps the arrow after its last word
+                  display: "inline-block",
+                  marginTop: "0.35rem",
+                  fontSize: "0.85rem",
+                  fontWeight: 600,
+                  color: "var(--blue-deep)",
+                  textDecoration: "none",
+                }}
+              >
+                <span style={{ borderBottom: "1px solid var(--powder)" }}>
+                  {t(hut.hr_hut_id ? "detail.hutPage" : "detail.hutPageInfo")}
+                </span>
+                <span aria-hidden="true">&nbsp;→</span>
+              </a>
+            ) : null}
           </div>
           {hut.phone || hut.website || hut.email ? (
             <div className="hf-contact">

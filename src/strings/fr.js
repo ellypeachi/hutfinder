@@ -74,6 +74,8 @@ export const fr = {
   "detail.dogsWelcome": " · chiens acceptés",
   "detail.noDogs": " · chiens non acceptés",
   "detail.priceList": "tarifs",
+  "detail.hutPage": "Page du refuge : calendrier, carte, refuges proches (en anglais)",
+  "detail.hutPageInfo": "Page du refuge : carte, refuges proches (en anglais)",
   "detail.priceListAria": "Tarifs de {hut}, PDF (ouvre un nouvel onglet)",
   "detail.closeAria": "Fermer {hut}",
   "detail.translatedNote": "Traduit",

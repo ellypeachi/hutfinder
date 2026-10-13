@@ -18,7 +18,8 @@
    photo, a description of their own or contact details; the others are
    noindex and left out of the sitemap until they have one of those (see
    indexable below). data/hut_pages.json, when it exists, narrows the build
-   to the ids it lists. Each page's address is kept in data/hut_slugs.json.
+   to the ids it lists. Each page's address is kept in
+   public/hut_slugs.json, which the app reads too.
 
    Text comes from src/strings/<code>.js (the "page." keys plus the app's own
    tag, availability and booking strings), so a word changed there changes
@@ -105,10 +106,10 @@ function slugify(name) {
     .replace(/^-+|-+$/g, '')
 }
 /* A page's address never changes once it is out, so every hut's slug is
-   kept in data/hut_slugs.json. A hut not in it yet gets its name, or, when
+   kept in public/hut_slugs.json. A hut not in it yet gets its name, or, when
    another hut already has that, its name and region, then its elevation too
    (enzianhuette-salzburg-1313). --write-slugs saves the new ones. */
-const SLUGS_FILE = 'data/hut_slugs.json'
+const SLUGS_FILE = 'public/hut_slugs.json'
 const slugs = new Map(Object.entries(exists(SLUGS_FILE) ? readJSON(SLUGS_FILE).slugs : {}))
 {
   const taken = new Map([...slugs].map(([id, s]) => [s, id]))
