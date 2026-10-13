@@ -281,15 +281,15 @@
    "src": "collages/n1636573842-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 626,
-   "h": 534,
-   "x": 551.1,
-   "y": 611.9,
-   "width": 468.9138576779026,
-   "src": "collages/n1636573842-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/n1636573842-zoom.webp"
   },
-  "frame_h": 1011.9,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -302,12 +302,20 @@
     "rot": -28.8
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blue-gingham",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 22.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 9.8
    }
   ],
   "sparkles": {
@@ -744,15 +752,15 @@
    "src": "collages/n281022622-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 549,
-   "x": 553.7,
-   "y": 611.9,
-   "width": 466.30236794171225,
-   "src": "collages/n281022622-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/n281022622-zoom.webp"
   },
-  "frame_h": 1011.9,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -765,12 +773,20 @@
     "rot": -35.0
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "grid-check",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 24.3
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 7.2
    }
   ],
   "sparkles": {
@@ -956,15 +972,15 @@
    "src": "collages/n3075534776-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 567,
-   "x": 568.5,
-   "y": 541.8,
-   "width": 451.4991181657848,
-   "src": "collages/n3075534776-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 558.8,
+   "width": 440,
+   "src": "collages/n3075534776-zoom.webp"
   },
-  "frame_h": 941.8,
+  "frame_h": 921.1,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -977,12 +993,20 @@
     "rot": -31.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blush-pinstripe",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 25.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 552.8,
+    "w": 160,
+    "h": 45,
+    "rot": 5.1
    }
   ],
   "sparkles": {
@@ -1042,12 +1066,12 @@
   ],
   "sparkles": {
    "cluster": [
-    734.1,
-    221.7
+    602.1,
+    89.7
    ],
    "single": [
-    86.1,
-    293.7
+    302.1,
+    101.7
    ]
   }
  },
@@ -1804,15 +1828,15 @@
    "src": "collages/n394568194-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 508,
-   "x": 516.1,
-   "y": 511.1,
-   "width": 503.93700787401576,
-   "src": "collages/n394568194-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 528.1,
+   "width": 440,
+   "src": "collages/n394568194-zoom.webp"
   },
-  "frame_h": 911.1,
+  "frame_h": 890.4,
   "main_h": 691.1,
   "label_top": 516.1,
   "tapes": [
@@ -1825,12 +1849,20 @@
     "rot": -27.9
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blush-pinstripe",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 24.2
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 522.1,
+    "w": 160,
+    "h": 45,
+    "rot": 10.0
    }
   ],
   "sparkles": {
@@ -3587,15 +3619,15 @@
    "src": "collages/w113046941-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 399,
-   "x": 460,
-   "y": 531.6,
-   "width": 560,
-   "src": "collages/w113046941-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 525.7,
+   "width": 440,
+   "src": "collages/w113046941-zoom.webp"
   },
-  "frame_h": 880.7,
+  "frame_h": 888.0,
   "main_h": 688.7,
   "label_top": 513.7,
   "tapes": [
@@ -3608,12 +3640,20 @@
     "rot": -27.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-floral",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 22.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 519.7,
+    "w": 160,
+    "h": 45,
+    "rot": 10.8
    }
   ],
   "sparkles": {
@@ -5378,15 +5418,15 @@
    "src": "collages/w125026512-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 393,
-   "x": 460,
-   "y": 637.1,
-   "width": 560,
-   "src": "collages/w125026512-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w125026512-zoom.webp"
   },
-  "frame_h": 981.0,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -5399,12 +5439,20 @@
     "rot": -30.5
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "mustard-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 24.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 10.4
    }
   ],
   "sparkles": {
@@ -5590,15 +5638,15 @@
    "src": "collages/w125812029-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 493,
-   "x": 500.7,
-   "y": 595.8,
-   "width": 519.2697768762678,
-   "src": "collages/w125812029-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 444,
+   "x": 580,
+   "y": 612.4,
+   "width": 440,
+   "src": "collages/w125812029-zoom.webp"
   },
-  "frame_h": 995.8,
+  "frame_h": 975.5,
   "main_h": 775.8,
   "label_top": 600.8,
   "tapes": [
@@ -5611,12 +5659,20 @@
     "rot": -30.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blue-gingham",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 25.2
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 606.4,
+    "w": 160,
+    "h": 45,
+    "rot": 7.0
    }
   ],
   "sparkles": {
@@ -5955,7 +6011,7 @@
  "w127242429": {
   "main": {
    "w": 834,
-   "h": 612,
+   "h": 605,
    "src": "collages/w127242429-main.webp"
   },
   "second": {
@@ -5963,13 +6019,13 @@
    "w": 538,
    "h": 443,
    "x": 560,
-   "y": 563.4,
+   "y": 555.0,
    "width": 460,
    "src": "collages/w127242429-photo.webp"
   },
-  "frame_h": 942.1,
-  "main_h": 733.8,
-  "label_top": 558.8,
+  "frame_h": 933.7,
+  "main_h": 725.4,
+  "label_top": 550.4,
   "tapes": [
    {
     "kind": "mustard-stripes",
@@ -5990,7 +6046,7 @@
    {
     "kind": "clear-blue",
     "x": 698.0,
-    "y": 557.4,
+    "y": 549.0,
     "w": 160,
     "h": 45,
     "rot": 10.2
@@ -5998,12 +6054,12 @@
   ],
   "sparkles": {
    "cluster": [
-    613.1,
-    413.9
+    721.1,
+    401.9
    ],
    "single": [
-    529.1,
-    113.9
+    433.1,
+    509.9
    ]
   }
  },
@@ -6666,15 +6722,15 @@
    "src": "collages/w131772488-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 604,
-   "h": 645,
-   "x": 645.4,
-   "y": 552.6,
-   "width": 374.57364341085275,
-   "src": "collages/w131772488-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 569.6,
+   "width": 440,
+   "src": "collages/w131772488-zoom.webp"
   },
-  "frame_h": 952.6,
+  "frame_h": 931.9,
   "main_h": 732.6,
   "label_top": 557.6,
   "tapes": [
@@ -6687,12 +6743,20 @@
     "rot": -27.9
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-floral",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 22.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 563.6,
+    "w": 160,
+    "h": 45,
+    "rot": 5.6
    }
   ],
   "sparkles": {
@@ -7475,15 +7539,15 @@
    "src": "collages/w136666319-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 386,
-   "x": 460,
-   "y": 639.9,
-   "width": 560,
-   "src": "collages/w136666319-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w136666319-zoom.webp"
   },
-  "frame_h": 977.6,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -7496,12 +7560,20 @@
     "rot": -31.6
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "pink-bands",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 5.4
    }
   ],
   "sparkles": {
@@ -8567,15 +8639,15 @@
    "src": "collages/w147175158-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 482,
-   "x": 488.9,
-   "y": 567.0,
-   "width": 531.1203319502074,
-   "src": "collages/w147175158-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 584.0,
+   "width": 440,
+   "src": "collages/w147175158-zoom.webp"
   },
-  "frame_h": 967.0,
+  "frame_h": 946.3,
   "main_h": 747.0,
   "label_top": 572.0,
   "tapes": [
@@ -8588,12 +8660,20 @@
     "rot": -29.5
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-floral",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 26.9
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 578.0,
+    "w": 160,
+    "h": 45,
+    "rot": 9.9
    }
   ],
   "sparkles": {
@@ -8779,15 +8859,15 @@
    "src": "collages/w148755635-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 412,
-   "x": 460,
-   "y": 629.6,
-   "width": 560,
-   "src": "collages/w148755635-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w148755635-zoom.webp"
   },
-  "frame_h": 990.1,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -8800,12 +8880,20 @@
     "rot": -28.5
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "terracotta-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.8
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 5.3
    }
   ],
   "sparkles": {
@@ -8814,8 +8902,8 @@
     317.7
    ],
    "single": [
-    770.1,
-    293.7
+    506.1,
+    569.7
    ]
   }
  },
@@ -9698,15 +9786,15 @@
    "src": "collages/w155829312-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 465,
-   "x": 469.5,
-   "y": 611.9,
-   "width": 550.5376344086022,
-   "src": "collages/w155829312-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w155829312-zoom.webp"
   },
-  "frame_h": 1011.9,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -9719,12 +9807,20 @@
     "rot": -28.6
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "terracotta-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 25.4
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 9.0
    }
   ],
   "sparkles": {
@@ -10680,15 +10776,15 @@
    "src": "collages/w168877614-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 258,
-   "x": 340,
-   "y": 668.5,
-   "width": 680,
-   "src": "collages/w168877614-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w168877614-zoom.webp"
   },
-  "frame_h": 942.6,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -10701,12 +10797,20 @@
     "rot": -27.9
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "terracotta-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.0
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 6.5
    }
   ],
   "sparkles": {
@@ -10892,15 +10996,15 @@
    "src": "collages/w169553255-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 397,
-   "x": 460,
-   "y": 565.5,
-   "width": 560,
-   "src": "collages/w169553255-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 558.8,
+   "width": 440,
+   "src": "collages/w169553255-zoom.webp"
   },
-  "frame_h": 912.9,
+  "frame_h": 921.1,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -10913,12 +11017,20 @@
     "rot": -27.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "butter-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.0
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 552.8,
+    "w": 160,
+    "h": 45,
+    "rot": 9.1
    }
   ],
   "sparkles": {
@@ -10939,15 +11051,15 @@
    "src": "collages/w169774182-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 282,
-   "x": 340,
-   "y": 587.0,
-   "width": 680,
-   "src": "collages/w169774182-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 558.8,
+   "width": 440,
+   "src": "collages/w169774182-zoom.webp"
   },
-  "frame_h": 886.6,
+  "frame_h": 921.1,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -10960,12 +11072,20 @@
     "rot": -29.4
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blue-wave",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 22.3
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 552.8,
+    "w": 160,
+    "h": 45,
+    "rot": 8.6
    }
   ],
   "sparkles": {
@@ -11638,15 +11758,15 @@
    "src": "collages/w178568882-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 481,
-   "x": 487.8,
-   "y": 820.0,
-   "width": 532.2245322245323,
-   "src": "collages/w178568882-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 837.0,
+   "width": 440,
+   "src": "collages/w178568882-zoom.webp"
   },
-  "frame_h": 1220.0,
+  "frame_h": 1199.3,
   "main_h": 1000.0,
   "label_top": 825.0,
   "tapes": [
@@ -11659,12 +11779,20 @@
     "rot": -32.7
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "gold-dots",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 25.9
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 831.0,
+    "w": 160,
+    "h": 45,
+    "rot": 10.9
    }
   ],
   "sparkles": {
@@ -12235,15 +12363,15 @@
    "src": "collages/w188125650-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 258,
-   "x": 340,
-   "y": 668.5,
-   "width": 680,
-   "src": "collages/w188125650-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w188125650-zoom.webp"
   },
-  "frame_h": 942.6,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -12256,12 +12384,20 @@
     "rot": -27.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-gingham",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 23.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 10.2
    }
   ],
   "sparkles": {
@@ -12706,15 +12842,15 @@
    "src": "collages/w196887659-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 474,
-   "x": 479.9,
-   "y": 611.9,
-   "width": 540.084388185654,
-   "src": "collages/w196887659-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w196887659-zoom.webp"
   },
-  "frame_h": 1011.9,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -12727,12 +12863,20 @@
     "rot": -32.4
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "orange-dots",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 24.2
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 10.8
    }
   ],
   "sparkles": {
@@ -12965,15 +13109,15 @@
    "src": "collages/w204040735-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 380,
-   "x": 460,
-   "y": 636.9,
-   "width": 560,
-   "src": "collages/w204040735-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 623.5,
+   "width": 440,
+   "src": "collages/w204040735-zoom.webp"
   },
-  "frame_h": 969.4,
+  "frame_h": 985.8,
   "main_h": 786.6,
   "label_top": 611.6,
   "tapes": [
@@ -12986,12 +13130,20 @@
     "rot": -30.0
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blue-gingham",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 23.3
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 617.5,
+    "w": 160,
+    "h": 45,
+    "rot": 8.4
    }
   ],
   "sparkles": {
@@ -13000,8 +13152,8 @@
     461.9
    ],
    "single": [
-    169.1,
-    257.9
+    433.1,
+    617.9
    ]
   }
  },
@@ -13282,8 +13434,8 @@
  },
  "w209732086": {
   "main": {
-   "w": 828,
-   "h": 483,
+   "w": 836,
+   "h": 662,
    "src": "collages/w209732086-main.webp"
   },
   "second": {
@@ -13291,13 +13443,13 @@
    "w": 538,
    "h": 443,
    "x": 560,
-   "y": 412.9,
+   "y": 621.4,
    "width": 460,
    "src": "collages/w209732086-photo.webp"
   },
-  "frame_h": 791.7,
-  "main_h": 583.3,
-  "label_top": 408.3,
+  "frame_h": 1000.2,
+  "main_h": 791.9,
+  "label_top": 616.9,
   "tapes": [
    {
     "kind": "blush-pinstripe",
@@ -13318,7 +13470,7 @@
    {
     "kind": "clear-blue",
     "x": 698.0,
-    "y": 406.9,
+    "y": 615.4,
     "w": 160,
     "h": 45,
     "rot": 6.8
@@ -13326,12 +13478,12 @@
   ],
   "sparkles": {
    "cluster": [
-    538.1,
-    90.6
+    650.1,
+    413.7
    ],
    "single": [
-    862.1,
-    306.6
+    86.1,
+    377.7
    ]
   }
  },
@@ -13656,15 +13808,15 @@
    "src": "collages/w220074037-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 390,
-   "x": 460,
-   "y": 638.3,
-   "width": 560,
-   "src": "collages/w220074037-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w220074037-zoom.webp"
   },
-  "frame_h": 979.6,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -13677,12 +13829,20 @@
     "rot": -32.2
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blush-pinstripe",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 27.0
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 6.8
    }
   ],
   "sparkles": {
@@ -14300,15 +14460,15 @@
    "src": "collages/w231316621-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 467,
-   "x": 471.8,
-   "y": 543.0,
-   "width": 548.1798715203425,
-   "src": "collages/w231316621-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 560.0,
+   "width": 440,
+   "src": "collages/w231316621-zoom.webp"
   },
-  "frame_h": 943.0,
+  "frame_h": 922.3,
   "main_h": 723.0,
   "label_top": 548.0,
   "tapes": [
@@ -14321,12 +14481,20 @@
     "rot": -28.7
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "terracotta-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.0
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 554.0,
+    "w": 160,
+    "h": 45,
+    "rot": 8.8
    }
   ],
   "sparkles": {
@@ -14991,15 +15159,15 @@
    "src": "collages/w252825586-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 460,
-   "x": 463.5,
-   "y": 546.6,
-   "width": 556.5217391304348,
-   "src": "collages/w252825586-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 563.6,
+   "width": 440,
+   "src": "collages/w252825586-zoom.webp"
   },
-  "frame_h": 946.6,
+  "frame_h": 925.9,
   "main_h": 726.6,
   "label_top": 551.6,
   "tapes": [
@@ -15012,12 +15180,20 @@
     "rot": -30.8
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "blush-pinstripe",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 27.4
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 557.6,
+    "w": 160,
+    "h": 45,
+    "rot": 6.8
    }
   ],
   "sparkles": {
@@ -16743,15 +16919,15 @@
    "src": "collages/w310992909-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 602,
-   "h": 403,
-   "x": 460,
-   "y": 553.1,
-   "width": 560,
-   "src": "collages/w310992909-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 442,
+   "x": 580,
+   "y": 559.2,
+   "width": 440,
+   "src": "collages/w310992909-zoom.webp"
   },
-  "frame_h": 928.0,
+  "frame_h": 920.6,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -16764,12 +16940,20 @@
     "rot": -30.5
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "terracotta-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 24.8
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 553.2,
+    "w": 160,
+    "h": 45,
+    "rot": 8.1
    }
   ],
   "sparkles": {
@@ -17701,15 +17885,15 @@
    "src": "collages/w391067011-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 365,
-   "x": 460,
-   "y": 648.1,
-   "width": 560,
-   "src": "collages/w391067011-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 628.8,
+   "width": 440,
+   "src": "collages/w391067011-zoom.webp"
   },
-  "frame_h": 967.5,
+  "frame_h": 991.1,
   "main_h": 791.9,
   "label_top": 616.9,
   "tapes": [
@@ -17722,12 +17906,20 @@
     "rot": -34.8
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "butter-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.4
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 622.8,
+    "w": 160,
+    "h": 45,
+    "rot": 6.6
    }
   ],
   "sparkles": {
@@ -18230,8 +18422,8 @@
  },
  "w40719448": {
   "main": {
-   "w": 850,
-   "h": 1079,
+   "w": 836,
+   "h": 662,
    "src": "collages/w40719448-main.webp"
   },
   "second": {
@@ -18239,13 +18431,13 @@
    "w": 538,
    "h": 443,
    "x": 560,
-   "y": 1099.0,
+   "y": 621.4,
    "width": 460,
    "src": "collages/w40719448-photo.webp"
   },
-  "frame_h": 1477.7,
-  "main_h": 1269.4,
-  "label_top": 1094.4,
+  "frame_h": 1000.2,
+  "main_h": 791.9,
+  "label_top": 616.9,
   "tapes": [
    {
     "kind": "blue-wave",
@@ -18266,7 +18458,7 @@
    {
     "kind": "clear-blue",
     "x": 698.0,
-    "y": 1093.0,
+    "y": 615.4,
     "w": 160,
     "h": 45,
     "rot": 6.5
@@ -18274,12 +18466,12 @@
   ],
   "sparkles": {
    "cluster": [
-    608.9,
-    664.2
+    302.1,
+    353.7
    ],
    "single": [
-    332.9,
-    520.2
+    650.1,
+    509.7
    ]
   }
  },
@@ -19806,15 +19998,15 @@
    "src": "collages/w793468427-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 314,
-   "x": 408.5,
-   "y": 604.8,
-   "width": 611.4649681528663,
-   "src": "collages/w793468427-sticker.webp"
+   "kind": "zoom",
+   "w": 538,
+   "h": 443,
+   "x": 580,
+   "y": 576.8,
+   "width": 440,
+   "src": "collages/w793468427-zoom.webp"
   },
-  "frame_h": 904.8,
+  "frame_h": 939.1,
   "main_h": 739.8,
   "label_top": 564.8,
   "tapes": [
@@ -19827,12 +20019,20 @@
     "rot": -27.1
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "red-gingham",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 712.0,
+    "y": 570.8,
+    "w": 160,
+    "h": 45,
+    "rot": 7.5
    }
   ],
   "sparkles": {
@@ -20885,8 +21085,8 @@
  },
  "w84541388": {
   "main": {
-   "w": 850,
-   "h": 1082,
+   "w": 836,
+   "h": 662,
    "src": "collages/w84541388-main.webp"
   },
   "second": {
@@ -20894,13 +21094,13 @@
    "w": 538,
    "h": 443,
    "x": 560,
-   "y": 1102.5,
+   "y": 621.4,
    "width": 460,
    "src": "collages/w84541388-photo.webp"
   },
-  "frame_h": 1481.3,
-  "main_h": 1272.9,
-  "label_top": 1097.9,
+  "frame_h": 1000.2,
+  "main_h": 791.9,
+  "label_top": 616.9,
   "tapes": [
    {
     "kind": "blue-wave",
@@ -20921,7 +21121,7 @@
    {
     "kind": "clear-blue",
     "x": 698.0,
-    "y": 1096.5,
+    "y": 615.4,
     "w": 160,
     "h": 45,
     "rot": 5.9
@@ -20929,12 +21129,12 @@
   ],
   "sparkles": {
    "cluster": [
-    392.9,
-    688.2
+    386.1,
+    365.7
    ],
    "single": [
-    728.9,
-    568.2
+    734.1,
+    257.7
    ]
   }
  },
@@ -22943,8 +23143,8 @@
  },
  "w93307290": {
   "main": {
-   "w": 850,
-   "h": 1082,
+   "w": 836,
+   "h": 662,
    "src": "collages/w93307290-main.webp"
   },
   "second": {
@@ -22952,13 +23152,13 @@
    "w": 538,
    "h": 443,
    "x": 560,
-   "y": 1102.5,
+   "y": 621.4,
    "width": 460,
    "src": "collages/w93307290-photo.webp"
   },
-  "frame_h": 1481.3,
-  "main_h": 1272.9,
-  "label_top": 1097.9,
+  "frame_h": 1000.2,
+  "main_h": 791.9,
+  "label_top": 616.9,
   "tapes": [
    {
     "kind": "blush-pinstripe",
@@ -22979,7 +23179,7 @@
    {
     "kind": "clear-blue",
     "x": 698.0,
-    "y": 1096.5,
+    "y": 615.4,
     "w": 160,
     "h": 45,
     "rot": 5.2
@@ -22987,12 +23187,12 @@
   ],
   "sparkles": {
    "cluster": [
-    752.9,
-    772.2
+    482.1,
+    281.7
    ],
    "single": [
-    536.9,
-    544.2
+    854.1,
+    509.7
    ]
   }
  },

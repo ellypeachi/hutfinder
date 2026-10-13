@@ -108,6 +108,9 @@ def main():
             continue
         hid = hits[0]
         name = by_id[hid]['name']
+        if hid in done:   # named twice (by name and by id): a second swap would undo the first
+            print(f'  {name}: named twice, swapped once')
+            continue
         old, new = photos.get(hid), seconds.get(hid)
         if not old or not old.get('full'):
             print(f'  {name}: has no main photo to swap')

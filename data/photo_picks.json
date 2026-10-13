@@ -4,6 +4,12 @@
     "\"file\": a Commons file name. \"file\": null means no good photo; the card shows the fallback.",
     "Made with data/photo-picker.html. fetch_photos.py reads this file and always uses these picks."
   ],
+  "n389785661": {
+    "_name": "Adolf-Nossberger-Hütte",
+    "file": "File:Adolf-Noßberger-Hütte und Petzeck am 28.9.2026.jpg",
+    "_checked": "2026-10-13",
+    "_note": "swapped with the second photo"
+  },
   "w150743263": {
     "_name": "Anna-Schutzhaus",
     "file": "File:Anna-Schutzhaus.jpg",
@@ -123,6 +129,12 @@
     "file": "File:Douglashütte am Lünersee.jpg",
     "_checked": "2026-09-21"
   },
+  "w209732086": {
+    "_name": "Duisburger Hütte",
+    "file": "File:Hütte Weißseekopf.jpg",
+    "_checked": "2026-10-13",
+    "_note": "swapped with the second photo"
+  },
   "n389785804": {
     "_name": "Edelrautehütte",
     "file": "File:Gemeinde Hohentauern, 8785, Austria - panoramio - Martin Cígler (8).jpg",
@@ -205,6 +217,12 @@
     "_name": "Gmundner Hütte",
     "file": "File:Gmunden - Gmundner Hütte.JPG",
     "_checked": "2026-09-21"
+  },
+  "w127242429": {
+    "_name": "Graf Meran Haus",
+    "file": "File:Graf-Meran-Haus, Veitsch.jpg",
+    "_checked": "2026-10-13",
+    "_note": "swapped with the second photo"
   },
   "w83122437": {
     "_name": "Gruttenhütte",
