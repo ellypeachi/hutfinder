@@ -8,16 +8,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Hüttenfinder — Austrian alpine huts with free beds</title>
+    <!-- The site's name for search results, and who publishes it. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://www.hutfinder.at/#website",
+            "name": "Hüttenfinder",
+            "alternateName": "hutfinder.at",
+            "url": "https://www.hutfinder.at/",
+            "inLanguage": ["en", "de", "nl", "fr", "cs"],
+            "publisher": { "@id": "https://www.hutfinder.at/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://www.hutfinder.at/#organization",
+            "name": "Hüttenfinder",
+            "url": "https://www.hutfinder.at/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://www.hutfinder.at/logo-512.png",
+              "width": 512,
+              "height": 512
+            }
+          }
+        ]
+      }
+    </script>
     <meta
       name="description"
-      content="Every hut in Austria, with the beds still free. Search 1,524 alpine huts by live bed availability, region and room type, then book direct."
+      content="Find and book mountain huts in Austria for your next hiking trip. Search 1,524 huts by live bed availability, region and room type, then book direct."
     />
 
     <!-- Chocolate browser chrome on Android, and on iOS when saved to the home screen -->
     <meta name="theme-color" content="#3A2A20" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href="https://www.hutfinder.at/" />
 
     <!-- What shows when the link is pasted into WhatsApp, Slack, Signal, etc. -->

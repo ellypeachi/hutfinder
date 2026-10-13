@@ -1602,20 +1602,33 @@ export default function App() {
             margin: "0 0 0.5rem",
           }}
         >
-          <h1 style={{ margin: 0 }}>
-            <img
-              src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
-              alt="Hüttenfinder"
-              style={{ height: 30, display: "block" }}
-            />
-          </h1>
+          {/* The logo, not the page's heading: the heading is the line
+              under it, which says what the site does. */}
+          <img
+            src={`${import.meta.env.BASE_URL}h-line-600-light.svg`}
+            alt="Hüttenfinder"
+            style={{ height: 30, display: "block" }}
+          />
           <LanguageMenu />
         </div>
         {/* What the site is, in a line: Austria only, and what you do here.
-            About 280px at 16px, so it stays on one line on a 360px phone. */}
-        <p style={{ color: "var(--ink-soft)", margin: "0 0 1.25rem", lineHeight: 1.5 }}>
+            About 280px at 16px, so it stays on one line on a 360px phone.
+            It is the page's heading, so search engines read it as the topic,
+            but it keeps the look of a quiet line. */}
+        <h1
+          style={{
+            color: "var(--ink-soft)",
+            margin: "0 0 1.25rem",
+            fontFamily: "var(--font-ui)",
+            fontSize: "1rem",
+            fontWeight: 400,
+            lineHeight: 1.5,
+            letterSpacing: "normal",
+            fontVariationSettings: "normal",
+          }}
+        >
           {t("site.tagline")}
-        </p>
+        </h1>
         <span className="hf-vh" role="status">{announced}</span>
 
         {status === "loading" && <p>{t("status.loading")}</p>}
