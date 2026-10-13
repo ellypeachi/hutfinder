@@ -299,6 +299,33 @@ def meta(ii, key):
     return plain((ii.get('extmetadata', {}).get(key) or {}).get('value'))
 
 
+def tidy_credit(credit):
+    """The author's name, without the wording Commons sometimes wraps it in.
+    Also used by add_second_photos.py, and run once over the saved credits."""
+    c = credit or ''
+    c = re.sub(r'\s*\((?:talk|Diskussion)(?:\s*/\s*e-?mail)?\)', '', c)
+    c = re.sub(r'^I,\s*', '', c)
+    c = re.sub(r'\b(User|Benutzer):', '', c).strip()
+    # "No machine-readable author provided. Coronium assumed (based on copyright claims)."
+    m = re.match(r'No machine-readable author provided\.\s*(.+?) assumed\b', c)
+    if m:
+        c = m.group(1)
+    # "The original uploader was Luidger at German Wikipedia."
+    m = re.match(r'The original uploader was (.+?) at \w+ Wikipedia\b', c)
+    if m:
+        c = m.group(1)
+    # "Michael Gredenberg Original uploader was …", "Tommyyboy at Dutch Wikipedia"
+    c = re.sub(r'\s+Original uploader was .*$', '', c)
+    c = re.sub(r'\s+at \w+ Wikipedia$', '', c)
+    # a talk-page signature: "Kai Brühne --Kai11 11:05, 30 July 2005 (UTC)"
+    c = re.sub(r'\s*-{1,2}\s*\S+\s+\d{1,2}:\d\d, \d{1,2} \w+ \d{4} \(UTC\)$', '', c)
+    # Friedrich Böhringer gives a note instead of his name; the e-mail address
+    # in it is the one in his photos' EXIF, next to his name.
+    if c.startswith('Feel free to use my photos, but please mention me as the author'):
+        c = 'Friedrich Böhringer'
+    return c.strip()
+
+
 def describe(page, p18_title):
     """Turn a Commons page into a candidate dict, with reasons it may not fit."""
     ii = (page.get('imageinfo') or [None])[0]
@@ -311,10 +338,7 @@ def describe(page, p18_title):
         date, date_kind = (ii.get('timestamp') or '')[:10], 'uploaded'
     licence = meta(ii, 'LicenseShortName')
     # the author's own attribution text if they gave one, else the author
-    credit = meta(ii, 'Attribution') or meta(ii, 'Artist')
-    credit = re.sub(r'\s*\(talk\)', '', credit)
-    credit = re.sub(r'^I,\s*', '', credit)
-    credit = re.sub(r'\b(User|Benutzer):', '', credit).strip()
+    credit = tidy_credit(meta(ii, 'Attribution') or meta(ii, 'Artist'))
     if len(credit) > 80:
         credit = credit[:77].rstrip() + '…'
 
