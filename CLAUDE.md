@@ -36,8 +36,9 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | `data/hr_mapping.json` | Hut ↔ HRS booking matches. Entries with `verified: true` are kept by `match_huts.py` on re-runs. |
 | `scripts/` | Data pipeline: OSM import, HRS matching, availability fetch. |
 | `QA/mobile-qa.md` | The mobile QA checklist. Run it the same way every time. |
-| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), plus `dist/sitemap.xml`. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
-| `data/hut_pages.json` | Optional, and not there now: a list of hut ids that limits which huts get a page (it held the ten test huts). Without it, every hut with a photo or a description of its own gets one. |
+| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), plus `dist/sitemap.xml`. Every hut gets a page; only huts with a photo, a description of their own or contact details are indexed and in the sitemap, the rest are `noindex` until they have one. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
+| `data/hut_pages.json` | Optional, and not there now: a list of hut ids that limits which huts get a page (it held the ten test huts). |
+| `data/hut_slugs.json` | Every hut page's address, so it never changes once it's out. `build_hut_pages.mjs --write-slugs` adds new huts; commit the file. |
 | `scripts/make_collages.py` | The photo collage on a hut page, made once on a laptop (needs rembg): writes `public/collages/` and `data/collages.json`. Keeps existing collages unless `--force`. Main photos taller than 5:4 (tall or square) are cropped to 4:3, so every collage has the same shape. `data/collage_choices.json` lists the huts Elly wants a close-up for instead of the cut-out. |
 
 ## Deploying and git
