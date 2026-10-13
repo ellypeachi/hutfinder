@@ -402,6 +402,19 @@ svg.hp-tape { clip-path: none; }
 }
 
 
+/* ---- region pages --------------------------------------------------------- */
+
+.hp-region-top { display: flex; flex-direction: column; gap: 12px; max-width: 680px; }
+.hp-count { color: var(--ink-soft); font-weight: 400; }
+/* The region's huts: as many columns of cards as fit, one on a phone. */
+.hp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+}
+.hp-region-more { margin: 0; }
+
+
 /* ---- huts nearby ---------------------------------------------------------- */
 
 .hp-near {

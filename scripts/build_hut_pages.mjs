@@ -709,7 +709,7 @@ function card(L, o, d) {
     (ph && ph.card ? `<img class="hf-thumb" src="/${esc(ph.card)}" width="96" height="72" alt="" loading="lazy" decoding="async"/>` : '') +
     `<div class="hf-card-title"><div class="hp-card-name">${name}</div>` +
     (meta ? `<div class="hf-card-meta">${esc(meta)}</div>` : '') +
-    `<div class="hf-card-meta">${esc(L.t('page.away', { km: L.nf(d, { maximumFractionDigits: 1, minimumFractionDigits: 1 }) }))}</div></div>` +
+    (d != null ? `<div class="hf-card-meta">${esc(L.t('page.away', { km: L.nf(d, { maximumFractionDigits: 1, minimumFractionDigits: 1 }) }))}</div>` : '') + '</div>' +
     (linked ? `<svg class="hf-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICON.chevron}</svg>` : '') +
     `</div>${tagList(hutTags(L, o).slice(0, 3))}${bandHTML}</div>`
   )
@@ -733,6 +733,143 @@ function nearbySection(L, h) {
     `<div class="hp-map-foot"><span>${esc(coords)}</span><button type="button" class="hf-tap-min" data-expand aria-controls="hut-map" hidden>${icon('expand', 14, 2)}<span class="hp-u">${esc(L.t('page.expandMap'))}</span></button></div></div>`
   const more = isBookable(h) ? '' : `<a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.pickDates'))}</span></a>`
   return `<section class="hp-section" aria-labelledby="near-h"><h2 class="hp-h2" id="near-h">${esc(heading)}</h2><div class="hp-near"><div class="hp-cards">${near.map(({ hut, d }) => card(L, hut, d)).join('')}</div>${map}</div>${more}</section>`
+}
+
+// ---------------------------------------------------------------- region pages
+
+/* One page per region (/de/tirol/, /en/tirol/): its huts with something of
+   their own to show, the bookable ones first (soonest free beds first), then
+   the ones you contact directly. Every name links to its hut page, so these
+   are the plain links a search engine can follow to the huts. A region with
+   fewer than REGION_MIN huts gets no page. */
+const REGION_MIN = 10
+const regionPath = (lang, r) => `/${lang}/${slugify(r)}/`
+const regionUrl = (lang, r) => SITE + regionPath(lang, r)
+const countIn = (r) => huts.filter((h) => h.region === r).length
+const REGIONS = [...new Set(huts.map(regionOf).filter(Boolean))]
+  .filter((r) => countIn(r) >= REGION_MIN)
+  .sort((a, b) => countIn(b) - countIn(a))
+const hasRegionPage = (r) => REGIONS.includes(r)
+
+function regionData(r) {
+  const all = huts.filter((h) => h.region === r)
+  const listed = all.filter((h) => builtIds.has(h.id) && (isBookable(h) || indexable(h)))
+  const book = listed
+    .filter(isBookable)
+    .map((h) => ({ h, nf: nextFree(h) }))
+    // Soonest free beds first; ISO dates compare as plain text, nothing free last.
+    .sort((a, b) => {
+      const x = a.nf ? a.nf.date : '9999'
+      const y = b.nf ? b.nf.date : '9999'
+      return x < y ? -1 : x > y ? 1 : a.h.name.localeCompare(b.h.name, 'de')
+    })
+    .map((x) => x.h)
+  const contact = listed.filter((h) => !isBookable(h)).sort((a, b) => a.name.localeCompare(b.name, 'de'))
+  // Only measured elevations: an estimate shouldn't set the range.
+  const known = all.filter((h) => isNum(h.elevation) && !h.elevation_estimated)
+  const pick = (cmp) => known.reduce((m, h) => (cmp(h.elevation, m.elevation) ? h : m), known[0])
+  return {
+    all, book, contact,
+    low: pick((x, y) => x < y),
+    high: pick((x, y) => x > y),
+    free: book.filter((h) => nextFree(h)).length,
+    hidden: all.length - listed.length,
+  }
+}
+
+function regionPage(L, r, assets) {
+  const other = PAGE_LANGS.find((c) => c !== L.lang)
+  const d = regionData(r)
+  // a non-breaking space, so "3,272 m" never splits over two lines
+  const m = (h) => L.t('page.elev', { n: L.nf(Math.round(h.elevation)) }).replace(' ', '\u00a0')
+  const title = L.t('page.region.title', { region: r })
+  const desc = L.t('page.region.meta', { n: L.nf(d.all.length), region: r, b: L.nf(d.book.length) })
+  const url = regionUrl(L.lang, r)
+  const intro = [
+    L.t('page.region.intro', { n: L.nf(d.all.length), region: r, low: m(d.low), high: m(d.high) }),
+    d.book.length ? L.t('page.region.introBook', { count: d.book.length, b: L.nf(d.book.length) }) : '',
+    d.book.length ? (d.free ? L.t('page.region.introFree', { count: d.free, f: L.nf(d.free) }) : L.t('page.region.introNoFree')) : '',
+    L.t('page.region.introHigh', { hut: d.high.name, elev: m(d.high) }),
+  ].filter(Boolean).join(' ')
+  const ld = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'CollectionPage', '@id': `${url}#page`, name: L.t('page.region.h1', { region: r }), url, description: desc, inLanguage: L.lang, isPartOf: { '@id': `${SITE}/#website` } },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
+          { '@type': 'ListItem', position: 2, name: r },
+        ],
+      },
+    ],
+  }
+  const head = [
+    '<meta charset="utf-8">',
+    "<script>document.documentElement.classList.add('hp-js')</script>",
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    `<title>${esc(title)}</title>`,
+    `<meta name="description" content="${esc(desc)}">`,
+    '<meta name="theme-color" content="#3A2A20">',
+    '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+    `<link rel="canonical" href="${url}">`,
+    ...PAGE_LANGS.map((c) => `<link rel="alternate" hreflang="${c}" href="${regionUrl(c, r)}">`),
+    `<link rel="alternate" hreflang="x-default" href="${regionUrl(DEFAULT_LANG, r)}">`,
+    '<meta property="og:type" content="website">',
+    '<meta property="og:site_name" content="Hüttenfinder">',
+    `<meta property="og:title" content="${esc(title)}">`,
+    `<meta property="og:description" content="${esc(desc)}">`,
+    `<meta property="og:url" content="${url}">`,
+    `<meta property="og:locale" content="${OG_LOCALES[L.lang]}">`,
+    `<meta property="og:image" content="${SITE}/og-image.png">`,
+    `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>`,
+    ...assets,
+  ].join('\n')
+  const crumbs =
+    `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
+    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(r)}</li></ol></nav>`
+  const section = (id, heading, list) =>
+    list.length
+      ? `<section class="hp-section" aria-labelledby="${id}"><h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count">${esc(L.nf(list.length))}</span></h2>` +
+        `<div class="hp-grid">${list.map((h) => card(L, h, null)).join('')}</div></section>`
+      : ''
+  const more = d.hidden
+    ? `<p class="hp-region-more"><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden) }))}</span>&nbsp;→</a></p>`
+    : ''
+  return (
+    `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
+    siteHeader(L, other, regionPath(other, r)) +
+    `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(L.t('page.region.h1', { region: r }))}</h1>` +
+    `<p class="hp-summary">${esc(intro)}</p></div></div>` +
+    section('book-h', L.t('page.region.book'), d.book) +
+    section('contact-h', L.t('page.region.contact'), d.contact) +
+    more +
+    `</main>` +
+    siteFooter(L, r, 'page.footer.wrongPage') +
+    `</div>\n</body>\n</html>\n`
+  )
+}
+
+// ---------------------------------------------------------------- page frame
+
+// The header and footer every page shares: hut pages and region pages.
+function siteHeader(L, other, otherPath) {
+  const O = i18n(other)
+  return (
+    `<header class="hp-head"><div class="hp-wrap">` +
+    `<a class="hp-mark" href="/" aria-label="${esc(L.t('page.home'))}"><img src="/h-line-600-light.svg" alt="Hüttenfinder" width="172" height="26"></a>` +
+    `<div class="hp-head-links"><a class="hf-tap-min" href="/"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.allHutsShort'))}</span></a>` +
+    `<a class="hp-lang hf-tap-min" href="${otherPath}" hreflang="${other}" lang="${other}" aria-label="${esc(O.t('page.thisPageIn'))}">${icon('globe', 16, 1.8)}${other.toUpperCase()}</a></div>` +
+    `</div></header>`
+  )
+}
+function siteFooter(L, subject, wrongKey = 'page.footer.wrong') {
+  return (
+    `<footer class="hp-foot"><div class="hp-wrap"><div class="hp-foot-text">` +
+    `<span>${esc(L.t('page.footer.data', { osm: '\u0000' })).replace('\u0000', '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>')} ${esc(L.t('page.footer.check'))}</span>` +
+    `<span>${esc(L.t(wrongKey, { email: '\u0000' })).replace('\u0000', `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}">${CONTACT_EMAIL}</a>`)}</span>` +
+    `</div><div class="hp-foot-links"><a href="/faq/">${esc(L.t('footer.faq'))}</a><a href="/imprint/">${esc(L.t('footer.imprint'))}</a><a href="/privacy/">${esc(L.t('footer.privacy'))}</a></div></div></footer>`
+  )
 }
 
 // ---------------------------------------------------------------- the page
@@ -759,7 +896,8 @@ function jsonLd(L, h, desc) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
-      { '@type': 'ListItem', position: 2, name: h.name },
+      ...(hasRegionPage(regionOf(h)) ? [{ '@type': 'ListItem', position: 2, name: regionOf(h), item: regionUrl(L.lang, regionOf(h)) }] : []),
+      { '@type': 'ListItem', position: hasRegionPage(regionOf(h)) ? 3 : 2, name: h.name },
     ],
   }
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': [place, crumbs] }).replace(/</g, '\\u003c')
@@ -767,7 +905,6 @@ function jsonLd(L, h, desc) {
 
 function page(L, h, assets) {
   const other = PAGE_LANGS.find((c) => c !== L.lang)
-  const O = i18n(other)
   const title = titleOf(L, h)
   const desc = descriptionOf(L, h)
   const url = pageUrl(L.lang, h)
@@ -803,17 +940,12 @@ function page(L, h, assets) {
     ...assets,
   ].join('\n')
 
-  const header =
-    `<header class="hp-head"><div class="hp-wrap">` +
-    `<a class="hp-mark" href="/" aria-label="${esc(L.t('page.home'))}"><img src="/h-line-600-light.svg" alt="Hüttenfinder" width="172" height="26"></a>` +
-    `<div class="hp-head-links"><a class="hf-tap-min" href="/"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.allHutsShort'))}</span></a>` +
-    `<a class="hp-lang hf-tap-min" href="${pagePath(other, h)}" hreflang="${other}" lang="${other}" aria-label="${esc(O.t('page.thisPageIn'))}">${icon('globe', 16, 1.8)}${other.toUpperCase()}</a></div>` +
-    `</div></header>`
+  const header = siteHeader(L, other, pagePath(other, h))
 
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
     `<li><a href="/">${esc(L.t('page.huts'))}</a></li>` +
-    (regionOf(h) ? `<li>${esc(regionOf(h))}</li>` : '') +
+    (regionOf(h) ? `<li>${hasRegionPage(regionOf(h)) ? `<a href="${regionPath(L.lang, regionOf(h))}">${esc(regionOf(h))}</a>` : esc(regionOf(h))}</li>` : '') +
     `<li aria-current="page">${esc(h.name)}</li></ol></nav>`
 
   const facts =
@@ -824,11 +956,7 @@ function page(L, h, assets) {
     b.html +
     `</div>`
 
-  const footer =
-    `<footer class="hp-foot"><div class="hp-wrap"><div class="hp-foot-text">` +
-    `<span>${esc(L.t('page.footer.data', { osm: '\u0000' })).replace('\u0000', '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>')} ${esc(L.t('page.footer.check'))}</span>` +
-    `<span>${esc(L.t('page.footer.wrong', { email: '\u0000' })).replace('\u0000', `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(h.name)}">${CONTACT_EMAIL}</a>`)}</span>` +
-    `</div><div class="hp-foot-links"><a href="/faq/">${esc(L.t('footer.faq'))}</a><a href="/imprint/">${esc(L.t('footer.imprint'))}</a><a href="/privacy/">${esc(L.t('footer.privacy'))}</a></div></div></footer>`
+  const footer = siteFooter(L, h.name)
 
   return (
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
@@ -853,6 +981,12 @@ function sitemap() {
       .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
       .join('\n')
     for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${pageUrl(c, h)}</loc>\n${alts}\n  </url>`)
+  }
+  for (const r of REGIONS) {
+    const alts = [...PAGE_LANGS.map((c) => [c, regionUrl(c, r)]), ['x-default', regionUrl(DEFAULT_LANG, r)]]
+      .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
+      .join('\n')
+    for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${regionUrl(c, r)}</loc>\n${alts}\n  </url>`)
   }
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`
 }
@@ -888,7 +1022,14 @@ if (CHECK) {
       fs.writeFileSync(path.join(dir, 'index.html'), page(i18n(c), h, assets))
     }
   }
+  for (const r of REGIONS) {
+    for (const c of PAGE_LANGS) {
+      const dir = path.join(DIST, c, slugify(r))
+      fs.mkdirSync(dir, { recursive: true })
+      fs.writeFileSync(path.join(dir, 'index.html'), regionPage(i18n(c), r, assets))
+    }
+  }
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap())
   fs.rmSync(path.join(DIST, 'hut-template'), { recursive: true, force: true })
-  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages) and sitemap.xml.`)
+  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages and sitemap.xml.`)
 }
