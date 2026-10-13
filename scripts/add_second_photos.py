@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'data' / 'second_photos.json'
 DIR = ROOT / 'data' / 'second_photos'
 WIDTH = 840
-USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use')
+USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use', 'Attribution')
 
 
 def main():

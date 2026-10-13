@@ -679,6 +679,16 @@
   "src": "data/second_photos/w122902604.webp",
   "_checked": "2026-10-12"
  },
+ "w123243677": {
+  "_name": "Gauertalhaus",
+  "file": "File:Gauertalweg 15 Gauertalhaus .JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AGauertalweg_15_Gauertalhaus_.JPG",
+  "credit": "Friedrich Böhringer",
+  "license": "Attribution",
+  "license_url": "",
+  "src": "data/second_photos/w123243677.webp",
+  "_checked": "2026-10-13"
+ },
  "w123303946": {
   "_name": "Sillianer Hütte",
   "file": "File:Sillianer Hütte.jpg",
@@ -3079,6 +3089,16 @@
   "src": "data/second_photos/w84977315.webp",
   "_checked": "2026-10-12"
  },
+ "w85042838": {
+  "_name": "Hainfelder Hütte",
+  "file": "File:Hainfelder Hütte Panorama Ost 01b.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AHainfelder_H%C3%BCtte_Panorama_Ost_01b.JPG",
+  "credit": "Uoaei1",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w85042838.webp",
+  "_checked": "2026-10-13"
+ },
  "w85132012": {
   "_name": "Feilalm",
   "file": "File:1372-J-Feilalm.jpg",
@@ -3141,9 +3161,13 @@
  },
  "w85800333": {
   "_name": "Madlenerhaus",
-  "file": null,
-  "_checked": "2026-10-12",
-  "_note": "Madlenerhaus.JPG is GFDL, which a collage cannot use"
+  "file": "File:Madlenerhaus.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AMadlenerhaus.JPG",
+  "credit": "Vince51",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "src": "data/second_photos/w85800333.webp",
+  "_checked": "2026-10-13"
  },
  "w85800400": {
   "_name": "Tübinger Hütte",

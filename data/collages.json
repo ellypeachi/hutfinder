@@ -4821,15 +4821,15 @@
    "src": "collages/w123243677-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 520,
-   "x": 527.7,
-   "y": 543.0,
-   "width": 492.3076923076923,
-   "src": "collages/w123243677-sticker.webp"
+   "kind": "photo",
+   "w": 538,
+   "h": 443,
+   "x": 560,
+   "y": 552.6,
+   "width": 460,
+   "src": "collages/w123243677-photo.webp"
   },
-  "frame_h": 943.0,
+  "frame_h": 931.3,
   "main_h": 723.0,
   "label_top": 548.0,
   "tapes": [
@@ -4842,12 +4842,20 @@
     "rot": -29.1
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "plum-dots",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 22.6
+   },
+   {
+    "kind": "clear-blue",
+    "x": 698.0,
+    "y": 546.6,
+    "w": 160,
+    "h": 45,
+    "rot": 9.1
    }
   ],
   "sparkles": {
@@ -19386,6 +19394,53 @@
    ]
   }
  },
+ "w67231968": {
+  "main": {
+   "w": 834,
+   "h": 602,
+   "src": "collages/w67231968-main.webp"
+  },
+  "second": {
+   "kind": "sticker",
+   "w": 640,
+   "h": 388,
+   "x": 460,
+   "y": 569.0,
+   "width": 560,
+   "src": "collages/w67231968-sticker.webp"
+  },
+  "frame_h": 908.5,
+  "main_h": 721.8,
+  "label_top": 546.8,
+  "tapes": [
+   {
+    "kind": "red-gingham",
+    "x": 30,
+    "y": 14,
+    "w": 205,
+    "h": 52,
+    "rot": -31.7
+   },
+   {
+    "kind": "clear-blue",
+    "x": 786,
+    "y": 5,
+    "w": 174,
+    "h": 49,
+    "rot": 24.8
+   }
+  ],
+  "sparkles": {
+   "cluster": [
+    265.1,
+    233.9
+   ],
+   "single": [
+    841.1,
+    389.9
+   ]
+  }
+ },
  "w674870317": {
   "main": {
    "w": 836,
@@ -21310,15 +21365,15 @@
    "src": "collages/w85042838-main.webp"
   },
   "second": {
-   "kind": "sticker",
-   "w": 640,
-   "h": 441,
-   "x": 460,
-   "y": 548.2,
-   "width": 560,
-   "src": "collages/w85042838-sticker.webp"
+   "kind": "photo",
+   "w": 538,
+   "h": 443,
+   "x": 560,
+   "y": 551.4,
+   "width": 460,
+   "src": "collages/w85042838-photo.webp"
   },
-  "frame_h": 934.1,
+  "frame_h": 930.1,
   "main_h": 721.8,
   "label_top": 546.8,
   "tapes": [
@@ -21331,12 +21386,20 @@
     "rot": -33.0
    },
    {
-    "kind": "clear-blue",
-    "x": 786,
+    "kind": "butter-stripes",
+    "x": 780,
     "y": 5,
-    "w": 174,
+    "w": 180,
     "h": 49,
     "rot": 21.2
+   },
+   {
+    "kind": "clear-blue",
+    "x": 698.0,
+    "y": 545.4,
+    "w": 160,
+    "h": 45,
+    "rot": 5.1
    }
   ],
   "sparkles": {
@@ -21345,8 +21408,8 @@
     425.9
    ],
    "single": [
-    841.1,
-    437.9
+    853.1,
+    449.9
    ]
   }
  },
@@ -21687,15 +21750,15 @@
    "src": "collages/w85800333-main.webp"
   },
   "second": {
-   "kind": "zoom",
+   "kind": "photo",
    "w": 538,
    "h": 443,
-   "x": 580,
-   "y": 542.5,
-   "width": 440,
-   "src": "collages/w85800333-zoom.webp"
+   "x": 560,
+   "y": 535.1,
+   "width": 460,
+   "src": "collages/w85800333-photo.webp"
   },
-  "frame_h": 904.8,
+  "frame_h": 913.9,
   "main_h": 705.5,
   "label_top": 530.5,
   "tapes": [
@@ -21717,8 +21780,8 @@
    },
    {
     "kind": "clear-blue",
-    "x": 712.0,
-    "y": 536.5,
+    "x": 698.0,
+    "y": 529.1,
     "w": 160,
     "h": 45,
     "rot": 5.2
