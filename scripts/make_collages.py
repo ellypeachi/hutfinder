@@ -2,11 +2,14 @@
 
 Each hut with a photo gets two paper pieces and the numbers to lay them out:
 
-  main    the whole photo on torn white paper, tilted a little
+  main    the whole photo on torn white paper, tilted a little (a photo
+          taller than 5:4 is cropped to 4:3 first)
   second  the hut's second photo (inside, or the landscape around it) on torn
           paper, when one was picked (data/second_photos.json); otherwise the
           hut cut out as a sticker with a white edge, when the cutout is
-          clean; otherwise a closer crop of the main photo on torn paper
+          clean and Elly hasn't asked for a close-up instead
+          (data/collage_choices.json); otherwise a closer crop of the main
+          photo on torn paper
 
 Writes public/collages/<id>-main.webp and -photo, -sticker or -zoom.webp, and an
 entry per hut in data/collages.json: the pieces, which washi tapes it gets,
@@ -42,6 +45,7 @@ PUBLIC = os.path.join(ROOT, "public")
 OUT_DIR = os.path.join(PUBLIC, "collages")
 DATA = os.path.join(ROOT, "data", "collages.json")
 SECOND = os.path.join(ROOT, "data", "second_photos.json")
+CHOICES = os.path.join(ROOT, "data", "collage_choices.json")
 
 PAPER = (255, 253, 248, 255)
 EDGE = (226, 218, 204, 255)
@@ -305,13 +309,53 @@ def place_sparkles(photo, subj, main_w, main_h, photo_box, avoid):
 # ---------------------------------------------------------------- one hut
 
 def crop_43(im):
-    """The middle of a photo at 4:3, the shape the second piece is shown in."""
+    """The middle of a photo at 4:3, the shape the second piece is shown in.
+    A tall photo is cropped around its subject instead, the way landscape()
+    crops a tall main photo, so a hut doesn't lose its roof."""
     w, h = im.size
     if w / h > 4 / 3:
         nw = round(h * 4 / 3)
         return im.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
     nh = round(w * 3 / 4)
-    return im.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+    y0 = (h - nh) // 2
+    if h > w:
+        sb = subject_box(cutout(im))
+        if sb:
+            y0 = int(min(max(0, (sb[1] + sb[3]) / 2 - 0.6 * nh), h - nh))
+    return im.crop((0, y0, w, y0 + nh))
+
+
+def landscape(src, cut):
+    """A main photo taller than 5:4 (a tall one, or a square one) cropped to
+    4:3, so every collage has the same shape. The hut sits a little below the
+    middle, which keeps the mountains above it."""
+    if src.height <= src.width * 0.8:
+        return src, cut
+    h = round(src.width * 3 / 4)
+    sb = subject_box(cut)
+    cy = (sb[1] + sb[3]) / 2 if sb else src.height / 2
+    # a hut bigger than the crop: the middle of the photo
+    y0 = cy - 0.6 * h if sb and sb[3] - sb[1] < h else (src.height - h) / 2
+    y0 = int(min(max(0, y0), src.height - h))
+    box = (0, y0, src.width, y0 + h)
+    return src.crop(box), (cut.crop(box) if cut is not None else None)
+
+
+def close_up_box(src, sb):
+    """The 4:3 part of the main photo the close-up shows: half its width,
+    or more where the hut is bigger, so the whole hut fits, but never more
+    than 80%, so it stays a closer view than the main photo. A hut bigger
+    than that is centred, so the close-up shows its front, not just roof."""
+    W, H = src.size
+    w = W * 0.5
+    if sb:
+        w = max(w, (sb[2] - sb[0]) * 1.25, (sb[3] - sb[1]) * 1.2 * 4 / 3)
+    w = min(w, W * 0.8, H * 4 / 3 * 0.8)
+    h = w * 3 / 4
+    cx, cy = (((sb[0] + sb[2]) / 2, (sb[1] + sb[3]) / 2) if sb else (W / 2, H / 2))
+    x0 = min(max(0, cx - w / 2), W - w)
+    y0 = min(max(0, cy - h / 2), H - h)
+    return (int(x0), int(y0), int(x0 + w), int(y0 + h))
 
 
 def make(hut, photo_entry, force_kind=None, second_photo=None):
@@ -320,9 +364,10 @@ def make(hut, photo_entry, force_kind=None, second_photo=None):
     sign = 1 if seed_of(hid, "tilt") % 2 else -1
     angle = 2.0 * sign
 
+    cut = cutout(src)
+    src, cut = landscape(src, cut)
     main, photo_box, _ = torn_piece(src, (0, 0, src.width, src.height), MAIN_W, angle, seed_of(hid) % 10**6)
 
-    cut = cutout(src)
     mask, why = clean_mask(cut) if cut is not None else (None, "rembg not installed")
     if second_photo is not None and not force_kind:
         kind, why = "photo", "second photo"
@@ -348,13 +393,7 @@ def make(hut, photo_entry, force_kind=None, second_photo=None):
         aspect = second.width / second.height
         second_w = min(min(680, max(560, 300 * aspect)), 400 * aspect)
     else:
-        sb = subject_box(cut)
-        cx, cy = (((sb[0] + sb[2]) / 2, (sb[1] + sb[3]) / 2) if sb else (src.width / 2, src.height / 2))
-        w = src.width * 0.5
-        h = w * 3 / 4
-        x0 = min(max(0, cx - w / 2), src.width - w)
-        y0 = min(max(0, cy - h / 2), src.height - h)
-        second, _, _ = torn_piece(src, (int(x0), int(y0), int(x0 + w), int(y0 + h)), 420, 5.0 * sign,
+        second, _, _ = torn_piece(src, close_up_box(src, subject_box(cut)), 420, 5.0 * sign,
                                   seed_of(hid, "zoom") % 10**6, border=15)
         second_w = 440
 
@@ -427,6 +466,8 @@ def main():
 
     data = json.load(open(DATA, encoding="utf-8")) if os.path.exists(DATA) else {}
     seconds = json.load(open(SECOND, encoding="utf-8")) if os.path.exists(SECOND) else {}
+    choices = json.load(open(CHOICES, encoding="utf-8")) if os.path.exists(CHOICES) else {}
+    close_up = set(args.zoom) | set(choices.get("close_up", {}))
     os.makedirs(OUT_DIR, exist_ok=True)
     made = 0
     for hid in dict.fromkeys(ids):
@@ -449,7 +490,10 @@ def main():
             continue
         two = seconds.get(hid) or {}
         two_img = Image.open(os.path.join(ROOT, two["src"])).convert("RGB") if two.get("src") else None
-        r = make(hut, ph, "zoom" if hid in args.zoom else None, two_img)
+        # A second photo, once picked, wins over a close-up chosen instead of the cutout.
+        r = make(hut, ph, "zoom" if hid in close_up and two_img is None else None, two_img)
+        if hid in close_up and r["kind"] == "zoom":
+            r["why"] = "close-up chosen"
         main_path = f"collages/{hid}-main.webp"
         second_path = f"collages/{hid}-{r['kind']}.webp"
         for old in ("photo", "sticker", "zoom"):

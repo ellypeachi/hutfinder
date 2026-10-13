@@ -13,11 +13,21 @@
   "_name": "Eisenkappler Hütte / Kapelska koča",
   "file": "File:Rainer-Schutzhaus Hochobir.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Rainer-Schutzhaus_Hochobir.jpg",
-  "credit": "H. Raab (User:Vesta)",
+  "credit": "H. Raab (Vesta)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/n1321748923.webp",
   "_checked": "2026-10-12"
+ },
+ "n1396763486": {
+  "_name": "Breitenkopfhütte",
+  "file": "File:Breitenkopfhuette inside.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Breitenkopfhuette_inside.jpg",
+  "credit": "Wetze",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/n1396763486.webp",
+  "_checked": "2026-10-13"
  },
  "n1537321603": {
   "_name": "Hochsteinhütte",
@@ -69,6 +79,16 @@
   "src": "data/second_photos/n2432850115.webp",
   "_checked": "2026-10-12"
  },
+ "n276593145": {
+  "_name": "Hochberghaus",
+  "file": "File:Hochberghaus 20130126.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AHochberghaus_20130126.jpg",
+  "credit": "Tigerente",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/n276593145.webp",
+  "_checked": "2026-10-13"
+ },
  "n280889033": {
   "_name": "Eppzirler Alm",
   "file": "File:20040717-Eppzirler Alm.jpg",
@@ -83,7 +103,7 @@
   "_name": "Bayreuther Hütte",
   "file": "File:Bayreuther Huette 3.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Bayreuther_Huette_3.jpg",
-  "credit": "Friedelkg (Diskussion)",
+  "credit": "Friedelkg",
   "license": "CC BY-SA 3.0 de",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
   "src": "data/second_photos/n292919704.webp",
@@ -111,13 +131,13 @@
  },
  "n389785661": {
   "_name": "Adolf-Nossberger-Hütte",
-  "file": "File:Adolf-Noßberger-Hütte und Petzeck am 28.9.2026.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Adolf-No%C3%9Fberger-H%C3%BCtte_und_Petzeck_am_28.9.2026.jpg",
-  "credit": "Michael Burgholzer",
+  "file": "File:Großer Gradensee, Schobergruppe.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Gro%C3%9Fer_Gradensee,_Schobergruppe.jpg",
+  "credit": "Aushelfer",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/n389785661.webp",
-  "_checked": "2026-10-12"
+  "_checked": "2026-10-13"
  },
  "n389785723": {
   "_name": "Bergfriedhütte",
@@ -138,6 +158,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/n389785744.webp",
   "_checked": "2026-10-12"
+ },
+ "n389785790": {
+  "_name": "E.T.-Compton-Hütte",
+  "file": "File:Comptonhuette mit Reisskofel 2 2010.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AComptonhuette_mit_Reisskofel_2_2010.jpg",
+  "credit": "HvB00",
+  "license": "Attribution",
+  "license_url": "",
+  "src": "data/second_photos/n389785790.webp",
+  "_checked": "2026-10-13"
  },
  "n389785804": {
   "_name": "Edelrautehütte",
@@ -309,6 +339,16 @@
   "src": "data/second_photos/n539660905.webp",
   "_checked": "2026-10-12"
  },
+ "n5643719069": {
+  "_name": "Gamskarkogelhütte",
+  "file": "File:Gamskarkogelhütte (2.467m).jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AGamskarkogelh%C3%BCtte_%282.467m%29.jpg",
+  "credit": "Franz Henisch",
+  "license": "Attribution",
+  "license_url": "",
+  "src": "data/second_photos/n5643719069.webp",
+  "_checked": "2026-10-13"
+ },
  "n5849855316": {
   "_name": "Loserhütte",
   "file": "File:Loserhütte Altaussee 1668-3.jpg",
@@ -363,7 +403,7 @@
   "_name": "Buchsteinhaus",
   "file": "File:Buchsteinhaus (20200919 140336).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Buchsteinhaus_(20200919_140336).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/n946045507.webp",
@@ -378,6 +418,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w100023059.webp",
   "_checked": "2026-10-12"
+ },
+ "w100452081": {
+  "_name": "Oberlandhütte",
+  "file": "File:Oberlandhuette 20130224.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AOberlandhuette_20130224.jpg",
+  "credit": "Coronium",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "src": "data/second_photos/w100452081.webp",
+  "_checked": "2026-10-13"
  },
  "w100510700": {
   "_name": "Tölzer Hütte",
@@ -479,6 +529,16 @@
   "src": "data/second_photos/w104676616.webp",
   "_checked": "2026-10-12"
  },
+ "w112282882": {
+  "_name": "Linzer Haus / Wurzeralm",
+  "file": "File:Spital am Pyhrn Wurzeralm Teichlboden.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ASpital_am_Pyhrn_Wurzeralm_Teichlboden.jpg",
+  "credit": "Isiwal",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w112282882.webp",
+  "_checked": "2026-10-13"
+ },
  "w114133557": {
   "_name": "Glocknerhaus",
   "file": "File:Großglockner Hochalpenstraße 21082018 239.jpg",
@@ -493,7 +553,7 @@
   "_name": "Plauener Hütte",
   "file": "File:Plauener Hütte mit Kuchelmooskopf.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Plauener_H%C3%BCtte_mit_Kuchelmooskopf.jpg",
-  "credit": "Benutzer:Hejkal",
+  "credit": "Hejkal",
   "license": "CC BY-SA 3.0 de",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
   "src": "data/second_photos/w117878139.webp",
@@ -503,7 +563,7 @@
   "_name": "Pfeishütte",
   "file": "File:Pfeishuette vor Sonntagkar HQ.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Pfeishuette_vor_Sonntagkar_HQ.jpg",
-  "credit": "The original uploader was Luidger at German Wikipedia.",
+  "credit": "Luidger",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w117889584.webp",
@@ -513,7 +573,7 @@
   "_name": "Sulzenauhütte",
   "file": "File:Sulzenauhütte (IMG 20220804 094601).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Sulzenauh%C3%BCtte_(IMG_20220804_094601).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w117966153.webp",
@@ -563,7 +623,7 @@
   "_name": "Weidener Hütte",
   "file": "File:Weidener Hütte im Winter.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Weidener_H%C3%BCtte_im_Winter.jpg",
-  "credit": "Hermann Hammer (User:Haneburger)",
+  "credit": "Hermann Hammer (Haneburger)",
   "license": "CC0",
   "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
   "src": "data/second_photos/w120467198.webp",
@@ -643,7 +703,7 @@
   "_name": "Walder Alm",
   "file": "File:Hochnissl from Walder Alm.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Hochnissl_from_Walder_Alm.JPG",
-  "credit": "User:Haneburger",
+  "credit": "Haneburger",
   "license": "Public domain",
   "license_url": "",
   "src": "data/second_photos/w122669293.webp",
@@ -653,7 +713,7 @@
   "_name": "Alpengasthaus Karwendel",
   "file": "File:AUT – Tirol – Bezirk Schwaz in Tirol — Gemeinde Eben am Achensee — Pertisau – Naturparkstrasse 31 (Alpengasthaus Karwendel) 2020.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:AUT_%E2%80%93_Tirol_%E2%80%93_Bezirk_Schwaz_in_Tirol_%E2%80%94_Gemeinde_Eben_am_Achensee_%E2%80%94_Pertisau_%E2%80%93_Naturparkstrasse_31_(Alpengasthaus_Karwendel)_2020.JPG",
-  "credit": "User:Mateus2019",
+  "credit": "Mateus2019",
   "license": "CC BY 3.0 de",
   "license_url": "https://creativecommons.org/licenses/by/3.0/de/deed.en",
   "src": "data/second_photos/w122712423.webp",
@@ -678,6 +738,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w122902604.webp",
   "_checked": "2026-10-12"
+ },
+ "w123243677": {
+  "_name": "Gauertalhaus",
+  "file": "File:Gauertalweg 15 Gauertalhaus .JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AGauertalweg_15_Gauertalhaus_.JPG",
+  "credit": "Böhringer Friedrich",
+  "license": "Attribution",
+  "license_url": "",
+  "src": "data/second_photos/w123243677.webp",
+  "_checked": "2026-10-13"
  },
  "w123303946": {
   "_name": "Sillianer Hütte",
@@ -829,6 +899,16 @@
   "src": "data/second_photos/w126213398.webp",
   "_checked": "2026-10-12"
  },
+ "w126233467": {
+  "_name": "Naturfreundehaus Neubau",
+  "file": "File:Schutzhaus Neubau 20090721.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ASchutzhaus_Neubau_20090721.jpg",
+  "credit": "Tigerente",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w126233467.webp",
+  "_checked": "2026-10-13"
+ },
  "w126300840": {
   "_name": "Dobratsch Gipfelhaus",
   "file": "File:Dobratsch ÖAV Gipfelhaus, Kärnten.jpg",
@@ -851,13 +931,23 @@
  },
  "w127242429": {
   "_name": "Graf Meran Haus",
-  "file": "File:Graf-Meran-Haus, Veitsch.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:Graf-Meran-Haus,_Veitsch.jpg",
+  "file": "File:Graf-Meran-Haus, Veitsch 01.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Graf-Meran-Haus,_Veitsch_01.jpg",
   "credit": "Herzi Pinki",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w127242429.webp",
-  "_checked": "2026-10-12"
+  "_checked": "2026-10-13"
+ },
+ "w127882802": {
+  "_name": "Fritz-Pflaum-Hütte",
+  "file": "File:Fritz-Pflaum-Huette MQ.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AFritz-Pflaum-Huette_MQ.jpg",
+  "credit": "Luidger",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "src": "data/second_photos/w127882802.webp",
+  "_checked": "2026-10-13"
  },
  "w127908485": {
   "_name": "Carl-von-Stahl-Haus",
@@ -943,7 +1033,7 @@
   "_name": "Kaltenberghütte",
   "file": "File:Kaltenberghütte, Klostertal 04.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Kaltenbergh%C3%BCtte,_Klostertal_04.JPG",
-  "credit": "Feel free to use my photos, but please mention me as the author and if you want send me a message. or (rufre@lenz-nenning.at)",
+  "credit": "Böhringer Friedrich",
   "license": "CC BY-SA 3.0 at",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/at/deed.en",
   "src": "data/second_photos/w130176573.webp",
@@ -983,7 +1073,7 @@
   "_name": "Oberzalimhütte",
   "file": "File:Oberzalimhütte 1.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Oberzalimh%C3%BCtte_1.JPG",
-  "credit": "Feel free to use my photos, but please mention me as the author and if you want send me a message. or (rufre@lenz-nenning.at)",
+  "credit": "Böhringer Friedrich",
   "license": "CC BY-SA 3.0 at",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/at/deed.en",
   "src": "data/second_photos/w132073459.webp",
@@ -1093,7 +1183,7 @@
   "_name": "Geraer Hütte",
   "file": "File:Geraer Hütte.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Geraer_H%C3%BCtte.jpg",
-  "credit": "Hejkal at German Wikipedia",
+  "credit": "Hejkal",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w137132960.webp",
@@ -1243,7 +1333,7 @@
   "_name": "Sarotlahütte",
   "file": "File:Sarotlahütte 1.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Sarotlah%C3%BCtte_1.JPG",
-  "credit": "Feel free to use my photos, but please mention me as the author and if you want send me a message. or (rufre@lenz-nenning.at)",
+  "credit": "Böhringer Friedrich",
   "license": "CC BY-SA 3.0 at",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/at/deed.en",
   "src": "data/second_photos/w146174865.webp",
@@ -1263,7 +1353,7 @@
   "_name": "Bettelwurfhütte",
   "file": "File:Bettelwurfhütte (DSC02419).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Bettelwurfh%C3%BCtte_(DSC02419).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w148049142.webp",
@@ -1288,6 +1378,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w149589020.webp",
   "_checked": "2026-10-12"
+ },
+ "w150050887": {
+  "_name": "Gießener Hütte",
+  "file": "File:Gießener DAV-Hütte (2215 m ü.A.), Hohe Tauern, Kärnten.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AGie%C3%9Fener_DAV-H%C3%BCtte_%282215_m_%C3%BC.A.%29%2C_Hohe_Tauern%2C_K%C3%A4rnten.jpg",
+  "credit": "Naturpuur",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w150050887.webp",
+  "_checked": "2026-10-13"
  },
  "w150245424": {
   "_name": "Taschachhaus",
@@ -1363,7 +1463,7 @@
   "_name": "Mitterfeldalm",
   "file": "File:Mitterfeldalm.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Mitterfeldalm.JPG",
-  "credit": "Tommyyboy at Dutch Wikipedia",
+  "credit": "Tommyyboy",
   "license": "Public domain",
   "license_url": "",
   "src": "data/second_photos/w152187326.webp",
@@ -1453,7 +1553,7 @@
   "_name": "Zeppezauerhaus",
   "file": "File:Grödig - Zeppezauerhaus (b).JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Gr%C3%B6dig_-_Zeppezauerhaus_(b).JPG",
-  "credit": "C.Stadler/Bwag (talk / email)",
+  "credit": "C.Stadler/Bwag",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w160081047.webp",
@@ -1523,7 +1623,7 @@
   "_name": "Lizumer Hütte",
   "file": "File:Junsjoch und Pluderling.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Junsjoch_und_Pluderling.jpg",
-  "credit": "Hermann Hammer (User:Haneburger)",
+  "credit": "Hermann Hammer (Haneburger)",
   "license": "CC0",
   "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
   "src": "data/second_photos/w166530671.webp",
@@ -1593,7 +1693,7 @@
   "_name": "Neue Regensburger Hütte",
   "file": "File:Neue Regensburgerhütte (IMG 20210821 164140).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Neue_Regensburgerh%C3%BCtte_(IMG_20210821_164140).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w168890140.webp",
@@ -1633,7 +1733,7 @@
   "_name": "Nürnberger Hütte",
   "file": "File:Nürnberger Hütte (IMG 20220804 160933).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:N%C3%BCrnberger_H%C3%BCtte_(IMG_20220804_160933).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w172609525.webp",
@@ -1859,6 +1959,16 @@
   "src": "data/second_photos/w200305337.webp",
   "_checked": "2026-10-12"
  },
+ "w203260151": {
+  "_name": "Hollhaus (Theodor-Karl-)",
+  "file": "File:Bad Mitterndorf Tauplitz Hollhaus DAV plaque.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ABad_Mitterndorf_Tauplitz_Hollhaus_DAV_plaque.jpg",
+  "credit": "Isiwal",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w203260151.webp",
+  "_checked": "2026-10-13"
+ },
  "w205171902": {
   "_name": "Neue Bielefelder Hütte",
   "file": "File:2008 Oetztal Neue Bielefelder Huette 2.jpg",
@@ -1911,13 +2021,13 @@
  },
  "w209732086": {
   "_name": "Duisburger Hütte",
-  "file": "File:Hütte Weißseekopf.jpg",
-  "page": "https://commons.wikimedia.org/wiki/File:H%C3%BCtte_Wei%C3%9Fseekopf.jpg",
-  "credit": "Seob2",
-  "license": "CC0",
-  "license_url": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+  "file": "File:Duisburger Hütte - Kegelesee - Zirknitzscharte, Österreichischer Alpenverein.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File:Duisburger_H%C3%BCtte_-_Kegelesee_-_Zirknitzscharte,_%C3%96sterreichischer_Alpenverein.jpg",
+  "credit": "Naturpuur",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w209732086.webp",
-  "_checked": "2026-10-12"
+  "_checked": "2026-10-13"
  },
  "w210661236": {
   "_name": "Ulmer Hütte",
@@ -1958,6 +2068,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w217894340.webp",
   "_checked": "2026-10-12"
+ },
+ "w218941198": {
+  "_name": "Erlanger Hütte",
+  "file": "File:Wildgrat.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AWildgrat.JPG",
+  "credit": "St. Braukmann",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "src": "data/second_photos/w218941198.webp",
+  "_checked": "2026-10-13"
  },
  "w222272618": {
   "_name": "Hocheck-Schutzhaus",
@@ -2083,7 +2203,7 @@
   "_name": "Pühringerhütte",
   "file": "File:Pühringer Hütte (DSC07108).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:P%C3%BChringer_H%C3%BCtte_(DSC07108).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w232521425.webp",
@@ -2108,6 +2228,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w233647338.webp",
   "_checked": "2026-10-12"
+ },
+ "w233768517": {
+  "_name": "Millstätter Hütte 1880 m",
+  "file": "File:Freilandhaltung von Schweinen, Millstätter Alpe 1600 m, Kärnten.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AFreilandhaltung_von_Schweinen%2C_Millst%C3%A4tter_Alpe_1600_m%2C_K%C3%A4rnten.jpg",
+  "credit": "Naturpuur",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w233768517.webp",
+  "_checked": "2026-10-13"
  },
  "w234410541": {
   "_name": "Sattelalpe",
@@ -2148,6 +2278,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w239039300.webp",
   "_checked": "2026-10-12"
+ },
+ "w239985798": {
+  "_name": "Bregenzer Hütte",
+  "file": "File:Schwarzenberg-Bregenzer Huette-entree-01ASD.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ASchwarzenberg-Bregenzer_Huette-entree-01ASD.jpg",
+  "credit": "Asurnipal",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w239985798.webp",
+  "_checked": "2026-10-13"
  },
  "w246634739": {
   "_name": "Friedrichshafener Hütte",
@@ -2223,7 +2363,7 @@
   "_name": "Solsteinhaus",
   "file": "File:Solsteinhaus mit Erlspitze.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Solsteinhaus_mit_Erlspitze.jpg",
-  "credit": "No machine-readable author provided. Luidger assumed (based on copyright claims).",
+  "credit": "Luidger",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w26716681.webp",
@@ -2253,7 +2393,7 @@
   "_name": "Falkenhütte",
   "file": "File:Falkenhuette MQ.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Falkenhuette_MQ.jpg",
-  "credit": "No machine-readable author provided. Luidger assumed (based on copyright claims).",
+  "credit": "Luidger",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w26960869.webp",
@@ -2483,7 +2623,7 @@
   "_name": "Füssener Hütte",
   "file": "File:Otto-Mayr-Huette.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Otto-Mayr-Huette.jpg",
-  "credit": "Kai Brühne --Kai11 11:05, 30 July 2005 (UTC)",
+  "credit": "Kai Brühne",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w33560054.webp",
@@ -2508,6 +2648,16 @@
   "license_url": "",
   "src": "data/second_photos/w35285185.webp",
   "_checked": "2026-10-12"
+ },
+ "w358873985": {
+  "_name": "Gleiwitzer Hütte",
+  "file": "File:Gleiwitzer Hütte 20080806a.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AGleiwitzer_H%C3%BCtte_20080806a.jpg",
+  "credit": "Tigerente",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w358873985.webp",
+  "_checked": "2026-10-13"
  },
  "w36333042": {
   "_name": "Spitzsteinhaus",
@@ -2633,7 +2783,7 @@
   "_name": "Olpererhütte",
   "file": "File:Olpererhütte (DSC06945).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Olpererh%C3%BCtte_(DSC06945).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w39911021.webp",
@@ -2663,7 +2813,7 @@
   "_name": "Grüntalkogelhütte",
   "file": "File:2009-05-10 Haltgraben in Frankenfels Richtung Schwabeck.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:2009-05-10_Haltgraben_in_Frankenfels_Richtung_Schwabeck.JPG",
-  "credit": "User:GT1976",
+  "credit": "GT1976",
   "license": "Public domain",
   "license_url": "",
   "src": "data/second_photos/w419513412.webp",
@@ -2723,7 +2873,7 @@
   "_name": "Bremer Hütte",
   "file": "File:Bremer Hütte (DSC00826).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Bremer_H%C3%BCtte_(DSC00826).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w477497580.webp",
@@ -2779,6 +2929,16 @@
   "src": "data/second_photos/w59484532.webp",
   "_checked": "2026-10-12"
  },
+ "w613732381": {
+  "_name": "Hexenseehütte",
+  "file": "File:Berg-Hexenkopf.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ABerg-Hexenkopf.jpg",
+  "credit": "MrIceblock",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "src": "data/second_photos/w613732381.webp",
+  "_checked": "2026-10-13"
+ },
  "w674870317": {
   "_name": "Bergerseehütte",
   "file": "File:Lasörling von der Bonn-Matreier-Hütte v.jpg",
@@ -2793,7 +2953,7 @@
   "_name": "Neue Reichenberger Hütte",
   "file": "File:Reichenberg1.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Reichenberg1.jpg",
-  "credit": "Michael Gredenberg Original uploader was Mike@inode.at at de.wikipedia",
+  "credit": "Michael Gredenberg",
   "license": "CC BY-SA 3.0",
   "license_url": "http://creativecommons.org/licenses/by-sa/3.0/",
   "src": "data/second_photos/w680506024.webp",
@@ -2803,7 +2963,7 @@
   "_name": "Almtalerhaus",
   "file": "File:Almtalerhaus.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Almtalerhaus.JPG",
-  "credit": "Cklang (Diskussion)",
+  "credit": "Cklang",
   "license": "CC BY-SA 3.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
   "src": "data/second_photos/w70214928.webp",
@@ -2883,7 +3043,7 @@
   "_name": "Gablonzer Hütte",
   "file": "File:Gosaukamm, Dachstein, Gablonzer hut.jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Gosaukamm,_Dachstein,_Gablonzer_hut.jpg",
-  "credit": "Benutzer:Hejkal",
+  "credit": "Hejkal",
   "license": "CC BY-SA 3.0 de",
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0/de/deed.en",
   "src": "data/second_photos/w81020836.webp",
@@ -3073,11 +3233,21 @@
   "_name": "Martin-Busch-Hütte",
   "file": "File:Martin-Busch-Hütte.JPG",
   "page": "https://commons.wikimedia.org/wiki/File:Martin-Busch-H%C3%BCtte.JPG",
-  "credit": "Gerdt at German Wikipedia",
+  "credit": "Gerdt",
   "license": "Public domain",
   "license_url": "",
   "src": "data/second_photos/w84977315.webp",
   "_checked": "2026-10-12"
+ },
+ "w85042838": {
+  "_name": "Hainfelder Hütte",
+  "file": "File:Hainfelder Hütte Panorama Ost 01b.JPG",
+  "page": "https://commons.wikimedia.org/wiki/File%3AHainfelder_H%C3%BCtte_Panorama_Ost_01b.JPG",
+  "credit": "Uoaei1",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w85042838.webp",
+  "_checked": "2026-10-13"
  },
  "w85132012": {
   "_name": "Feilalm",
@@ -3142,8 +3312,8 @@
  "w85800333": {
   "_name": "Madlenerhaus",
   "file": null,
-  "_checked": "2026-10-12",
-  "_note": "Madlenerhaus.JPG is GFDL, which a collage cannot use"
+  "_checked": "2026-10-13",
+  "_note": "Elly: Madlenerhaus.JPG is the main photo, with a close-up of it as the second piece"
  },
  "w85800400": {
   "_name": "Tübinger Hütte",
@@ -3225,6 +3395,16 @@
   "src": "data/second_photos/w87219951.webp",
   "_checked": "2026-10-12"
  },
+ "w87312650": {
+  "_name": "Neue Magdeburger Hütte",
+  "file": "File:20040717-Magdeburger Huette MQ.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3A20040717-Magdeburger_Huette_MQ.jpg",
+  "credit": "Luidger",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "src": "data/second_photos/w87312650.webp",
+  "_checked": "2026-10-13"
+ },
  "w87608952": {
   "_name": "Weichtalhaus",
   "file": "File:Reichenau an der Rax - Weichtalhaus, neues.JPG",
@@ -3244,6 +3424,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
   "src": "data/second_photos/w87622072.webp",
   "_checked": "2026-10-12"
+ },
+ "w87627789": {
+  "_name": "Patscherkofel Schutzhaus",
+  "file": "File:Schutzhaus Patscherkofel - panoramio.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3ASchutzhaus_Patscherkofel_-_panoramio.jpg",
+  "credit": "buzzard525",
+  "license": "CC BY 3.0",
+  "license_url": "https://creativecommons.org/licenses/by/3.0",
+  "src": "data/second_photos/w87627789.webp",
+  "_checked": "2026-10-13"
  },
  "w87676412": {
   "_name": "Hochleckenhaus",
@@ -3305,6 +3495,16 @@
   "src": "data/second_photos/w91107893.webp",
   "_checked": "2026-10-12"
  },
+ "w91797593": {
+  "_name": "Eckberthütte",
+  "file": "File:Eckberthuette Bluehnbachtal.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3AEckberthuette_Bluehnbachtal.jpg",
+  "credit": "Thomas Edel",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w91797593.webp",
+  "_checked": "2026-10-13"
+ },
  "w92004584": {
   "_name": "Osnabrücker Hütte",
   "file": "File:Osnabrücker Hütte1.jpg",
@@ -3329,7 +3529,7 @@
   "_name": "Admonter Haus",
   "file": "File:Admonter Haus (20200918 140523).jpg",
   "page": "https://commons.wikimedia.org/wiki/File:Admonter_Haus_(20200918_140523).jpg",
-  "credit": "Simon Legner (User:simon04)",
+  "credit": "Simon Legner (simon04)",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
   "src": "data/second_photos/w92644628.webp",
@@ -3414,6 +3614,16 @@
   "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
   "src": "data/second_photos/w95667789.webp",
   "_checked": "2026-10-12"
+ },
+ "w95808244": {
+  "_name": "Buschberghütte",
+  "file": "File:ÖAV Logo Buschberghütte.jpg",
+  "page": "https://commons.wikimedia.org/wiki/File%3A%C3%96AV_Logo_Buschbergh%C3%BCtte.jpg",
+  "credit": "Naoag",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "src": "data/second_photos/w95808244.webp",
+  "_checked": "2026-10-13"
  },
  "w95812262": {
   "_name": "Dortmunder Hütte",

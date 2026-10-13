@@ -32,7 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import swap_photos as sw  # noqa: E402  (the file layout and helpers are shared)
 
 ROOT = sw.ROOT
-USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use')   # as in add_second_photos.py
+USABLE = ('CC BY', 'CC0', 'Public domain', 'Copyrighted free use', 'Attribution')   # as in add_second_photos.py
 
 
 def main():

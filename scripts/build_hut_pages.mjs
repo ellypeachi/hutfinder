@@ -596,9 +596,25 @@ function credit(L, ph, isCollage, two) {
   const link = (href, text) => (href ? `<a href="${esc(href)}">${text}</a>` : text)
   const lic = (name, href) => link(href, `<span class="hp-nowrap">${esc(name || '')}</span>`)
   const one = (p) => `${link(p.page, esc(p.credit || ''))} · ${lic(p.license, p.license_url)}`
-  let s = two
-    ? `${esc(L.t('page.photos'))} ${one(ph)} ${esc(L.t('page.and'))} ${one(two)}`
-    : `${esc(L.t('detail.photoCredit'))} ${one(ph)}`
+  // Both photos by the same person ("Simon Legner (simon04)", or a longer form
+  // of the same name): the name once, the licences once each. The name links
+  // to the main photo and the word "Photos" to the second, so each photo still
+  // links to its page.
+  const who = (c) => (c || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '')
+  const [a, b] = two ? [who(ph.credit), who(two.credit)] : []
+  const same = two && a && b && (a === b || a.includes(b) || b.includes(a))
+  let s
+  if (same) {
+    const name = b.length > a.length ? two.credit : ph.credit
+    const lics = ph.license === two.license
+      ? lic(ph.license, ph.license_url)
+      : `${lic(ph.license, ph.license_url)} ${esc(L.t('page.and'))} ${lic(two.license, two.license_url)}`
+    s = `${link(two.page, esc(L.t('page.photos')))} ${link(ph.page, esc(name))} · ${lics}`
+  } else {
+    s = two
+      ? `${esc(L.t('page.photos'))} ${one(ph)} ${esc(L.t('page.and'))} ${one(two)}`
+      : `${esc(L.t('detail.photoCredit'))} ${one(ph)}`
+  }
   if (isCollage) {
     s += ` · ${esc(L.t('page.collageBy'))}`
     if ([ph, two].some((p) => p && /^CC BY-SA/i.test(p.license || '')))
