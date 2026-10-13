@@ -322,7 +322,6 @@ svg.hp-tape { clip-path: none; }
   color: var(--ink-soft);
 }
 .hp-legend > span { display: inline-flex; align-items: center; gap: 5px; }
-.hp-legend-phone { display: none; }
 .hp-cal-foot {
   display: flex;
   flex-wrap: wrap;
@@ -358,25 +357,49 @@ svg.hp-tape { clip-path: none; }
   cursor: pointer;
 }
 .hp-step:disabled { color: var(--ink-soft); cursor: default; opacity: 0.45; }
-.hp-keys {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px 14px;
-  margin-bottom: 8px;
-  font-size: 12.5px;
+/* Room type pills above the phone calendar, any mix of them picked. They
+   need JavaScript, so without it they stay hidden and the calendar shows all
+   room types together. */
+.hp-types { display: none; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.hp-js .hp-types { display: flex; }
+.hp-types .hf-chip { padding: 5px 12px; font-size: 13.5px; }
+.hp-types-one { margin: 0 0 8px; font-size: 13px; color: var(--ink-soft); }
+
+
+/* ---- the hut's own text, behind "View more information" -------------------- */
+
+.hp-info { margin-top: 6px; }
+.hp-info-btn {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--blue-deep);
+  font: inherit;
+  font-size: var(--t-meta);
+  font-weight: 600;
+}
+.hp-js .hp-info-btn { display: inline-flex; }
+.hp-js .hp-info:not(.is-open) .hp-info-body { display: none; }
+.hp-info-btn .hp-icon { transform: rotate(90deg); transition: transform var(--dur) var(--ease); }
+.hp-info.is-open .hp-info-btn .hp-icon { transform: rotate(-90deg); }
+.hp-info-close, .hp-info.is-open .hp-info-open { display: none; }
+.hp-info.is-open .hp-info-close { display: inline; }
+.hp-info-body { margin: 4px 0 8px; }
+.hp-info-body p { margin: 0; }
+.hp-info-body p + p { margin-top: 10px; }
+/* Fine print, set apart from the text it credits. */
+.hp-source {
+  margin-top: 12px !important;
+  padding-top: 8px;
+  border-top: 1px solid var(--hair);
+  font-size: 12px;
+  line-height: 1.45;
   color: var(--ink-soft);
 }
-.hp-keys > span { display: inline-flex; align-items: center; gap: 5px; }
-
-
-/* ---- the hut's own text --------------------------------------------------- */
-
-.hp-desc { max-width: 680px; }
-.hp-desc .hp-h2 { margin-bottom: 6px; }
-.hp-desc p { margin: 0; }
-.hp-desc p + p { margin-top: 10px; }
-.hp-desc .hp-note { margin-top: 6px; }
 
 
 /* ---- huts nearby ---------------------------------------------------------- */
@@ -540,9 +563,11 @@ svg.hp-tape { clip-path: none; }
   .hp-facts { flex-basis: 100%; gap: 14px; }
   .hp-name { font-size: var(--t-name); line-height: var(--lh-name); font-variation-settings: var(--fr-name); }
   .hp-meta { margin-top: 4px; font-size: 14.5px; }
-  .hp-summary, .hp-desc p { font-size: 15px; }
+  .hp-summary, .hp-info-body p { font-size: 15px; }
+  .hp-info-body .hp-source { font-size: 11.5px; }
   .hp-band { gap: 8px 16px; padding-top: 12px; font-size: 14px; }
-  .hp-credit { font-size: 11.5px; }
+  /* In from the collage's edge, in line with the text below. */
+  .hp-credit { padding: 0 4px; font-size: 11.5px; }
 
   .hp-section { gap: 10px; }
   .hp-h2 { font-size: 18px; }
@@ -552,13 +577,13 @@ svg.hp-tape { clip-path: none; }
   .hp-cal-top, .hp-weeks-view { display: none; }
   .hp-months { display: block; }
   .hp-cal-foot { flex-direction: column; align-items: stretch; }
-  .hp-legend-wide { display: none; }
-  .hp-legend-phone { display: inline-flex; justify-content: center; font-size: 12.5px; }
+  .hp-cal-foot .hp-legend { justify-content: center; font-size: 12.5px; }
   .hp-cal-foot .hp-btn { align-self: flex-start; }
 
-  .hp-near { flex-direction: column; gap: 12px; }
+  .hp-near { flex-direction: column; gap: 24px; }
   .hp-cards { max-width: none; flex-basis: auto; }
-  .hp-mapcol { flex-basis: auto; margin-top: 6px; }
+  /* The map comes before the nearby huts' cards on a phone. */
+  .hp-mapcol { flex-basis: auto; order: -1; }
   .hp-mapbox { flex: none; min-height: 0; height: 320px; }
   .hp-map-legend { left: 10px; top: 10px; flex-direction: column; gap: 2px; padding: 6px 9px; font-size: 11.5px; }
 
@@ -566,14 +591,16 @@ svg.hp-tape { clip-path: none; }
   .hp-foot-links a { min-height: 44px; display: inline-flex; align-items: center; }
 }
 
-/* The phone month grid: smaller cells, an icon per room type instead of its
-   name, and regular-weight numbers, which are easier on the eyes when every
-   cell has three. */
+/* The phone month grid: one number a day, the free beds of the room types
+   picked above it, with the same full / half / empty gauge as the legend. */
 .hp-months .hp-dow, .hp-months .hp-week, .hp-months .hp-weeks { gap: 3px; }
 .hp-months .hp-dow { margin-bottom: 3px; font-size: 11.5px; }
-.hp-months .hp-day { min-height: 78px; padding: 5px 4px; gap: 5px; font-size: 11.5px; }
+.hp-months .hp-day { min-height: 54px; padding: 6px 5px; gap: 6px; font-size: 13px; }
+/* Days already past, and blanks outside the month, take no more room than
+   their number: a week that is over shrinks to one line. */
+.hp-months .hp-day-past, .hp-months .hp-day:empty { min-height: 0; }
 .hp-months .hp-num { font-size: 13.5px; font-weight: 700; }
 .hp-months .hp-day-past .hp-num,
 .hp-months .hp-day-closed .hp-num { font-weight: 600; }
-.hp-months .hp-row { gap: 3px; }
-.hp-months .hp-row b { margin-left: 0; font-weight: 400; }
+.hp-months .hp-v { display: flex; align-items: center; gap: 4px; line-height: 1.1; }
+.hp-months .hp-v b { font-weight: 400; }

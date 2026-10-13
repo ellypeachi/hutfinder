@@ -163,15 +163,6 @@ const ICON = {
 const icon = (name, size = 15, sw = 1.9) =>
   `<svg class="hp-icon" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICON[name]}</svg>`
 
-// Room-type icons in the phone calendar: bunk, two people, a door.
-const ROOM_ICON = {
-  dorm: '<path d="M2.5 1.8v12.7M13.5 1.8v12.7M2.5 6.6h11M2.5 12h11M4.3 4.6h2.6M4.3 10h2.6"/>',
-  shared: '<circle cx="5.4" cy="5.2" r="2.1"/><circle cx="11" cy="5.2" r="2.1"/><path d="M1.6 14c0-2.5 1.7-4.1 3.8-4.1s3.8 1.6 3.8 4.1M9.4 10.2c.5-.2 1-.3 1.6-.3 2.1 0 3.8 1.6 3.8 4.1"/>',
-  priv: '<path d="M3.8 14.5V2.6a1 1 0 0 1 1-1h6.4a1 1 0 0 1 1 1v11.9M2.2 14.5h11.6"/><circle cx="10" cy="8.4" r="0.6"/>',
-}
-const roomIcon = (k, color, size, sw) =>
-  `<svg width="${size}" height="${size}" viewBox="0 0 16 16" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0">${ROOM_ICON[k]}</svg>`
-
 /* Free beds keep the app's traffic light, and the colours never work alone:
    the gauge's shape (full, half, empty) and the number carry the meaning. */
 const bedColor = (n) => (n <= 0 ? 'var(--burgundy)' : n <= 3 ? 'var(--rust)' : 'var(--pine)')
@@ -409,16 +400,24 @@ function openDays(rec) {
   return rec && rec.days ? Object.keys(rec.days).filter((d) => d >= TODAY && d < WINDOW_END).sort() : []
 }
 
+// The room types a hut has, as [key, index into the availability arrays].
+const typesOf = (rec) => BUCKETS.map((k, j) => [k, j]).filter(([, j]) => rec.caps && rec.caps[j] > 0)
+
 function cellRows(L, rec, iso, phone) {
   const a = rec.days[iso]
+  if (phone) {
+    /* On a phone a day shows one number: the free beds of the room types
+       picked above the calendar, added up. The page is written with all of
+       them picked; data-beds holds each type's count, so src/hutpage.js can
+       redo the sum when the pick changes. */
+    const n = typesOf(rec).reduce((sum, [, j]) => sum + (a[j] || 0), 0)
+    return `<span class="hp-v" data-beds="${BUCKETS.map((_, j) => a[j] || 0).join(',')}">${gauge(n, 9)}<b style="color:${bedColor(n)}">${esc(n > 0 ? L.nf(n) : L.t('avail.full'))}</b></span>`
+  }
   return BUCKETS.map((k, j) => {
     if (!(rec.caps && rec.caps[j] > 0)) return ''
     const n = a[j] || 0
     const text = n > 0 ? L.nf(n) : L.t('avail.full')
     const color = bedColor(n)
-    if (phone) {
-      return `<span class="hp-row">${roomIcon(k, color, 11, 1.25)}<span class="hf-vh">${esc(L.t(`bucket.${k}`))}: </span><b style="color:${color}">${esc(text)}</b></span>`
-    }
     return `<span class="hp-row">${gauge(n)}<span class="hp-lbl">${esc(L.t(`page.short.${k}`))}</span><b style="color:${color}">${esc(text)}</b></span>`
   }).join('')
 }
@@ -435,10 +434,8 @@ function dayCell(L, rec, iso, { phone = false, inMonth = true } = {}) {
 
 const dowRow = (L) => `<div class="hp-dow" aria-hidden="true">${L.dows.map((d) => `<span>${esc(d)}</span>`).join('')}</div>`
 
-function legend(L, filled, cls) {
-  const dot = (n) =>
-    filled ? `<svg width="9" height="9" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="9" fill="${bedColor(n)}"/></svg>` : gauge(n, 10)
-  return `<span class="hp-legend ${cls}"><span>${dot(9)}${esc(L.t('page.legend.many'))}</span><span>${dot(2)}${esc(L.t('page.legend.few'))}</span><span>${dot(0)}${esc(L.t('avail.full'))}</span></span>`
+function legend(L) {
+  return `<span class="hp-legend"><span>${gauge(9, 10)}${esc(L.t('page.legend.many'))}</span><span>${gauge(2, 10)}${esc(L.t('page.legend.few'))}</span><span>${gauge(0, 10)}${esc(L.t('avail.full'))}</span></span>`
 }
 
 function bookButton(L, h, cls = 'hp-btn') {
@@ -476,7 +473,14 @@ function bedsSection(L, h) {
     m = mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, '0')}`
   }
   const monthName = (m) => L.date(`${m}-01`, { month: 'long', year: 'numeric' })
-  const keys = `<div class="hp-keys">${BUCKETS.map((k, j) => (rec.caps && rec.caps[j] > 0 ? `<span>${roomIcon(k, '#6E5A4B', 14, 1.7)}${esc(L.t(`bucket.${k}`))}</span>` : '')).join('')}</div>`
+  // Room type pills, all picked to start with; any mix can be picked.
+  const types = typesOf(rec)
+  const pill = (k, j) =>
+    `<button type="button" class="hf-chip hf-pill hp-type" data-i="${j}" aria-pressed="true">${esc(L.t(`page.short.${k}`))}</button>`
+  const keys =
+    types.length > 1
+      ? `<div class="hp-types" role="group" aria-label="${esc(L.t('page.roomType'))}">${types.map(([k, j]) => pill(k, j)).join('')}</div>`
+      : `<p class="hp-types-one">${esc(L.t(`bucket.${types[0][0]}`))}</p>`
   const months = monthKeys
     .map((m, idx) => {
       const first1 = `${m}-01`
@@ -496,9 +500,9 @@ function bedsSection(L, h) {
       return `<div class="hp-month"><div class="hp-month-head">${step(-1, prev, 'prev')}<p class="hp-month-name">${esc(monthName(m))}</p>${step(1, next, 'chevron')}</div>${dowRow(L)}<div class="hp-weeks">${rows}</div></div>`
     })
     .join('')
-  const phone = `<div class="hp-months" data-months>${keys}${months}</div>`
+  const phone = `<div class="hp-months" data-months data-full="${esc(L.t('avail.full'))}" data-locale="${NUMBER_LOCALES[L.lang] || L.locale}">${keys}${months}</div>`
 
-  return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L, false, 'hp-legend-wide')}${legend(L, true, 'hp-legend-phone')}${bookButton(L, h)}</div></div></section>`
+  return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div></section>`
 }
 
 // ---------------------------------------------------------------- description
@@ -520,7 +524,11 @@ function plainParas(html) {
 
 /* The hut's own text in this language, or else in the first language the hut
    wrote one in, labelled as such. Our own translations (nl, cs) are not used. */
-function descSection(L, h) {
+/* The hut's own text, folded into the intro behind "View more information".
+   It opens above the button, so "Show less" ends up under the text. It is in
+   the HTML either way, so search engines read it; without JavaScript it is
+   simply shown. */
+function moreInfo(L, h) {
   const e = textOf(h)
   if (!e) return ''
   const ours = e.translated || []
@@ -530,7 +538,10 @@ function descSection(L, h) {
   if (!paras.length) return ''
   const note = code === L.lang ? L.t('page.descSource') : L.t('page.descSourceIn', { language: L.langName(code) })
   const langAttr = code === L.lang ? '' : ` lang="${code}"`
-  return `<section class="hp-desc" aria-labelledby="desc-h"><h2 class="hp-h2" id="desc-h">${esc(L.t('detail.description'))}</h2><div${langAttr}>${paras.map((p) => `<p>${esc(p)}</p>`).join('')}</div><p class="hp-note">${esc(note)}</p></section>`
+  return (
+    `<div class="hp-info"><div class="hp-info-body" id="hut-info"><div${langAttr}>${paras.map((p) => `<p>${esc(p)}</p>`).join('')}</div><p class="hp-source">${esc(note)}</p></div>` +
+    `<button type="button" class="hp-info-btn hf-tap-min" aria-expanded="false" aria-controls="hut-info"><span class="hp-u hp-info-open">${esc(L.t('page.moreInfo'))}</span><span class="hp-u hp-info-close">${esc(L.t('page.lessInfo'))}</span>${icon('chevron', 15, 2)}</button></div>`
+  )
 }
 
 // ---------------------------------------------------------------- top
@@ -719,6 +730,9 @@ function page(L, h, assets) {
 
   const head = [
     '<meta charset="utf-8">',
+    // Before anything renders, so parts that only work with JavaScript (the
+    // folded text, the calendar pills) don't show for a moment first.
+    "<script>document.documentElement.classList.add('hp-js')</script>",
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
     `<title>${esc(title)}</title>`,
     `<meta name="description" content="${esc(desc)}">`,
@@ -743,7 +757,7 @@ function page(L, h, assets) {
   const header =
     `<header class="hp-head"><div class="hp-wrap">` +
     `<a class="hp-mark" href="/" aria-label="${esc(L.t('page.home'))}"><img src="/h-line-600-light.svg" alt="Hüttenfinder" width="172" height="26"></a>` +
-    `<div class="hp-head-links"><a class="hf-tap-min" href="/"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.map'))}</span></a>` +
+    `<div class="hp-head-links"><a class="hf-tap-min" href="/"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.allHutsShort'))}</span></a>` +
     `<a class="hp-lang hf-tap-min" href="${pagePath(other, h)}" hreflang="${other}" lang="${other}" aria-label="${esc(O.t('page.thisPageIn'))}">${icon('globe', 16, 1.8)}${other.toUpperCase()}</a></div>` +
     `</div></header>`
 
@@ -755,7 +769,7 @@ function page(L, h, assets) {
 
   const facts =
     `<div class="hp-facts"><div><h1 class="hp-name">${esc(h.name)}</h1>${meta ? `<p class="hp-meta">${esc(meta)}</p>` : ''}</div>` +
-    `<p class="hp-summary">${esc(summary(L, h))}</p>` +
+    `<div><p class="hp-summary">${esc(summary(L, h))}</p>${moreInfo(L, h)}</div>` +
     tagList(hutTags(L, h)) +
     contactLinks(L, h, b.skip) +
     b.html +
@@ -772,7 +786,6 @@ function page(L, h, assets) {
     header +
     `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-top${fig ? '' : ' hp-top-solo'}">${facts}${fig}</div></div>` +
     bedsSection(L, h) +
-    descSection(L, h) +
     nearbySection(L, h) +
     `</main>` +
     footer +

@@ -6,6 +6,7 @@ import '@fontsource-variable/figtree'
 import './tokens.css'
 import './hut-page.css'
 
+// The page's own inline script already set the hp-js class; this is for safety.
 document.documentElement.classList.add('hp-js')
 
 /* The phone calendar: one month at a time. Each month has its own arrows, so
@@ -29,6 +30,52 @@ for (const cal of document.querySelectorAll('[data-months]')) {
     ;(same && !same.disabled ? same : other)?.focus()
   })
   show(0)
+}
+
+/* Room type pills on the phone calendar. Any mix can be picked, and each day
+   shows the free beds of the picked types added up. The last picked type
+   can't be unpicked, so the calendar always shows something. */
+const bedColor = (n) => (n <= 0 ? 'var(--burgundy)' : n <= 3 ? 'var(--rust)' : 'var(--pine)')
+const gauge = (n) => {
+  const c = bedColor(n)
+  const ring = `<circle cx="10" cy="10" r="8" fill="none" stroke="${c}" stroke-width="2.8"/>`
+  const body = n > 3 ? `<circle cx="10" cy="10" r="8" fill="${c}"/>` : n > 0 ? `${ring}<path d="M10 2a8 8 0 0 1 0 16z" fill="${c}"/>` : ring
+  return `<svg class="hp-gauge" width="9" height="9" viewBox="0 0 20 20" aria-hidden="true" focusable="false" style="flex-shrink:0">${body}</svg>`
+}
+for (const months of document.querySelectorAll('[data-months]')) {
+  const pills = [...months.querySelectorAll('.hp-type')]
+  const nf = new Intl.NumberFormat(months.dataset.locale)
+  const full = months.dataset.full
+  const redraw = () => {
+    const picked = pills.filter((p) => p.getAttribute('aria-pressed') === 'true').map((p) => Number(p.dataset.i))
+    for (const v of months.querySelectorAll('.hp-v')) {
+      const beds = v.dataset.beds.split(',').map(Number)
+      const n = picked.reduce((sum, i) => sum + beds[i], 0)
+      const b = document.createElement('b')
+      b.style.color = bedColor(n)
+      b.textContent = n > 0 ? nf.format(n) : full
+      v.innerHTML = gauge(n)
+      v.append(b)
+    }
+  }
+  for (const pill of pills) {
+    pill.addEventListener('click', () => {
+      const on = pill.getAttribute('aria-pressed') === 'true'
+      if (on && pills.filter((p) => p.getAttribute('aria-pressed') === 'true').length === 1) return
+      pill.setAttribute('aria-pressed', String(!on))
+      redraw()
+    })
+  }
+}
+
+/* "View more information": the hut's own text opens above the button. */
+for (const info of document.querySelectorAll('.hp-info')) {
+  const btn = info.querySelector('.hp-info-btn')
+  btn.addEventListener('click', () => {
+    const open = !info.classList.contains('is-open')
+    info.classList.toggle('is-open', open)
+    btn.setAttribute('aria-expanded', String(open))
+  })
 }
 
 /* The map. Leaflet and the tiles load only once the map is near the screen,
