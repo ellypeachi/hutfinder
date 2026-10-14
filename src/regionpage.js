@@ -41,7 +41,10 @@ export function init(root) {
     return Array.from({ length: 7 }, (_, i) => f.format(new Date(2021, 1, i + 1)).replace(/\./g, '').slice(0, 2))
   })()
 
-  const st = { from: '', to: '', region: [], room: '', type: [], band: [], warden: '', assoc: '', shower: '' }
+  // A page about one room type (private rooms) has it fixed: dates then mean
+  // that type free every night, and there are no room type pills.
+  const fixedRoom = root.dataset.room || ''
+  const st = { from: '', to: '', region: [], room: fixedRoom, type: [], band: [], warden: '', assoc: '', shower: '' }
   let avail = null
 
   const huts = [...document.querySelectorAll('[data-hut]')].map((el) => ({
@@ -448,7 +451,7 @@ export function init(root) {
     else if (e.target.closest('[data-clearmore]') || e.target.closest('[data-clearall]')) {
       Object.assign(st, { type: [], band: [], warden: '', assoc: '', shower: '' })
       if (e.target.closest('[data-clearall]')) {
-        st.room = ''
+        st.room = fixedRoom
         st.region = []
         moreBtn.focus({ preventScroll: true })
       }
@@ -494,13 +497,15 @@ export function init(root) {
   let closeTimer = 0
   const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
+  // The next free date, of the page's own room type where it has one, as on its cards.
   const nextFreeHTML = (rec) => {
     if (!rec) return ''
     const today = toISO(new Date())
+    const i = BUCKETS.indexOf(fixedRoom)
     for (const d of Object.keys(rec.days || {}).sort()) {
       const a = rec.days[d]
-      const n = (a[0] || 0) + (a[1] || 0) + (a[2] || 0)
-      if (d >= today && n > 0) return `<span>${gauge(n, 11)} ${escHTML(t('avail.nextFree', { date: fmt(d), n: nf(n) }))}</span>`
+      const n = i >= 0 ? a[i] || 0 : (a[0] || 0) + (a[1] || 0) + (a[2] || 0)
+      if (d >= today && n > 0) return `<span>${gauge(n, 11)} ${escHTML(t(i >= 0 ? `page.nextFree.${fixedRoom}` : 'avail.nextFree', { date: fmt(d), n: nf(n) }))}</span>`
     }
     return `<span>${escHTML(t('avail.none'))}</span>`
   }
