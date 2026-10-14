@@ -197,6 +197,7 @@ export const fr = {
   "date.nights": { one: "{n} nuit", other: "{n} nuits" },
   "date.checkInPending": "Arrivée {date} · choisissez le départ",
   "date.noDates": "Aucune date — tous les refuges sont affichés",
+  "link.weekend": "Lits libres ce week-end",
 
   // ---------- menu des langues ----------
   "lang.label": "Langue",

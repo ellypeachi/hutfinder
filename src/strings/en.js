@@ -199,6 +199,7 @@ export const en = {
   "date.nights": { one: "{n} night", other: "{n} nights" },
   "date.checkInPending": "Check-in {date} · pick a check-out date",
   "date.noDates": "No dates — showing all huts",
+  "link.weekend": "Free beds this weekend",
 
   // ---------- the language menu ----------
   "lang.label": "Language",
