@@ -973,8 +973,8 @@ function regionPage(L, r, assets) {
         `<div class="hp-grid">${list.map((h) => card(L, h, null, true)).join('')}</div></section>`
       : ''
   const more = d.hidden
-    // Not filtered, so the filters hide it while any is on.
-    ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
+    // Not filtered, so the filters hide it while any is on. The app opens on the region.
+    ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="/?region=${REGION_KEYS[r]}"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
     : ''
   return (
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
