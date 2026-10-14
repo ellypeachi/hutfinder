@@ -1,10 +1,12 @@
-// Entry for the hut pages (/de/hut/<slug>/, /en/hut/<slug>/). The pages are
-// complete without this file; it adds the phone calendar's month switch and
-// the map, which loads only when it comes near the screen.
+// Entry for the hut pages (/de/hut/<slug>/, /en/hut/<slug>/) and the region
+// pages (/en/tyrol/). The pages are complete without this file; it adds the
+// phone calendar's month switch, the region filters and the map, which loads
+// only when it comes near the screen.
 import '@fontsource-variable/fraunces/full.css'
 import '@fontsource-variable/figtree'
 import './tokens.css'
 import './hut-page.css'
+import { bedColor, gauge } from './gauge.js'
 
 // The page's own inline script already set the hp-js class; this is for safety.
 document.documentElement.classList.add('hp-js')
@@ -35,13 +37,6 @@ for (const cal of document.querySelectorAll('[data-months]')) {
 /* Room type pills on the phone calendar. Any mix can be picked, and each day
    shows the free beds of the picked types added up. The last picked type
    can't be unpicked, so the calendar always shows something. */
-const bedColor = (n) => (n <= 0 ? 'var(--burgundy)' : n <= 3 ? 'var(--rust)' : 'var(--pine)')
-const gauge = (n) => {
-  const c = bedColor(n)
-  const ring = `<circle cx="10" cy="10" r="8" fill="none" stroke="${c}" stroke-width="2.8"/>`
-  const body = n > 3 ? `<circle cx="10" cy="10" r="8" fill="${c}"/>` : n > 0 ? `${ring}<path d="M10 2a8 8 0 0 1 0 16z" fill="${c}"/>` : ring
-  return `<svg class="hp-gauge" width="9" height="9" viewBox="0 0 20 20" aria-hidden="true" focusable="false" style="flex-shrink:0">${body}</svg>`
-}
 for (const months of document.querySelectorAll('[data-months]')) {
   const pills = [...months.querySelectorAll('.hp-type')]
   const nf = new Intl.NumberFormat(months.dataset.locale)
@@ -77,6 +72,10 @@ for (const info of document.querySelectorAll('.hp-info')) {
     btn.setAttribute('aria-expanded', String(open))
   })
 }
+
+/* The region pages' filters, only on a page that has them. */
+const filters = document.querySelector('[data-filters]')
+if (filters) import('./regionfilters.js').then((m) => m.init(filters))
 
 /* The map. Leaflet and the tiles load only once the map is near the screen,
    so a visitor who reads the top of the page and books loads neither. */

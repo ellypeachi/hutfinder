@@ -32,6 +32,15 @@ export const de = {
   "bucketPlural.shared": "Mehrbettzimmer",
   "bucketPlural.priv": "Privatzimmer",
   "region.other": "Andere/Unbekannt",
+  "region.tirol": "Tirol",
+  "region.salzburg": "Salzburg",
+  "region.steiermark": "Steiermark",
+  "region.kaernten": "Kärnten",
+  "region.niederoesterreich": "Niederösterreich",
+  "region.oberoesterreich": "Oberösterreich",
+  "region.vorarlberg": "Vorarlberg",
+  "region.burgenland": "Burgenland",
+  "region.wien": "Wien",
 
   // ---------- Tags auf der Karte ----------
   "tag.beds": { one: "{n} Bett", other: "{n} Betten" },
@@ -287,6 +296,7 @@ export const de = {
   "page.region.introHigh": "Höchstgelegene Hütte: {hut}, {elev}.",
   "page.region.book": "Online buchbar",
   "page.region.contact": "Direkt bei der Hütte anfragen",
+  "page.region.filters": "Hütten filtern",
   "page.region.more": { one: "{n} weitere Hütte ohne Kontaktdaten findest du auf der Karte", other: "{n} weitere Hütten ohne Kontaktdaten findest du auf der Karte" },
   "page.footer.data": "Hüttendaten © {osm}-Mitwirkende, Alpenverein und hut-reservation.org.",
   "page.footer.check": "Frag vor deiner Tour bei der Hütte nach.",

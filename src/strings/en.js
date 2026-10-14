@@ -32,6 +32,15 @@ export const en = {
   "bucketPlural.shared": "shared rooms",
   "bucketPlural.priv": "private rooms",
   "region.other": "Other/Unknown",
+  "region.tirol": "Tyrol",
+  "region.salzburg": "Salzburg",
+  "region.steiermark": "Styria",
+  "region.kaernten": "Carinthia",
+  "region.niederoesterreich": "Lower Austria",
+  "region.oberoesterreich": "Upper Austria",
+  "region.vorarlberg": "Vorarlberg",
+  "region.burgenland": "Burgenland",
+  "region.wien": "Vienna",
 
   // ---------- tags on a card ----------
   "tag.beds": { one: "{n} bed", other: "{n} beds" },
@@ -288,6 +297,7 @@ export const en = {
   "page.region.introHigh": "Highest hut: {hut}, {elev}.",
   "page.region.book": "Book online",
   "page.region.contact": "Ask the hut directly",
+  "page.region.filters": "Filter the huts",
   "page.region.more": { one: "{n} more hut without contact details is on the map", other: "{n} more huts without contact details are on the map" },
   "page.footer.data": "Hut data © {osm} contributors, the Alpenverein and hut-reservation.org.",
   "page.footer.check": "Check with the hut before you set off.",

@@ -31,6 +31,15 @@ export const nl = {
   "bucketPlural.shared": "meerpersoonskamers",
   "bucketPlural.priv": "privékamers",
   "region.other": "Anders/Onbekend",
+  "region.tirol": "Tirol",
+  "region.salzburg": "Salzburg",
+  "region.steiermark": "Stiermarken",
+  "region.kaernten": "Karinthië",
+  "region.niederoesterreich": "Neder-Oostenrijk",
+  "region.oberoesterreich": "Opper-Oostenrijk",
+  "region.vorarlberg": "Vorarlberg",
+  "region.burgenland": "Burgenland",
+  "region.wien": "Wenen",
 
   // ---------- labels op een kaartje ----------
   "tag.beds": { one: "{n} bed", other: "{n} bedden" },

@@ -271,15 +271,30 @@ function typeLabel(L, h) {
   return TYPE_KEYS.includes(h.type) ? L.t(`type.${h.type}`) : h.type || ''
 }
 const regionOf = (h) => (h.region && h.region !== 'Other/Unknown' ? h.region : null)
-// The regions' English names, for the English pages. The data keeps the German ones.
-const REGION_EN = {
-  Tirol: 'Tyrol', Steiermark: 'Styria', Kärnten: 'Carinthia', Niederösterreich: 'Lower Austria',
-  Oberösterreich: 'Upper Austria', Salzburg: 'Salzburg', Vorarlberg: 'Vorarlberg', Burgenland: 'Burgenland', Wien: 'Vienna',
+// Each language's own name for a region (region.* in src/strings/, as in the
+// app). The data keeps the German names.
+const REGION_KEYS = {
+  Tirol: 'tirol', Salzburg: 'salzburg', Steiermark: 'steiermark', Kärnten: 'kaernten', Niederösterreich: 'niederoesterreich',
+  Oberösterreich: 'oberoesterreich', Vorarlberg: 'vorarlberg', Burgenland: 'burgenland', Wien: 'wien',
 }
-const regionName = (L, r) => (r && L.lang === 'en' ? REGION_EN[r] || r : r)
+const regionName = (L, r) => (r && REGION_KEYS[r] ? L.t(`region.${REGION_KEYS[r]}`) : r)
 const bedsOf = (h) => (isNum(h.hr_capacity) ? h.hr_capacity : isNum(h.sleeping) ? h.sleeping : null)
 const elevText = (L, h) =>
   isNum(h.elevation) ? L.t(h.elevation_estimated ? 'page.elevApprox' : 'page.elev', { n: L.nf(Math.round(h.elevation)) }) : null
+
+// The app's filter values (ELEV_BANDS, wardenOf, assocOf in src/App.jsx).
+const ELEV_BANDS = [
+  { key: 'e1', lo: -Infinity, hi: 1000 },
+  { key: 'e2', lo: 1000, hi: 1500 },
+  { key: 'e3', lo: 1500, hi: 2000 },
+  { key: 'e4', lo: 2000, hi: 2500 },
+  { key: 'e5', lo: 2500, hi: Infinity },
+]
+const bandOf = (h) => (isNum(h.elevation) && ELEV_BANDS.find((b) => h.elevation >= b.lo && h.elevation < b.hi)?.key) || 'unknown'
+const bandLabel = (L, b) => L.t(`elev.${b.key}`, { n: L.nf(b.key === 'e1' ? b.hi : b.lo), a: L.nf(b.lo), b: L.nf(b.hi) })
+// "Attended" huts filter with Serviced: someone is there.
+const wardenOf = (h) => (h.warden === 'bewartet' ? 'bewirtschaftet' : h.warden || '')
+const assocOf = (h) => h.association || 'unknown'
 
 // Same order and wording as hutTags() in src/App.jsx.
 function hutTags(L, h) {
@@ -689,7 +704,14 @@ function figure(L, h) {
 
 // ---------------------------------------------------------------- nearby
 
-function card(L, o, d) {
+// What the region page filters read off a card (src/regionfilters.js).
+const filterData = (o) =>
+  ` data-hut data-type="${esc(o.type || '')}" data-band="${bandOf(o)}" data-warden="${esc(wardenOf(o))}" data-assoc="${esc(assocOf(o))}"` +
+  (o.shower === true ? ' data-shower' : '') +
+  (bedsOf(o) != null ? ` data-beds="${bedsOf(o)}"` : '') +
+  (o.hr_hut_id != null ? ` data-hr="${esc(o.hr_hut_id)}"` : '')
+
+function card(L, o, d, filterable = false) {
   const ph = photos[o.id]
   const linked = builtIds.has(o.id)
   const meta = [typeLabel(L, o), elevText(L, o)].filter(Boolean).join(' · ')
@@ -697,11 +719,13 @@ function card(L, o, d) {
   let bandHTML
   if (isBookable(o)) {
     const nf = nextFree(o)
-    const line = nf
+    let line = nf
       ? `<span>${gauge(nf.free, 11)} ${esc(L.t('avail.nextFree', { date: fmtISO(nf.date), n: L.nf(nf.free) }))}</span>`
       : recOf(o)
         ? `<span>${esc(L.t('avail.none'))}</span>`
         : ''
+    // With dates picked, the filters put the free beds of those nights here.
+    if (filterable) line = `<div class="hp-avail">${line}</div>`
     bandHTML = `<div class="hf-card-band">${line}<div>${bookButton(L, o)}</div></div>`
   } else if (o.phone) {
     bandHTML = `<div class="hf-card-band hf-card-band-row"><a class="hf-call hf-tap" href="${esc(telHref(o.phone))}" aria-label="${esc(L.t('call.aria', { hut: o.name, phone: phoneLabel(o.phone) }))}">${icon('phone', 14, 1.8)}${esc(L.t('call.label', { phone: phoneLabel(o.phone) }))}</a><span>${esc(L.t('page.notBookable'))}</span></div>`
@@ -711,7 +735,7 @@ function card(L, o, d) {
     bandHTML = `<div class="hf-card-band"><span>${esc(L.t('page.notBookableNoContact'))}</span></div>`
   }
   return (
-    `<div class="hp-card"><div class="hf-card-head">` +
+    `<div class="hp-card"${filterable ? filterData(o) : ''}><div class="hf-card-head">` +
     (ph && ph.card ? `<img class="hf-thumb" src="/${esc(ph.card)}" width="96" height="72" alt="" loading="lazy" decoding="async"/>` : '') +
     `<div class="hf-card-title"><div class="hp-card-name">${name}</div>` +
     (meta ? `<div class="hf-card-meta">${esc(meta)}</div>` : '') +
@@ -743,13 +767,14 @@ function nearbySection(L, h) {
 
 // ---------------------------------------------------------------- region pages
 
-/* One page per region (/de/tirol/, /en/tirol/): its huts with something of
+/* One page per region (/de/tyrol/, /en/tyrol/): its huts with something of
    their own to show, the bookable ones first (soonest free beds first), then
    the ones you contact directly. Every name links to its hut page, so these
    are the plain links a search engine can follow to the huts. A region with
    fewer than REGION_MIN huts gets no page. */
 const REGION_MIN = 10
-const regionSlug = (r) => slugify(REGION_EN[r] || r)
+// Addresses are English in every language: /de/styria/ and /en/styria/.
+const regionSlug = (r) => slugify(regionName(i18n('en'), r))
 const regionPath = (lang, r) => `/${lang}/${regionSlug(r)}/`
 const regionUrl = (lang, r) => SITE + regionPath(lang, r)
 const countIn = (r) => huts.filter((h) => h.region === r).length
@@ -784,17 +809,70 @@ function regionData(r) {
   }
 }
 
-/* A hut as one line: its name (linking to its page), type and elevation,
-   and the way to reach it. The shorter alternative to a card. */
-function row(L, o) {
-  const meta = [typeLabel(L, o), elevText(L, o)].filter(Boolean).join(' · ')
-  const act = o.phone
-    ? `<a class="hp-row-act hf-tap-min" href="${esc(telHref(o.phone))}" aria-label="${esc(L.t('call.aria', { hut: o.name, phone: phoneLabel(o.phone) }))}">${icon('phone', 14, 1.8)}<span class="hp-u">${esc(phoneLabel(o.phone))}</span></a>`
-    : o.website
-      ? `<a class="hp-row-act hf-tap-min" href="${esc(webHref(o.website))}" target="_blank" rel="noopener" aria-label="${esc(L.t('contact.websiteAria', { hut: o.name, host: webLabel(o.website) }))}">${icon('globe', 14, 1.8)}<span class="hp-u">${esc(webLabel(o.website))}</span></a>`
-      : ''
-  const name = builtIds.has(o.id) ? `<a class="hp-row-name" href="${pagePath(L.lang, o)}">${esc(o.name)}</a>` : `<span class="hp-row-name">${esc(o.name)}</span>`
-  return `<li class="hp-row"><div class="hp-row-main">${name}${meta ? `<span class="hp-row-meta">${esc(meta)}</span>` : ''}</div>${act}</li>`
+/* The app's filters, above the cards: dates and room type, then More filters
+   (type, elevation, warden, association, shower). Rendered here so the page
+   doesn't jump; src/regionfilters.js makes them work and fills in the
+   counts. Without JavaScript they are hidden, and every card shows. */
+const FILTER_STRINGS = [
+  'date.checkIn', 'date.checkOut', 'date.add', 'date.prevMonth', 'date.nextMonth', 'date.pickCheckIn', 'date.pickCheckOut',
+  'date.dayAria', 'date.nights', 'date.checkInPending', 'date.noDates',
+  'avail.free', 'avail.fewest', 'avail.full', 'avail.beds', 'avail.asOf',
+  'bucket.dorm', 'bucket.shared', 'bucket.priv', 'bucketPlural.dorm', 'bucketPlural.shared', 'bucketPlural.priv',
+  'unlisted.noteDatesRoom', 'unlisted.noteDates', 'unlisted.noteRoom',
+  'empty.nothingFreeNights', 'empty.nothingFreeNight', 'empty.noMatch',
+  'more.applied', 'more.show', 'chip.removeAria',
+]
+function regionFilters(L, d) {
+  const listed = [...d.book, ...d.contact]
+  const pill = (g, v, label, chip = label) =>
+    `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="${esc(v)}" data-chip="${esc(chip)}" aria-pressed="false">${esc(label)}<span class="hp-pill-n"></span></button>`
+  const all = (g, label) => `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="" aria-pressed="true">${esc(label)}</button>`
+  const group = (id, label, pills, note = '') =>
+    `<div class="hp-fgroup"><div class="hp-flabel" id="${id}">${esc(label)}</div><div class="hp-pills" role="group" aria-labelledby="${id}">${pills}</div>` +
+    (note ? `<p class="hp-fnote">${esc(note)}</p>` : '') + '</div>'
+  const field = (which, caption) =>
+    `<button type="button" class="hp-dfield hf-tap-min" data-field="${which}" aria-expanded="false" aria-haspopup="dialog"><span class="hp-dcap">${esc(caption)}</span><span class="hp-dval">${esc(L.t('date.add'))}</span></button>`
+  const bands = ELEV_BANDS.map((b) => pill('band', b.key, bandLabel(L, b)))
+  if (listed.some((h) => bandOf(h) === 'unknown')) bands.push(pill('band', 'unknown', L.t('elev.unknown')))
+  const more =
+    group('f-type', L.t('filter.type'), all('type', L.t('pill.all')) + TYPE_KEYS.map((k) => pill('type', k, L.t(`type.${k}`))).join('')) +
+    group('f-band', L.t('filter.elevation'), all('band', L.t('pill.all')) + bands.join('')) +
+    group('f-warden', L.t('filter.warden'), all('warden', L.t('pill.all')) + ['bewirtschaftet', 'selbstversorger'].map((w) => pill('warden', w, L.t(`warden.${w}`))).join('')) +
+    group('f-assoc', L.t('filter.association'), all('assoc', L.t('pill.all')) +
+      ['alpine_club', 'naturfreunde', 'private'].map((a) => pill('assoc', a, L.t(`assoc.${a}`))).join('') +
+      pill('assoc', 'unknown', L.t('pill.unlisted'), L.t('label.assocUnlisted'))) +
+    group('f-shower', L.t('filter.amenities'), pill('shower', '1', L.t('pill.hasShower'), L.t('tag.shower')))
+  const config = {
+    locale: L.locale,
+    numLocale: NUMBER_LOCALES[L.lang] || L.locale,
+    maxNights: 31,
+    strings: Object.fromEntries(FILTER_STRINGS.map((k) => [k, DICTS[L.lang][k] ?? en[k]])),
+  }
+  return (
+    `<div class="hp-filters" role="search" aria-label="${esc(L.t('page.region.filters'))}" data-filters data-avail="/availability.json">` +
+    `<div class="hp-frow">` +
+    `<div class="hp-fgroup hp-fdates"><div class="hp-flabel" id="f-dates">${esc(L.t('filter.available'))}</div>` +
+    `<div class="hp-dfields" role="group" aria-labelledby="f-dates">${field('start', L.t('date.checkIn'))}${field('end', L.t('date.checkOut'))}` +
+    `<button type="button" class="hp-dclear" data-dclear hidden>${esc(L.t('date.clear'))}</button></div>` +
+    `<p class="hp-dstatus" data-dstatus>${esc(L.t('date.noDates'))}</p><p class="hp-asof" data-asof></p></div>` +
+    // The calendar opens under the dates on a phone, under the whole row where there is room.
+    `<div class="hp-pick" role="dialog" aria-label="${esc(L.t('date.dialogAria'))}" data-cal hidden></div>` +
+    group('f-room', L.t('filter.roomType'), all('room', L.t('pill.any')) + BUCKETS.map((k) => pill('room', k, L.t(`bucket.${k}`))).join(''), L.t('filter.roomTypeNote')) +
+    `</div>` +
+    `<div class="hp-fbar"><button type="button" class="hp-morebtn hf-tap" aria-expanded="false" aria-controls="more-filters">${esc(L.t('more.button'))}` +
+    `<span class="hp-badge" aria-hidden="true" hidden></span><span class="hf-vh" data-applied></span></button>` +
+    `<div class="hp-chips" data-chips></div>` +
+    `<button type="button" class="hp-linkbtn hf-tap" data-clearall hidden>${esc(L.t('clear.filters'))}</button></div>` +
+    `<div class="hp-morepanel" id="more-filters" aria-label="${esc(L.t('more.button'))}" tabindex="-1" hidden>` +
+    `<div class="hp-morehead"><span class="hp-moretitle">${esc(L.t('more.button'))}</span>` +
+    `<button type="button" class="hp-done hf-tap" data-close>${esc(L.t('more.done'))}</button>` +
+    `<button type="button" class="hp-x hf-tap" data-close aria-label="${esc(L.t('more.closeAria'))}">${icon('close', 20, 2)}</button></div>` +
+    `<div class="hp-moregroups">${more}</div>` +
+    `<div class="hp-morefoot"><button type="button" class="hp-linkbtn hf-tap" data-clearmore>${esc(L.t('more.clear'))}</button>` +
+    `<button type="button" class="hp-show hf-tap" data-close data-show></button></div></div>` +
+    `<script type="application/json">${JSON.stringify(config).replace(/</g, '\\u003c')}</script>` +
+    `</div>`
+  )
 }
 
 function regionPage(L, r, assets) {
@@ -849,15 +927,13 @@ function regionPage(L, r, assets) {
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
     `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(name)}</li></ol></nav>`
-  const section = (id, heading, list) =>
+  // The note says what the filters can't know about these huts; the empty
+  // line is for when they leave none. Both are filled in by the filters.
+  const section = (id, kind, heading, list) =>
     list.length
-      ? `<section class="hp-section" aria-labelledby="${id}"><h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count">${esc(L.nf(list.length))}</span></h2>` +
-        `<div class="hp-grid">${list.map((h) => card(L, h, null)).join('')}</div></section>`
-      : ''
-  const contactSection = (L2, list) =>
-    list.length
-      ? `<section class="hp-section" aria-labelledby="contact-h"><h2 class="hp-h2" id="contact-h">${esc(L2.t('page.region.contact'))} <span class="hp-count">${esc(L2.nf(list.length))}</span></h2>` +
-        `<ul class="hp-rows">${list.map((h) => row(L2, h)).join('')}</ul></section>`
+      ? `<section class="hp-section" aria-labelledby="${id}" data-section="${kind}"><h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count" data-count>${esc(L.nf(list.length))}</span></h2>` +
+        `<p class="hp-note" data-note hidden></p><p class="hp-fempty" data-empty hidden></p>` +
+        `<div class="hp-grid">${list.map((h) => card(L, h, null, true)).join('')}</div></section>`
       : ''
   const more = d.hidden
     ? `<p class="hp-region-more"><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden) }))}</span>&nbsp;→</a></p>`
@@ -866,13 +942,9 @@ function regionPage(L, r, assets) {
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
     siteHeader(L, other, regionPath(other, r)) +
     `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(L.t('page.region.h1', { region: name }))}</h1>` +
-    `<p class="hp-summary">${esc(intro)}</p></div></div>` +
-    section('book-h', L.t('page.region.book'), d.book) +
-    (process.env.REGION_CONTACT === 'both'
-      ? `<div class="mk-cards">${section('contact-h', L.t('page.region.contact'), d.contact)}</div><div class="mk-list">${contactSection(L, d.contact)}</div>`
-      : process.env.REGION_CONTACT === 'list'
-        ? contactSection(L, d.contact)
-        : section('contact-h', L.t('page.region.contact'), d.contact)) +
+    `<p class="hp-summary">${esc(intro)}</p></div>${regionFilters(L, d)}</div>` +
+    section('book-h', 'book', L.t('page.region.book'), d.book) +
+    section('contact-h', 'contact', L.t('page.region.contact'), d.contact) +
     more +
     `</main>` +
     siteFooter(L, name, 'page.footer.wrongPage') +

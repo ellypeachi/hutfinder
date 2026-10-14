@@ -35,6 +35,15 @@ export const cs = {
   "bucketPlural.shared": "vícelůžkové pokoje",
   "bucketPlural.priv": "soukromé pokoje",
   "region.other": "Jiné/Neznámé",
+  "region.tirol": "Tyrolsko",
+  "region.salzburg": "Salcbursko",
+  "region.steiermark": "Štýrsko",
+  "region.kaernten": "Korutany",
+  "region.niederoesterreich": "Dolní Rakousy",
+  "region.oberoesterreich": "Horní Rakousy",
+  "region.vorarlberg": "Vorarlbersko",
+  "region.burgenland": "Burgenland",
+  "region.wien": "Vídeň",
 
   // ---------- štítky na kartě ----------
   "tag.beds": { one: "{n} lůžko", few: "{n} lůžka", other: "{n} lůžek" },
