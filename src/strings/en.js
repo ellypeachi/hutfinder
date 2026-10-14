@@ -49,6 +49,7 @@ export const en = {
   "tag.shower": "Shower",
   "tag.winterRoom": "Winter room",
   "tag.privateRooms": "Private rooms",
+  "tag.freeWeekend": "Free this weekend",
   "tag.dogsWelcome": "Dogs welcome",
   "tag.noDogs": "No dogs",
 
@@ -317,6 +318,7 @@ export const en = {
   "page.priv.introNoFree": "None has a private room free at the moment.",
   "page.priv.introUnknown": "Huts that don’t publish their room types aren’t on this list: ask the hut.",
   "page.nextFree.priv": "Next free private room: {date} ({n} beds)",
+  "page.weekendLink": "All huts with free beds this weekend",
   "page.weekend.title": "Free beds this weekend: mountain huts in Austria",
   "page.weekend.h1": "Free beds this weekend",
   "page.weekend.meta": { one: "{n} mountain hut in Austria with free beds this weekend, updated several times a day. See the free beds per room type and book directly.", other: "{n} mountain huts in Austria with free beds this weekend, updated several times a day. See the free beds per room type and book directly." },

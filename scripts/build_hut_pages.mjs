@@ -313,6 +313,7 @@ function hutTags(L, h) {
   // Private rooms, from the hut's booking page; it opens the huts with private rooms.
   if (isBookable(h) && recOf(h)?.caps?.[PRIV] > 0) tags.push({ label: t('tag.privateRooms'), href: privPath(L.lang) })
   if (h.hr_dogs === true) tags.push({ label: t('tag.dogsWelcome'), href: dogsPath(L.lang) })
+  if (/tag|both/.test(process.env.WEEKEND_LINK || '') && weekendFree(h) > 0) tags.push({ label: t('tag.freeWeekend'), href: weekendPath(L.lang), mk: 'mk-cards' })
   else if (h.hr_dogs === false) tags.push({ label: t('tag.noDogs') })
   return tags
 }
@@ -321,7 +322,7 @@ const tagList = (tags) =>
   `<ul class="hf-tags">${tags
     .map((g) =>
       g.href
-        ? `<li class="hf-tag hf-tag-link"><a href="${g.href}">${esc(g.label)}</a></li>`
+        ? `<li class="hf-tag hf-tag-link${g.mk ? ` ${g.mk}` : ''}"><a href="${g.href}">${esc(g.label)}</a></li>`
         : `<li class="${g.club ? 'hf-tag hf-tag-club' : 'hf-tag'}">${esc(g.label)}</li>`)
     .join('')}</ul>`
 
@@ -572,7 +573,10 @@ function bedsSection(L, h) {
     .join('')
   const phone = `<div class="hp-months" data-months data-full="${esc(L.t('avail.full'))}" data-locale="${NUMBER_LOCALES[L.lang] || L.locale}">${keys}${months}</div>`
 
-  return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div></section>`
+  const weekendLink = /link|both/.test(process.env.WEEKEND_LINK || '')
+    ? `<p class="hp-region-more mk-list"><a class="hp-more hf-tap-min" href="${weekendPath(L.lang)}"><span class="hp-u">${esc(L.t('page.weekendLink'))}</span>&nbsp;→</a></p>`
+    : ''
+  return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div>${weekendLink}</section>`
 }
 
 // ---------------------------------------------------------------- description
