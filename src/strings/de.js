@@ -317,7 +317,6 @@ export const de = {
   "page.priv.introNoFree": "Gerade hat keine davon ein Privatzimmer frei.",
   "page.priv.introUnknown": "Hütten, die ihre Zimmerarten nicht angeben, stehen nicht auf dieser Liste: frag am besten direkt bei der Hütte nach.",
   "page.nextFree.priv": "Nächstes freies Privatzimmer: {date} ({n} Betten)",
-  "page.weekendLink": "Alle Hütten mit freien Betten am Wochenende",
   "page.weekend.title": "Freie Betten am Wochenende: Hütten in Österreich",
   "page.weekend.h1": "Freie Betten am Wochenende",
   "page.weekend.meta": { one: "{n} Hütte in Österreich mit freien Betten am Wochenende, mehrmals am Tag aktualisiert. Sieh die freien Betten pro Zimmerart und buch direkt.", other: "{n} Hütten in Österreich mit freien Betten am Wochenende, mehrmals am Tag aktualisiert. Sieh die freien Betten pro Zimmerart und buch direkt." },

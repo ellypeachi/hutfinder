@@ -166,7 +166,7 @@ function fmtGenerated(iso, locale) {
 /* `links`: for the pop-up, the list pages its tags open. `privPage` is set
    only for a hut whose booking page lists private rooms, and adds that tag.
    A card leaves both out: the whole card opens the pop-up. */
-function hutTags(hut, t, { dogsPage = null, privPage = null } = {}) {
+function hutTags(hut, t, { dogsPage = null, privPage = null, weekendPage = null } = {}) {
   const tags = [];
   if (hut.club) tags.push({ label: CLUB_LABEL[hut.club] || hut.club, club: true });
   else if (hut.association) tags.push({ label: assocName(t, hut.association) });
@@ -183,6 +183,7 @@ function hutTags(hut, t, { dogsPage = null, privPage = null } = {}) {
   if (hut.winterraum === true) tags.push({ label: t("tag.winterRoom") });
   if (privPage) tags.push({ label: t("tag.privateRooms"), href: privPage });
   if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome"), href: dogsPage });
+  if (weekendPage) tags.push({ label: t("tag.freeWeekend"), href: weekendPage });
   else if (hut.hr_dogs === false) tags.push({ label: t("tag.noDogs") });
   return tags;
 }
@@ -328,6 +329,16 @@ function Description({ text, source }) {
     ) : null}
     </>
   );
+}
+
+/* The nights of the coming weekend, as the free-beds-this-weekend page counts
+   them: Friday and Saturday night, or on a Saturday that night only. */
+function weekendNights() {
+  const d = new Date();
+  const dow = d.getDay(); // 0 Sunday … 6 Saturday
+  if (dow !== 6) d.setDate(d.getDate() + ((5 - dow + 7) % 7));
+  const first = toISO(d);
+  return dow === 6 ? [first] : [first, nextDayISO(first)];
 }
 
 function nightsBetween(from, to) {
@@ -927,6 +938,13 @@ export default function App() {
     const tags = hutTags(hut, t, {
       dogsPage: `${list}/huts-with-dogs/`,
       privPage: hut.hr_booking_url && rec && rec.caps && rec.caps[BUCKET_IDX.priv] > 0 ? `${list}/huts-with-private-rooms/` : null,
+      weekendPage:
+        hut.hr_booking_url && rec && weekendNights().every((d) => {
+          const a = nightArr(rec, d);
+          return a && (a[0] || 0) + (a[1] || 0) + (a[2] || 0) > 0;
+        })
+          ? `${list}/free-beds-this-weekend/`
+          : null,
     });
     return (
       <>
