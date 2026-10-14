@@ -51,6 +51,7 @@ export const cs = {
   "tag.usuallyServiced": "Většinou obsluhovaná",
   "tag.shower": "Sprcha",
   "tag.winterRoom": "Zimní místnost",
+  "tag.privateRooms": "Soukromé pokoje",
   "tag.dogsWelcome": "Psi vítáni",
   "tag.noDogs": "Bez psů",
 

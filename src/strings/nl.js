@@ -47,6 +47,7 @@ export const nl = {
   "tag.usuallyServiced": "Meestal bewaakt",
   "tag.shower": "Douche",
   "tag.winterRoom": "Winterruimte",
+  "tag.privateRooms": "Privékamers",
   "tag.dogsWelcome": "Honden welkom",
   "tag.noDogs": "Geen honden",
 
