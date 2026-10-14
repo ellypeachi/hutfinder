@@ -4,6 +4,15 @@
    {name} is filled in by t("key", { name: … }). A value written as
    { one, other } is chosen by the count passed as `count`. */
 export const en = {
+  // ---------- the homepage in search results and link previews ----------
+  // The homepage's <head> in each language (/, /de/, /nl/, /fr/, /cs/),
+  // written by scripts/build_hut_pages.mjs. index.html repeats the English
+  // for `npm run dev`. {n} is the number of huts.
+  "meta.title": "Hüttenfinder — Austrian alpine huts with free beds",
+  "meta.description": "Find and book mountain huts in Austria for your next hiking trip. Search {n} huts by live bed availability, region and room type, then book direct.",
+  "meta.share": "Every hut in Austria, with the beds still free. Search {n} alpine huts by live bed availability.",
+  "meta.shareShort": "Every hut in Austria, with the beds still free.",
+
   // ---------- header ----------
   "site.tagline": "Find and book mountain huts in Austria.",
   "search.aria": "Search huts by name",

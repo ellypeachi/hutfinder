@@ -12,7 +12,11 @@
    page's CSS and JS come from the Vite entry hut-template/index.html.
 
    Also writes dist/sitemap.xml: the pages in public/sitemap.xml plus every
-   hut page, with its other language as an alternate.
+   hut page, with its other language as an alternate. And the homepage in
+   every language: dist/index.html is the English one, and /de/, /nl/, /fr/
+   and /cs/ are copies of it with their own lang, title, description and
+   link preview (the meta.* strings), so a search shows each language its
+   own text.
 
    Which huts get a page: all of them. Search engines get the ones with a
    photo, a description of their own or contact details; the others are
@@ -35,6 +39,9 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { en } from '../src/strings/en.js'
 import { de } from '../src/strings/de.js'
+import { nl } from '../src/strings/nl.js'
+import { fr } from '../src/strings/fr.js'
+import { cs } from '../src/strings/cs.js'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
@@ -46,11 +53,15 @@ const SITE = 'https://www.hutfinder.at'
 const CONTACT_EMAIL = 'hutfinder.at@gmail.com'
 const PAGE_LANGS = ['de', 'en']
 const DEFAULT_LANG = 'en'
-const DICTS = { en, de }
+// The homepage is in every language the app speaks (LANGS in src/i18n.js).
+const HOME_LANGS = ['en', 'de', 'nl', 'fr', 'cs']
+const DICTS = { en, de, nl, fr, cs }
 // As in src/i18n.js: dates in de-AT (Jänner), numbers in de-DE (1.524).
-const LOCALES = { en: 'en-GB', de: 'de-AT' }
+const LOCALES = { en: 'en-GB', de: 'de-AT', nl: 'nl-NL', fr: 'fr-FR', cs: 'cs-CZ' }
 const NUMBER_LOCALES = { de: 'de-DE' }
-const OG_LOCALES = { en: 'en_GB', de: 'de_AT' }
+const OG_LOCALES = { en: 'en_GB', de: 'de_AT', nl: 'nl_NL', fr: 'fr_FR', cs: 'cs_CZ' }
+// As homePath in src/i18n.js: / in English, /de/ and so on for the others.
+const homePath = (c) => (c === 'en' ? '/' : `/${c}/`)
 const TZ = 'Europe/Vienna'
 // As in src/App.jsx.
 const CLUB_LABEL = { OEAV: 'ÖAV', DAV: 'DAV', AVS: 'AVS', alpGesPreintaler: 'Alpengesellschaft Preintaler' }
@@ -784,7 +795,7 @@ function nearbySection(L, h) {
     `<button type="button" class="hp-map-close" hidden>${icon('close', 16, 2)}${esc(L.t('page.closeMap'))}</button>` +
     `<script type="application/json">${JSON.stringify(mapData).replace(/</g, '\\u003c')}</script></div>` +
     `<div class="hp-map-foot"><span>${esc(coords)}</span><button type="button" class="hf-tap-min" data-expand aria-controls="hut-map" hidden>${icon('expand', 14, 2)}<span class="hp-u">${esc(L.t('page.expandMap'))}</span></button></div></div>`
-  const more = isBookable(h) ? '' : `<a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.pickDates'))}</span></a>`
+  const more = isBookable(h) ? '' : `<a class="hp-more hf-tap-min" href="${homePath(L.lang)}"><span class="hp-u">${esc(L.t('page.pickDates'))}</span></a>`
   return `<section class="hp-section" aria-labelledby="near-h"><h2 class="hp-h2" id="near-h">${esc(heading)}</h2><div class="hp-near"><div class="hp-cards">${near.map(({ hut, d }) => card(L, hut, d)).join('')}</div>${map}</div>${more}</section>`
 }
 
@@ -967,7 +978,7 @@ function listPage(L, p, assets) {
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
+          { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: SITE + homePath(L.lang) },
           { '@type': 'ListItem', position: 2, name: p.crumb },
         ],
       },
@@ -996,7 +1007,7 @@ function listPage(L, p, assets) {
   ].join('\n')
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
-    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(p.crumb)}</li></ol></nav>`
+    `<li><a href="${homePath(L.lang)}">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(p.crumb)}</li></ol></nav>`
   const pop = Object.fromEntries(p.listed.map((h) => [h.id, popData(L, h)]))
   return (
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
@@ -1027,7 +1038,7 @@ function regionPage(L, r, assets) {
   ].filter(Boolean).join(' ')
   const more = d.hidden
     // Not filtered, so the filters hide it while any is on. The app opens on the region.
-    ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="/?region=${REGION_KEYS[r]}"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
+    ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="${homePath(L.lang)}?region=${REGION_KEYS[r]}"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
     : ''
   return listPage(L, {
     path: (c) => regionPath(c, r),
@@ -1200,8 +1211,8 @@ function siteHeader(L, other, otherPath) {
   const O = i18n(other)
   return (
     `<header class="hp-head"><div class="hp-wrap">` +
-    `<a class="hp-mark" href="/" aria-label="${esc(L.t('page.home'))}"><img src="/h-line-600-light.svg" alt="Hüttenfinder" width="172" height="26"></a>` +
-    `<div class="hp-head-links"><a class="hf-tap-min" href="/"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.allHutsShort'))}</span></a>` +
+    `<a class="hp-mark" href="${homePath(L.lang)}" aria-label="${esc(L.t('page.home'))}"><img src="/h-line-600-light.svg" alt="Hüttenfinder" width="172" height="26"></a>` +
+    `<div class="hp-head-links"><a class="hf-tap-min" href="${homePath(L.lang)}"><span class="hp-u hp-long">${esc(L.t('page.allHuts'))}</span><span class="hp-u hp-short">${esc(L.t('page.allHutsShort'))}</span></a>` +
     `<a class="hp-lang hf-tap-min" href="${otherPath}" hreflang="${other}" lang="${other}" aria-label="${esc(O.t('page.thisPageIn'))}">${icon('globe', 16, 1.8)}${other.toUpperCase()}</a></div>` +
     `</div></header>`
   )
@@ -1238,7 +1249,7 @@ function jsonLd(L, h, desc) {
   const crumbs = {
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
+      { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: SITE + homePath(L.lang) },
       ...(hasRegionPage(regionOf(h)) ? [{ '@type': 'ListItem', position: 2, name: regionName(L, regionOf(h)), item: regionUrl(L.lang, regionOf(h)) }] : []),
       { '@type': 'ListItem', position: hasRegionPage(regionOf(h)) ? 3 : 2, name: h.name },
     ],
@@ -1287,7 +1298,7 @@ function page(L, h, assets) {
 
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
-    `<li><a href="/">${esc(L.t('page.huts'))}</a></li>` +
+    `<li><a href="${homePath(L.lang)}">${esc(L.t('page.huts'))}</a></li>` +
     (regionOf(h) ? `<li>${hasRegionPage(regionOf(h)) ? `<a href="${regionPath(L.lang, regionOf(h))}">${esc(regionName(L, regionOf(h)))}</a>` : esc(regionName(L, regionOf(h)))}</li>` : '') +
     `<li aria-current="page">${esc(h.name)}</li></ol></nav>`
 
@@ -1313,12 +1324,49 @@ function page(L, h, assets) {
   )
 }
 
+// ---------------------------------------------------------------- homepages
+
+/* The homepage in one language: dist/index.html with that language's lang,
+   title, description, address and link preview, all from the meta.* strings
+   (English too, so the hut count stays current). Each tag must be found, so
+   a change to index.html can't quietly leave English on the German page. */
+function homePage(c, html) {
+  const L = i18n(c)
+  const n = L.nf(huts.length)
+  const title = esc(L.t('meta.title'))
+  const swaps = [
+    ['lang', /(<html lang=")[^"]*/, c],
+    ['title', /(<title>)[^<]*/, title],
+    ['description', /(<meta\s+name="description"\s+content=")[^"]*/, esc(L.t('meta.description', { n }))],
+    ['canonical', /(<link rel="canonical" href=")[^"]*/, SITE + homePath(c)],
+    ['og:url', /(<meta property="og:url" content=")[^"]*/, SITE + homePath(c)],
+    ['og:title', /(<meta property="og:title" content=")[^"]*/, title],
+    ['og:description', /(<meta\s+property="og:description"\s+content=")[^"]*/, esc(L.t('meta.share', { n }))],
+    ['og:locale', /(<meta property="og:locale" content=")[^"]*/, OG_LOCALES[c]],
+    ['twitter:title', /(<meta name="twitter:title" content=")[^"]*/, title],
+    ['twitter:description', /(<meta\s+name="twitter:description"\s+content=")[^"]*/, esc(L.t('meta.shareShort'))],
+  ]
+  for (const [name, re, value] of swaps) {
+    if (!re.test(html)) throw new Error(`dist/index.html: no ${name} to replace`)
+    html = html.replace(re, (m, before) => before + value)
+  }
+  return html
+}
+
 // ---------------------------------------------------------------- sitemap
 
 function sitemap() {
   const base = fs.readFileSync(path.join(ROOT, 'public/sitemap.xml'), 'utf8')
   const locs = [...base.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1])
-  const urls = locs.map((l) => `  <url>\n    <loc>${l}</loc>\n  </url>`)
+  // The homepage once per language, each with the others as alternates.
+  const homeAlts = [...HOME_LANGS.map((c) => [c, SITE + homePath(c)]), ['x-default', SITE + homePath(DEFAULT_LANG)]]
+    .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
+    .join('\n')
+  const urls = locs.flatMap((l) =>
+    l === `${SITE}/`
+      ? HOME_LANGS.map((c) => `  <url>\n    <loc>${SITE + homePath(c)}</loc>\n${homeAlts}\n  </url>`)
+      : [`  <url>\n    <loc>${l}</loc>\n  </url>`],
+  )
   for (const h of built.filter(indexable)) {
     const alts = [...PAGE_LANGS.map((c) => [c, pageUrl(c, h)]), ['x-default', pageUrl(DEFAULT_LANG, h)]]
       .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
@@ -1356,7 +1404,20 @@ if (CHECK) {
       console.log(`  ${pagePath(c, h)}\n    ${tt.length}  ${tt}\n    ${dd.length}  ${dd}`)
     }
   }
+  console.log('The homepage:')
+  for (const c of HOME_LANGS) {
+    const L = i18n(c)
+    const tt = L.t('meta.title')
+    const dd = L.t('meta.description', { n: L.nf(huts.length) })
+    console.log(`  ${homePath(c)}\n    ${tt.length}  ${tt}\n    ${dd.length}  ${dd}`)
+  }
 } else {
+  const home = fs.readFileSync(path.join(DIST, 'index.html'), 'utf8')
+  for (const c of HOME_LANGS) {
+    const dir = path.join(DIST, homePath(c))
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(path.join(dir, 'index.html'), homePage(c, home))
+  }
   const assets = templateAssets()
   for (const h of built) {
     for (const c of PAGE_LANGS) {
@@ -1375,5 +1436,5 @@ if (CHECK) {
   }
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap())
   fs.rmSync(path.join(DIST, 'hut-template'), { recursive: true, force: true })
-  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages, 3 list pages (dogs, private rooms, this weekend) in ${PAGE_LANGS.length} languages and sitemap.xml.`)
+  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages, 3 list pages (dogs, private rooms, this weekend) in ${PAGE_LANGS.length} languages, the homepage in ${HOME_LANGS.length} and sitemap.xml.`)
 }

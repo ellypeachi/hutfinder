@@ -4,6 +4,12 @@
    De namen van de huttypes blijven Duits (Schutzhütte, Alm, Jausenstation):
    zo staan ze ook op de hut zelf en op de wandelkaart. */
 export const nl = {
+  // ---------- de startpagina in zoekresultaten en linkvoorbeelden (/nl/) ----------
+  "meta.title": "Hüttenfinder: vrije bedden in Oostenrijkse berghutten",
+  "meta.description": "Vind en boek berghutten in Oostenrijk voor je volgende wandeltocht. Zoek in {n} hutten op vrije bedden, regio en kamertype en boek direct.",
+  "meta.share": "Elke berghut in Oostenrijk, met de bedden die nog vrij zijn. Zoek in {n} hutten op vrije bedden.",
+  "meta.shareShort": "Elke berghut in Oostenrijk, met de bedden die nog vrij zijn.",
+
   // ---------- kop ----------
   "site.tagline": "Vind en boek berghutten in Oostenrijk.",
   "search.aria": "Berghutten op naam zoeken",

@@ -8,6 +8,12 @@
    „s {rooms}“ je v nich „v této kategorii“. Čeština by jinak potřebovala
    pro každý pád jiný tvar. */
 export const cs = {
+  // ---------- úvodní stránka ve výsledcích vyhledávání a náhledech odkazů (/cs/) ----------
+  "meta.title": "Hüttenfinder: volná lůžka na horských chatách v Rakousku",
+  "meta.description": "Najděte a rezervujte si chatu v Rakousku na svou příští túru. Prohledejte {n} chat podle volných lůžek, regionu a typu noclehu a rezervujte přímo.",
+  "meta.share": "Všechny chaty v Rakousku i s lůžky, která jsou ještě volná. Prohledejte {n} chat podle volných lůžek.",
+  "meta.shareShort": "Všechny chaty v Rakousku i s lůžky, která jsou ještě volná.",
+
   // ---------- hlavička ----------
   "site.tagline": "Najděte a rezervujte chaty v Rakousku.",
   "search.aria": "Hledat chaty podle názvu",

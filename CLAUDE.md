@@ -36,7 +36,7 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | `data/hr_mapping.json` | Hut ↔ HRS booking matches. Entries with `verified: true` are kept by `match_huts.py` on re-runs. |
 | `scripts/` | Data pipeline: OSM import, HRS matching, availability fetch. |
 | `QA/mobile-qa.md` | The mobile QA checklist. Run it the same way every time. |
-| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), one per region with at least 10 huts (`/en/tyrol/`, `/de/tyrol/`: the address is English in both), three list pages, each linked from its tag on hut pages and in the pop-ups (`/en/huts-with-dogs/` from "Dogs welcome", `/en/huts-with-private-rooms/` from "Private rooms", `/en/free-beds-this-weekend/` from "Free this weekend", which comes and goes with the free beds), plus `dist/sitemap.xml`. Every hut gets a page; only huts with a photo, a description of their own or contact details are indexed and in the sitemap, the rest are `noindex` until they have one. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
+| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), one per region with at least 10 huts (`/en/tyrol/`, `/de/tyrol/`: the address is English in both), three list pages, each linked from its tag on hut pages and in the pop-ups (`/en/huts-with-dogs/` from "Dogs welcome", `/en/huts-with-private-rooms/` from "Private rooms", `/en/free-beds-this-weekend/` from "Free this weekend", which comes and goes with the free beds), the homepage in every language (`/de/`, `/nl/`, `/fr/`, `/cs/`, see Languages), plus `dist/sitemap.xml`. Every hut gets a page; only huts with a photo, a description of their own or contact details are indexed and in the sitemap, the rest are `noindex` until they have one. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
 | `src/regionpage.js` | The list pages' script (regions, dogs, private rooms, this weekend), loaded only there: the app's filters on the cards in the page (same rules as `passes()` in `App.jsx`) and the app's hut pop-up. A plain click on a card opens the pop-up; its name opens the hut page. Reads `availability.json`, and `hut_texts.json` when the first pop-up opens. |
 | `data/hut_pages.json` | Optional, and not there now: a list of hut ids that limits which huts get a page (it held the ten test huts). |
 | `public/hut_slugs.json` | Every hut page's address, so it never changes once it's out. The app loads it to link cards and pop-ups to the pages. `build_hut_pages.mjs --write-slugs` adds new huts; commit the file. |
@@ -74,6 +74,14 @@ basemap.at inside Austria and OpenStreetMap outside it.
 
 English, German, Dutch, French and Czech. The site opens in the browser's
 language, remembers a change, and sets `<html lang>`.
+
+- **The homepage has an address per language**: `/` (English), `/de/`, `/nl/`,
+  `/fr/`, `/cs/`, linked with hreflang in `index.html`. `build_hut_pages.mjs`
+  writes all five from `dist/index.html` with their own lang, title,
+  description and link preview (the `meta.*` keys), so a search shows each
+  language its own text. The address wins over the remembered choice; `/`
+  keeps the old detection; switching language changes the address. Hut and
+  list pages link home to `/de/` in German.
 
 - **No string in a component.** `const { t, nf } = useI18n()`, then
   `t("pill.all")`. A key missing from a language falls back to English, so a

@@ -5,6 +5,12 @@
    Jausenstation) : c'est ce qui est écrit sur la cabane et sur la carte.
    Espace insécable avant « : » et à l'intérieur des guillemets. */
 export const fr = {
+  // ---------- la page d'accueil dans les résultats de recherche et les aperçus de liens (/fr/) ----------
+  "meta.title": "Hüttenfinder : lits libres dans les refuges d'Autriche",
+  "meta.description": "Trouvez et réservez un refuge en Autriche pour votre prochaine randonnée. Filtrez {n} refuges par lits libres, région et couchage, et réservez en direct.",
+  "meta.share": "Tous les refuges d'Autriche, avec les lits encore libres. Cherchez parmi {n} refuges par lits libres.",
+  "meta.shareShort": "Tous les refuges d'Autriche, avec les lits encore libres.",
+
   // ---------- en-tête ----------
   "site.tagline": "Trouvez et réservez des refuges en Autriche.",
   "search.aria": "Rechercher un refuge par nom",
