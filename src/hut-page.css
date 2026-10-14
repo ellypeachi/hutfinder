@@ -431,7 +431,8 @@ svg.hp-tape { clip-path: none; }
 .hp-filters.no-avail .hp-frow { display: none; }
 .hp-frow { display: flex; flex-wrap: wrap; gap: 0 40px; align-items: flex-start; }
 .hp-frow > .hp-fgroup { flex: 1 1 300px; }
-.hp-frow > .hp-fdates { max-width: 460px; }
+/* Room for both dates and Clear on one line, also beside two other groups. */
+.hp-frow > .hp-fdates { flex-basis: 380px; max-width: 460px; }
 .hp-fgroup { margin-bottom: 14px; min-width: 0; }
 .hp-flabel {
   font-size: 11.2px;

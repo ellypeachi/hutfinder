@@ -728,19 +728,20 @@ const filterData = (o) =>
   (bedsOf(o) != null ? ` data-beds="${bedsOf(o)}"` : '') +
   (o.hr_hut_id != null ? ` data-hr="${esc(o.hr_hut_id)}"` : '')
 
-// `bucket`: on a page about one room type (private rooms), the card gives that
-// type's next free date instead of the next free bed of any type.
-function card(L, o, d, filterable = false, bucket = null) {
+// `lineOf`: a list page's own availability line for a bookable hut (the next
+// free private room, the beds free this weekend) instead of the next free bed.
+function card(L, o, d, filterable = false, lineOf = null) {
   const ph = photos[o.id]
   const linked = builtIds.has(o.id)
   const meta = [typeLabel(L, o), elevText(L, o)].filter(Boolean).join(' · ')
   const name = linked ? `<a class="hp-card-link" href="${pagePath(L.lang, o)}">${esc(o.name)}</a>` : esc(o.name)
   let bandHTML
   if (isBookable(o)) {
-    const nf = bucket == null ? nextFree(o) : nextFreeIn(o, bucket)
-    const nfKey = bucket == null ? 'avail.nextFree' : `page.nextFree.${BUCKETS[bucket]}`
-    let line = nf
-      ? `<span>${gauge(nf.free, 11)} ${esc(L.t(nfKey, { date: fmtISO(nf.date), n: L.nf(nf.free) }))}</span>`
+    const nf = nextFree(o)
+    let line = lineOf
+      ? lineOf(o)
+      : nf
+      ? `<span>${gauge(nf.free, 11)} ${esc(L.t('avail.nextFree', { date: fmtISO(nf.date), n: L.nf(nf.free) }))}</span>`
       : recOf(o)
         ? `<span>${esc(L.t('avail.none'))}</span>`
         : ''
@@ -882,7 +883,7 @@ function popData(L, h) {
   return o
 }
 
-function listFilters(L, listed, regions = null, room = null) {
+function listFilters(L, listed, regions = null, room = null, dates = null) {
   const pill = (g, v, label, chip = label) =>
     `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="${esc(v)}" data-chip="${esc(chip)}" aria-pressed="false">${esc(label)}<span class="hp-pill-n"></span></button>`
   const all = (g, label) => `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="" aria-pressed="true">${esc(label)}</button>`
@@ -908,7 +909,7 @@ function listFilters(L, listed, regions = null, room = null) {
     strings: Object.fromEntries(CLIENT_STRINGS.map((k) => [k, DICTS[L.lang][k] ?? en[k]])),
   }
   return (
-    `<div class="hp-filters" role="search" aria-label="${esc(L.t('page.region.filters'))}" data-filters data-avail="/availability.json" data-texts="/hut_texts.json"${room ? ` data-room="${room}"` : ''}>` +
+    `<div class="hp-filters" role="search" aria-label="${esc(L.t('page.region.filters'))}" data-filters data-avail="/availability.json" data-texts="/hut_texts.json"${room ? ` data-room="${room}"` : ''}${dates ? ` data-from="${dates.from}" data-to="${dates.to}"` : ''}>` +
     `<div class="hp-frow">` +
     `<div class="hp-fgroup hp-fdates"><div class="hp-flabel" id="f-dates">${esc(L.t('filter.available'))}</div>` +
     `<div class="hp-dfields" role="group" aria-labelledby="f-dates">${field('start', L.t('date.checkIn'))}${field('end', L.t('date.checkOut'))}` +
@@ -940,14 +941,14 @@ function listFilters(L, listed, regions = null, room = null) {
    these huts, and the empty line is for when they leave none; the filters
    fill both in. A section that `collapses` goes instead, when it is one of
    several of the same kind (the regions on the dogs page). */
-function listSection(L, { id, kind, heading, list, aside = '', collapse = false, bucket = null }) {
+function listSection(L, { id, kind, heading, list, aside = '', collapse = false, lineOf = null }) {
   if (!list.length) return ''
   const h2 = `<h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count" data-count>${esc(L.nf(list.length))}</span></h2>`
   return (
     `<section class="hp-section" aria-labelledby="${id}" data-section="${kind}"${collapse ? ' data-collapse' : ''}>` +
     (aside ? `<div class="hp-section-head">${h2}${aside}</div>` : h2) +
     `<p class="hp-note" data-note hidden></p><p class="hp-fempty" data-empty hidden></p>` +
-    `<div class="hp-grid">${list.map((h) => card(L, h, null, true, bucket)).join('')}</div></section>`
+    `<div class="hp-grid">${list.map((h) => card(L, h, null, true, lineOf)).join('')}</div></section>`
   )
 }
 
@@ -999,7 +1000,7 @@ function listPage(L, p, assets) {
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
     siteHeader(L, other, p.path(other)) +
     `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(p.h1)}</h1>` +
-    `<p class="hp-summary">${esc(p.intro)}</p></div>${listFilters(L, p.listed, p.regions, p.room)}</div>` +
+    `<p class="hp-summary">${esc(p.intro)}</p></div>${listFilters(L, p.listed, p.regions, p.room, p.dates)}</div>` +
     p.sections +
     // When the filters leave no hut in any section that collapses.
     (p.sections.includes('data-collapse') ? `<p class="hp-fempty" data-none hidden></p>` : '') +
@@ -1098,13 +1099,20 @@ function privPage(L, assets) {
     free ? L.t('page.priv.introFree', { count: free, f: L.nf(free) }) : L.t('page.priv.introNoFree'),
     L.t('page.priv.introUnknown'),
   ].join(' ')
+  // Each card: the next free private room.
+  const lineOf = (o) => {
+    const nf = nextFreeIn(o, PRIV)
+    return nf
+      ? `<span>${gauge(nf.free, 11)} ${esc(L.t('page.nextFree.priv', { date: fmtISO(nf.date), n: L.nf(nf.free) }))}</span>`
+      : recOf(o) ? `<span>${esc(L.t('avail.none'))}</span>` : ''
+  }
   const sections = regions
     .map((r) => {
       const name = r ? regionName(L, r) : L.t('region.other')
       const aside = hasRegionPage(r)
         ? `<a class="hp-more hf-tap-min" href="${regionPath(L.lang, r)}"><span class="hp-u">${esc(L.t('page.list.allIn', { region: name }))}</span>&nbsp;→</a>`
         : ''
-      return listSection(L, { id: `priv-${REGION_KEYS[r] || 'other'}`, kind: 'book', heading: name, list: bySoonest(groups.get(r), PRIV), aside, collapse: true, bucket: PRIV })
+      return listSection(L, { id: `priv-${REGION_KEYS[r] || 'other'}`, kind: 'book', heading: name, list: bySoonest(groups.get(r), PRIV), aside, collapse: true, lineOf })
     })
     .join('')
   return listPage(L, {
@@ -1117,6 +1125,68 @@ function privPage(L, assets) {
     listed: regions.flatMap((r) => bySoonest(groups.get(r), PRIV)),
     regions: regions.filter(Boolean),
     room: 'priv',
+    sections,
+  }, assets)
+}
+
+/* Free beds this weekend (/en/free-beds-this-weekend/): the bookable huts
+   with a free bed every night of the coming weekend, Friday and Saturday
+   night (on a Saturday, that night only). Built with every deploy, which
+   the free beds' refresh runs about five times a day, so the weekend moves
+   on by itself. The page starts with those dates picked in the filters. */
+const weekendPath = (lang) => `/${lang}/free-beds-this-weekend/`
+const WEEKEND = (() => {
+  const dow = utc(TODAY).getUTCDay() // 0 Sunday … 6 Saturday
+  const from = dow === 6 ? TODAY : addDays(TODAY, (5 - dow + 7) % 7)
+  const nights = dow === 6 ? [from] : [from, addDays(from, 1)]
+  return { from, to: addDays(from, nights.length), nights }
+})()
+// The fewest free beds across the weekend's nights; 0 if any night is full or closed.
+const weekendFree = (h) => {
+  const rec = recOf(h)
+  if (!rec || !rec.days) return 0
+  return Math.min(...WEEKEND.nights.map((d) => (rec.days[d] ? rec.days[d].reduce((a, b) => a + (b || 0), 0) : 0)))
+}
+const WEEKEND_HUTS = huts.filter((h) => isBookable(h) && builtIds.has(h.id) && weekendFree(h) > 0)
+
+function weekendPage(L, assets) {
+  const groups = new Map()
+  for (const h of WEEKEND_HUTS) groups.set(regionOf(h), [...(groups.get(regionOf(h)) || []), h])
+  const regions = [...groups.keys()].sort((a, b) => groups.get(b).length - groups.get(a).length)
+  // Most free beds first.
+  const ordered = (r) => [...groups.get(r)].sort((a, b) => weekendFree(b) - weekendFree(a) || a.name.localeCompare(b.name, 'de'))
+  const n = WEEKEND_HUTS.length
+  const day = (iso) => L.date(iso, { weekday: 'short', day: 'numeric', month: 'short' })
+  const range = `${day(WEEKEND.from)} – ${day(WEEKEND.to)}`
+  const intro = [
+    n ? L.t('page.weekend.intro', { count: n, n: L.nf(n), range }) : L.t('page.weekend.introNone', { range }),
+    L.t('page.weekend.introFresh'),
+    L.t('page.weekend.introUnknown'),
+  ].join(' ')
+  // Each card: the beds free every night of the weekend (the filters then show them per room type).
+  const lineOf = (o) => {
+    const f = weekendFree(o)
+    return `<span>${gauge(f, 11)} ${esc(L.t('page.weekend.cardFree', { count: f, n: L.nf(f) }))}</span>`
+  }
+  const sections = regions
+    .map((r) => {
+      const name = r ? regionName(L, r) : L.t('region.other')
+      const aside = hasRegionPage(r)
+        ? `<a class="hp-more hf-tap-min" href="${regionPath(L.lang, r)}"><span class="hp-u">${esc(L.t('page.list.allIn', { region: name }))}</span>&nbsp;→</a>`
+        : ''
+      return listSection(L, { id: `weekend-${REGION_KEYS[r] || 'other'}`, kind: 'book', heading: name, list: ordered(r), aside, collapse: true, lineOf })
+    })
+    .join('')
+  return listPage(L, {
+    path: weekendPath,
+    title: L.t('page.weekend.title'),
+    desc: L.t('page.weekend.meta', { count: n, n: L.nf(n) }),
+    h1: L.t('page.weekend.h1'),
+    crumb: L.t('page.weekend.h1'),
+    intro,
+    listed: regions.flatMap(ordered),
+    regions: regions.filter(Boolean),
+    dates: { from: WEEKEND.from, to: WEEKEND.to },
     sections,
   }, assets)
 }
@@ -1253,7 +1323,7 @@ function sitemap() {
       .join('\n')
     for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${pageUrl(c, h)}</loc>\n${alts}\n  </url>`)
   }
-  for (const where of [...REGIONS.map((r) => (c) => regionPath(c, r)), dogsPath, privPath]) {
+  for (const where of [...REGIONS.map((r) => (c) => regionPath(c, r)), dogsPath, privPath, weekendPath]) {
     const alts = [...PAGE_LANGS.map((c) => [c, SITE + where(c)]), ['x-default', SITE + where(DEFAULT_LANG)]]
       .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
       .join('\n')
@@ -1293,7 +1363,7 @@ if (CHECK) {
       fs.writeFileSync(path.join(dir, 'index.html'), page(i18n(c), h, assets))
     }
   }
-  const lists = [...REGIONS.map((r) => [(c) => regionPath(c, r), (L) => regionPage(L, r, assets)]), [dogsPath, (L) => dogsPage(L, assets)], [privPath, (L) => privPage(L, assets)]]
+  const lists = [...REGIONS.map((r) => [(c) => regionPath(c, r), (L) => regionPage(L, r, assets)]), [dogsPath, (L) => dogsPage(L, assets)], [privPath, (L) => privPage(L, assets)], [weekendPath, (L) => weekendPage(L, assets)]]
   for (const [where, make] of lists) {
     for (const c of PAGE_LANGS) {
       const dir = path.join(DIST, where(c))
@@ -1303,5 +1373,5 @@ if (CHECK) {
   }
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap())
   fs.rmSync(path.join(DIST, 'hut-template'), { recursive: true, force: true })
-  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages, the huts-with-dogs and private-rooms pages in ${PAGE_LANGS.length} languages and sitemap.xml.`)
+  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages, 3 list pages (dogs, private rooms, this weekend) in ${PAGE_LANGS.length} languages and sitemap.xml.`)
 }
