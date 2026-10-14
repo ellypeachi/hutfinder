@@ -44,7 +44,8 @@ export function init(root) {
   // A page about one room type (private rooms) has it fixed: dates then mean
   // that type free every night, and there are no room type pills.
   const fixedRoom = root.dataset.room || ''
-  const st = { from: '', to: '', region: [], room: fixedRoom, type: [], band: [], warden: '', assoc: '', shower: '' }
+  // A page about given dates (this weekend) starts with them picked.
+  const st = { from: root.dataset.from || '', to: root.dataset.to || '', region: [], room: fixedRoom, type: [], band: [], warden: '', assoc: '', shower: '' }
   let avail = null
 
   const huts = [...document.querySelectorAll('[data-hut]')].map((el) => ({
@@ -96,11 +97,12 @@ export function init(root) {
     if (skip !== 'warden' && st.warden && h.warden !== st.warden) return false
     if (skip !== 'assoc' && st.assoc && h.assoc !== st.assoc) return false
     if (skip !== 'shower' && st.shower && !h.shower) return false
-    if (nights.length) {
+    // Dates filter once the free beds are in; until then every hut stays.
+    if (nights.length && avail) {
       const rec = recOf(h)
       if (!rec) {
         // Unknown stays, unless the hut is known to have no beds at all.
-        if (!avail || h.beds === 0) return false
+        if (h.beds === 0) return false
       } else if (!nights.every((d) => {
         const a = night(rec, d)
         return a && (a[0] || 0) + (a[1] || 0) + (a[2] || 0) > 0
