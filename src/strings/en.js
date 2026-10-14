@@ -48,6 +48,7 @@ export const en = {
   "tag.usuallyServiced": "Usually serviced",
   "tag.shower": "Shower",
   "tag.winterRoom": "Winter room",
+  "tag.privateRooms": "Private rooms",
   "tag.dogsWelcome": "Dogs welcome",
   "tag.noDogs": "No dogs",
 

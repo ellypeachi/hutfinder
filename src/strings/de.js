@@ -48,6 +48,7 @@ export const de = {
   "tag.usuallyServiced": "Meist bewirtschaftet",
   "tag.shower": "Dusche",
   "tag.winterRoom": "Winterraum",
+  "tag.privateRooms": "Privatzimmer",
   "tag.dogsWelcome": "Hunde willkommen",
   "tag.noDogs": "Keine Hunde",
 

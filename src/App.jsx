@@ -163,9 +163,10 @@ function fmtGenerated(iso, locale) {
    three and the pop-up all of them. Anything the data doesn't know is left
    out rather than shown as "unknown", and an inferred value says so
    ("Usually serviced"). */
-/* `dogsPage`: the huts-with-dogs page, for the pop-up's Dogs welcome tag.
-   A card leaves it out: the whole card opens the pop-up. */
-function hutTags(hut, t, dogsPage = null) {
+/* `links`: for the pop-up, the list pages its tags open. `privPage` is set
+   only for a hut whose booking page lists private rooms, and adds that tag.
+   A card leaves both out: the whole card opens the pop-up. */
+function hutTags(hut, t, { dogsPage = null, privPage = null } = {}) {
   const tags = [];
   if (hut.club) tags.push({ label: CLUB_LABEL[hut.club] || hut.club, club: true });
   else if (hut.association) tags.push({ label: assocName(t, hut.association) });
@@ -180,6 +181,7 @@ function hutTags(hut, t, dogsPage = null) {
   else if (hut.warden === "selbstversorger") tags.push({ label: t("warden.selbstversorger") });
   if (hut.shower === true) tags.push({ label: t("tag.shower") });
   if (hut.winterraum === true) tags.push({ label: t("tag.winterRoom") });
+  if (privPage) tags.push({ label: t("tag.privateRooms"), href: privPage });
   if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome"), href: dogsPage });
   else if (hut.hr_dogs === false) tags.push({ label: t("tag.noDogs") });
   return tags;
@@ -920,7 +922,12 @@ export default function App() {
     const notes = own ? plainText(own.text) : "";
     const source = own && own.source ? { code: own.source.code, text: plainText(own.source.text) } : null;
     // The list pages exist in German and English.
-    const tags = hutTags(hut, t, `${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}/huts-with-dogs/`);
+    const list = `${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}`;
+    const rec = recOf(hut);
+    const tags = hutTags(hut, t, {
+      dogsPage: `${list}/huts-with-dogs/`,
+      privPage: hut.hr_booking_url && rec && rec.caps && rec.caps[BUCKET_IDX.priv] > 0 ? `${list}/huts-with-private-rooms/` : null,
+    });
     return (
       <>
         {photo ? (
