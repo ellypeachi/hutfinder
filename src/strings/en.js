@@ -298,7 +298,7 @@ export const en = {
   "page.region.book": "Book online",
   "page.region.contact": "Ask the hut directly",
   "page.region.filters": "Filter the huts",
-  "page.region.more": { one: "{n} more hut without contact details is on the map", other: "{n} more huts without contact details are on the map" },
+  "page.region.more": { one: "{n} more hut in {region} has no contact details. It’s on the map", other: "{n} more huts in {region} have no contact details. They’re on the map" },
   "page.footer.data": "Hut data © {osm} contributors, the Alpenverein and hut-reservation.org.",
   "page.footer.check": "Check with the hut before you set off.",
   "page.footer.wrongPage": "Something wrong on this page? {email}",

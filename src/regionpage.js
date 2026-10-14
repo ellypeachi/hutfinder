@@ -1,6 +1,7 @@
-/* The region pages' filters (/en/tyrol/…): the app's filters, working on the
-   cards already in the page. scripts/build_hut_pages.mjs renders the controls
-   and the cards' data; this file makes them work.
+/* The region pages (/en/tyrol/…): the app's filters, working on the cards
+   already in the page, and the app's hut pop-up when a card is clicked.
+   scripts/build_hut_pages.mjs renders the controls and the cards' data;
+   this file makes them work.
 
    The rules are the app's (passes() in src/App.jsx). A hut that doesn't
    publish free beds or room types is unknown, not a no: it stays when dates
@@ -122,20 +123,15 @@ export function init(root) {
 
   // ---------------------------------------------------------------- drawing
 
-  /* With dates, a bookable card shows the free beds of those nights per room
-     type, the fewest across them, as the app's cards do. Otherwise the line
-     the page was built with: the next free date. */
-  const drawLine = (h, nights) => {
-    if (!h.line) return
-    const rec = recOf(h)
-    if (!nights.length || !rec || !rec.caps) {
-      if (h.line.innerHTML !== h.lineHTML) h.line.innerHTML = h.lineHTML
-      return
-    }
+  /* With dates, the free beds of those nights per room type, the fewest
+     across them, as the app's cards and pop-up show them. Null without dates
+     or without the hut's free beds. */
+  const bedsHTML = (rec, nights) => {
+    if (!nights.length || !rec || !rec.caps) return null
     const mins = [Infinity, Infinity, Infinity]
     for (const d of nights) {
       const a = night(rec, d)
-      if (!a) return void (h.line.innerHTML = h.lineHTML)
+      if (!a) return null
       for (let i = 0; i < 3; i++) mins[i] = Math.min(mins[i], a[i] || 0)
     }
     const range = st.to ? `${fmt(st.from)}–${fmt(st.to)}` : fmt(st.from)
@@ -144,8 +140,13 @@ export function init(root) {
       const n = mins[i]
       return `<span class="hp-free-row"><span>${gauge(n)}${t(`bucket.${k}`)}</span><b style="color:${bedColor(n)}">${n > 0 ? t('avail.beds', { count: n, n: nf(n) }) : t('avail.full')}</b></span>`
     }).join('')
-    h.line.innerHTML =
-      `<span class="hp-free"><b>${t('avail.free', { range })}</b>${nights.length > 1 ? `<span>${t('avail.fewest')}</span>` : ''}</span>${rows}`
+    return `<span class="hp-free"><b>${t('avail.free', { range })}</b>${nights.length > 1 ? `<span>${t('avail.fewest')}</span>` : ''}</span>${rows}`
+  }
+  // A card keeps the line the page was built with (the next free date) until dates are picked.
+  const drawLine = (h, nights) => {
+    if (!h.line) return
+    const html = bedsHTML(recOf(h), nights) ?? h.lineHTML
+    if (h.line.innerHTML !== html) h.line.innerHTML = html
   }
 
   const pills = [...root.querySelectorAll('.hp-pill')]
@@ -156,6 +157,7 @@ export function init(root) {
   const clearAll = root.querySelector('[data-clearall]')
   const clearMore = root.querySelector('[data-clearmore]')
   const show = root.querySelector('[data-show]')
+  const unfiltered = document.querySelectorAll('[data-unfiltered]')
 
   function update() {
     const nights = nightsOf()
@@ -212,6 +214,8 @@ export function init(root) {
       .map((p) => `<button type="button" class="hp-chip hf-tap" data-g="${p.dataset.g}" data-v="${p.dataset.v}" aria-label="${escAttr(t('chip.removeAria', { label: p.dataset.chip }))}">${escHTML(p.dataset.chip)}<span aria-hidden="true">×</span></button>`)
       .join('')
     clearAll.hidden = !on.length
+    // The huts the page doesn't list aren't filtered, so their line goes while anything is.
+    for (const el of unfiltered) el.hidden = !!(on.length || st.from)
     show.textContent = t('more.show', { count: total, n: nf(total) })
   }
 
@@ -407,7 +411,8 @@ export function init(root) {
   })
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return
-    if (cal.open) closeCal(cal.mode)
+    if (current) closePop()
+    else if (cal.open) closeCal(cal.mode)
     else closeMore()
   })
 
@@ -435,6 +440,173 @@ export function init(root) {
         moreBtn.focus({ preventScroll: true })
       }
       update()
+    }
+  })
+
+  // ---------------------------------------------------------------- the hut pop-up
+
+  /* A plain click on a card opens the app's pop-up, and the name in it opens
+     the hut's page. A click for a new tab, or a middle click, is left to the
+     browser, so the card is still a link to the page. */
+  const popData = document.querySelector('script[data-pop]')
+  const pops = popData ? JSON.parse(popData.textContent) : {}
+  const ICON = {
+    phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+    globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  }
+  const svg = (name) =>
+    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="flex-shrink:0">${ICON[name]}</svg>`
+  const chevron =
+    '<svg class="hf-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>'
+  const pageLang = document.documentElement.lang
+  const TEXT_LANGS = ['de', 'en', 'fr', 'it'] // the languages huts write their own text in
+  let texts = null
+  let textsLoading = null
+  const loadTexts = () =>
+    (textsLoading ||= fetch(root.dataset.texts)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => (texts = (d && d.texts) || {}))
+      .catch(() => (texts = {})))
+  // The texts arrive as HTML; a parsed document is inert, so reading its text is safe.
+  const plain = (html) => (new DOMParser().parseFromString(html, 'text/html').body.textContent || '').replace(/\s+/g, ' ').trim()
+
+  const back = document.createElement('div')
+  back.className = 'hp-pop-back'
+  back.hidden = true
+  back.innerHTML = '<div class="hp-pop" role="dialog" aria-modal="true" tabindex="-1"></div>'
+  ;(document.querySelector('.hp') || document.body).append(back)
+  const box = back.firstChild
+  let current = null // the open hut, and what gets focus back
+  let closeTimer = 0
+  const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const nextFreeHTML = (rec) => {
+    if (!rec) return ''
+    const today = toISO(new Date())
+    for (const d of Object.keys(rec.days || {}).sort()) {
+      const a = rec.days[d]
+      const n = (a[0] || 0) + (a[1] || 0) + (a[2] || 0)
+      if (d >= today && n > 0) return `<span>${gauge(n, 11)} ${escHTML(t('avail.nextFree', { date: fmt(d), n: nf(n) }))}</span>`
+    }
+    return `<span>${escHTML(t('avail.none'))}</span>`
+  }
+  // Two lines of the hut's own text, then Read more, as in the app.
+  const descHTML = (o) => {
+    const e = o.txt && texts && texts[o.hr]
+    const code = e && [pageLang, 'en', ...TEXT_LANGS].find((c) => e[c])
+    const text = code ? plain(e[code]) : ''
+    if (!text) return ''
+    return (
+      `<div><div class="hf-label">${escHTML(t('detail.description'))}</div><div class="hf-desc-wrap">` +
+      `<p class="hf-desc"${code !== pageLang ? ` lang="${code}"` : ''}><button type="button" class="hf-more" aria-expanded="false"><span>${escHTML(t('detail.readMore'))}</span></button>${escHTML(text)}</p></div></div>`
+    )
+  }
+  // Not bookable online: the phone number is the next step, so it is the button.
+  const callBand = (o) => {
+    const a = o.tel
+      ? `<a href="${escAttr(o.tel[0])}" class="hf-call hf-tap" aria-label="${escAttr(t('call.aria', { hut: o.n, phone: o.tel[1] }))}">${svg('phone')}${escHTML(t('call.label', { phone: o.tel[1] }))}</a>`
+      : o.web
+        ? `<a href="${escAttr(o.web[0])}" target="_blank" rel="noopener" class="hf-call hf-tap" aria-label="${escAttr(t('contact.websiteAria', { hut: o.n, host: o.web[1] }))}">${svg('globe')}${escHTML(t('contact.website'))}</a>`
+        : o.mail
+          ? `<a href="mailto:${escAttr(o.mail)}" class="hf-call hf-tap" aria-label="${escAttr(t('contact.emailAria', { hut: o.n, email: o.mail }))}">${svg('mail')}${escHTML(t('contact.email'))}</a>`
+          : ''
+    return a ? `<div class="hf-detail-band"><div class="hf-card-band hf-card-band-row">${a}<span>${escHTML(t('band.notBookable'))}</span></div></div>` : ''
+  }
+
+  function render(id) {
+    const o = pops[id]
+    const rec = o.hr && avail && avail.huts ? avail.huts[o.hr] || null : null
+    const name = o.u
+      ? `<a href="${escAttr(o.u)}" class="hf-detail-namelink" aria-label="${escAttr(t('detail.hutPageAria', { hut: o.n }))}"><span>${escHTML(o.n)}</span>${chevron}</a>`
+      : escHTML(o.n)
+    const contact = [
+      o.tel && `<a href="${escAttr(o.tel[0])}" class="hf-tap-min" aria-label="${escAttr(t('call.aria', { hut: o.n, phone: o.tel[1] }))}">${svg('phone')}<span>${escHTML(o.tel[1])}</span></a>`,
+      o.web && `<a href="${escAttr(o.web[0])}" target="_blank" rel="noopener" class="hf-tap-min" aria-label="${escAttr(t('contact.websiteAria', { hut: o.n, host: o.web[1] }))}">${svg('globe')}<span>${escHTML(o.web[1])}</span></a>`,
+      o.mail && `<a href="mailto:${escAttr(o.mail)}" class="hf-tap-min" aria-label="${escAttr(t('contact.emailAria', { hut: o.n, email: o.mail }))}">${svg('mail')}<span>${escHTML(o.mail)}</span></a>`,
+    ].filter(Boolean)
+    let body = `<div><h2 class="hf-detail-name">${name}</h2><div class="hf-card-meta">${escHTML(o.m)}</div></div>`
+    if (contact.length) body += `<div class="hf-contact">${contact.join('')}</div>`
+    if (o.tags.length) body += `<ul class="hf-tags">${o.tags.map(([l, club]) => `<li class="hf-tag${club ? ' hf-tag-club' : ''}">${escHTML(l)}</li>`).join('')}</ul>`
+    body += descHTML(o)
+    if (o.book) {
+      // The free beds of the picked nights, or else the next free date.
+      const beds = bedsHTML(rec, nightsOf()) ?? (avail ? nextFreeHTML(rec) : '')
+      body +=
+        `<div class="hp-pop-book"><div class="hp-pop-bookrow">` +
+        `<a class="hp-btn" href="${escAttr(o.book)}" target="_blank" rel="noopener" aria-label="${escAttr(t('book.aria', { hut: o.n }))}">${escHTML(t('book.online'))}</a>` +
+        (o.x ? `<span>${escHTML(o.x)}</span>` : '') +
+        (o.pdf ? `<a class="hp-pop-pdf hf-tap" href="${escAttr(o.pdf)}" target="_blank" rel="noopener" aria-label="${escAttr(t('detail.priceListAria', { hut: o.n }))}"><span class="hp-u">${escHTML(t('detail.priceList'))}</span></a>` : '') +
+        `</div>${beds ? `<div class="hp-avail hp-pop-avail">${beds}</div>` : ''}</div>`
+    } else body += callBand(o)
+    box.setAttribute('aria-label', o.n)
+    box.innerHTML =
+      `<button type="button" class="hf-close hp-pop-x${o.p ? ' on-photo' : ''}" aria-label="${escAttr(t('detail.closeAria', { hut: o.n }))}"><span aria-hidden="true">×</span></button>` +
+      // The credit is HTML from build_hut_pages.mjs, escaped there.
+      (o.p ? `<img class="hf-detail-photo" src="${escAttr(o.p)}" width="420" height="220" alt="${escAttr(o.n)}"><p class="hf-credit">${o.c}</p>` : '') +
+      `<div class="hp-pop-body${o.p ? '' : ' no-photo'}">${body}</div>`
+    // Read more only where the two lines actually cut the text off.
+    const p = box.querySelector('.hf-desc')
+    if (p && p.scrollHeight <= p.clientHeight + 1) p.querySelector('.hf-more').remove()
+  }
+
+  function openPop(id, trigger) {
+    clearTimeout(closeTimer)
+    current = { id, trigger }
+    back.hidden = false
+    document.documentElement.classList.add('hp-locked')
+    render(id)
+    box.scrollTop = 0
+    requestAnimationFrame(() => back.classList.add('is-open'))
+    box.focus({ preventScroll: true })
+    if (pops[id].txt && !texts) loadTexts().then(() => current && current.id === id && render(id))
+  }
+  function closePop() {
+    if (!current) return
+    const { trigger } = current
+    current = null
+    back.classList.remove('is-open')
+    document.documentElement.classList.remove('hp-locked')
+    if (trigger && document.contains(trigger)) trigger.focus({ preventScroll: true })
+    closeTimer = setTimeout(() => {
+      back.hidden = true
+      box.innerHTML = ''
+    }, reduced() ? 0 : 150)
+  }
+
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('[data-hut] .hp-card-link')
+    if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const id = a.closest('[data-hut]').dataset.id
+    if (!pops[id]) return
+    e.preventDefault()
+    openPop(id, a)
+  })
+  back.addEventListener('click', (e) => {
+    if (e.target === back || e.target.closest('.hp-pop-x')) return closePop()
+    const more = e.target.closest('.hf-more')
+    if (!more) return
+    const p = more.closest('.hf-desc')
+    const open = !p.classList.contains('is-open')
+    p.classList.toggle('is-open', open)
+    more.setAttribute('aria-expanded', String(open))
+    more.firstChild.textContent = open ? t('detail.showLess') : t('detail.readMore')
+    if (open) p.append(more)
+    else p.prepend(more)
+  })
+  // Tab stays inside the pop-up while it is open.
+  box.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return
+    const stops = [...box.querySelectorAll(FOCUSABLE)]
+    if (!stops.length) return
+    const first = stops[0]
+    const last = stops[stops.length - 1]
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === box)) {
+      e.preventDefault()
+      last.focus()
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault()
+      first.focus()
     }
   })
 

@@ -418,7 +418,7 @@ svg.hp-tape { clip-path: none; }
 .hp-fempty { margin: 0; font-weight: 600; }
 
 
-/* ---- region filters (src/regionfilters.js) -------------------------------
+/* ---- region filters (src/regionpage.js) -------------------------------
    The app's filters and their look: uppercase captions, pills with counts,
    the check-in/check-out pair with one calendar. Only with JavaScript, which
    they need; without it every card shows. */
@@ -671,6 +671,75 @@ svg.hp-tape { clip-path: none; }
   cursor: pointer;
 }
 html.hp-locked { overflow: hidden; }
+
+/* ---- the hut pop-up (src/regionpage.js) ----------------------------------
+   The app's pop-up, with the app's classes from tokens.css; what the app
+   sets inline is here. */
+.hp-pop-back {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(20, 18, 14, 0);
+  transition: background-color var(--dur) var(--ease);
+}
+.hp-pop-back[hidden] { display: none; }
+.hp-pop-back.is-open { background: rgba(20, 18, 14, 0.45); }
+.hp-pop {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--card);
+  border-radius: 12px;
+  outline: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.hp-pop-back.is-open .hp-pop { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hp-pop-back, .hp-pop { transition: none; }
+}
+.hp-pop-x {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  padding: 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+/* On a photo it needs its own backing to stay readable. */
+.hp-pop-x.on-photo {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--card) 65%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+}
+.hp-pop-body { display: flex; flex-direction: column; gap: 0.9rem; padding: 0.75rem 1.4rem 1.25rem; }
+.hp-pop-body.no-photo { padding: 1.25rem 1.4rem; }
+.hp-pop .hf-card-meta { font-size: 0.9rem; }
+.hp .hp-pop .hf-detail-namelink { color: var(--ink); }
+.hp .hp-pop .hf-call { color: var(--ink); }
+.hp .hp-pop .hf-credit a, .hp .hp-pop .hf-credit a:hover { color: inherit; text-decoration: none; }
+.hp-pop-book { margin-top: 0.35rem; padding-top: 1rem; border-top: 1px solid var(--hair); font-size: 0.85rem; color: var(--ink-soft); }
+.hp-pop-bookrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; }
+.hp-pop .hp-btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+@media (pointer: coarse) { .hp-pop .hp-btn { min-height: 44px; } }
+.hp .hp-pop-pdf { color: var(--blue-deep); font-weight: 600; text-decoration: none; }
+.hp-pop-avail { margin-top: 0.5rem; }
+@media (max-width: 860px) {
+  .hp-pop-body.no-photo { padding-top: 2.6rem; }
+}
 
 /* With dates picked: the free beds of those nights, per room type. */
 .hp-avail .hp-free { display: block; font-size: 12.8px; margin-bottom: 6px; color: var(--ink-soft); }

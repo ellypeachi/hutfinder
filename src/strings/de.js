@@ -297,7 +297,7 @@ export const de = {
   "page.region.book": "Online buchbar",
   "page.region.contact": "Direkt bei der Hütte anfragen",
   "page.region.filters": "Hütten filtern",
-  "page.region.more": { one: "{n} weitere Hütte ohne Kontaktdaten findest du auf der Karte", other: "{n} weitere Hütten ohne Kontaktdaten findest du auf der Karte" },
+  "page.region.more": { one: "{n} weitere Hütte in {region} hat keine Kontaktdaten. Du findest sie auf der Karte", other: "{n} weitere Hütten in {region} haben keine Kontaktdaten. Du findest sie auf der Karte" },
   "page.footer.data": "Hüttendaten © {osm}-Mitwirkende, Alpenverein und hut-reservation.org.",
   "page.footer.check": "Frag vor deiner Tour bei der Hütte nach.",
   "page.footer.wrongPage": "Stimmt auf dieser Seite etwas nicht? {email}",

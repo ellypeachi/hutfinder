@@ -73,9 +73,9 @@ for (const info of document.querySelectorAll('.hp-info')) {
   })
 }
 
-/* The region pages' filters, only on a page that has them. */
+/* The region pages' filters and hut pop-up, only on a page that has them. */
 const filters = document.querySelector('[data-filters]')
-if (filters) import('./regionfilters.js').then((m) => m.init(filters))
+if (filters) import('./regionpage.js').then((m) => m.init(filters))
 
 /* The map. Leaflet and the tiles load only once the map is near the screen,
    so a visitor who reads the top of the page and books loads neither. */

@@ -704,9 +704,9 @@ function figure(L, h) {
 
 // ---------------------------------------------------------------- nearby
 
-// What the region page filters read off a card (src/regionfilters.js).
+// What the region page filters read off a card (src/regionpage.js).
 const filterData = (o) =>
-  ` data-hut data-type="${esc(o.type || '')}" data-band="${bandOf(o)}" data-warden="${esc(wardenOf(o))}" data-assoc="${esc(assocOf(o))}"` +
+  ` data-hut data-id="${esc(o.id)}" data-type="${esc(o.type || '')}" data-band="${bandOf(o)}" data-warden="${esc(wardenOf(o))}" data-assoc="${esc(assocOf(o))}"` +
   (o.shower === true ? ' data-shower' : '') +
   (bedsOf(o) != null ? ` data-beds="${bedsOf(o)}"` : '') +
   (o.hr_hut_id != null ? ` data-hr="${esc(o.hr_hut_id)}"` : '')
@@ -811,9 +811,9 @@ function regionData(r) {
 
 /* The app's filters, above the cards: dates and room type, then More filters
    (type, elevation, warden, association, shower). Rendered here so the page
-   doesn't jump; src/regionfilters.js makes them work and fills in the
+   doesn't jump; src/regionpage.js makes them work and fills in the
    counts. Without JavaScript they are hidden, and every card shows. */
-const FILTER_STRINGS = [
+const CLIENT_STRINGS = [
   'date.checkIn', 'date.checkOut', 'date.add', 'date.prevMonth', 'date.nextMonth', 'date.pickCheckIn', 'date.pickCheckOut',
   'date.dayAria', 'date.nights', 'date.checkInPending', 'date.noDates',
   'avail.free', 'avail.fewest', 'avail.full', 'avail.beds', 'avail.asOf',
@@ -821,7 +821,44 @@ const FILTER_STRINGS = [
   'unlisted.noteDatesRoom', 'unlisted.noteDates', 'unlisted.noteRoom',
   'empty.nothingFreeNights', 'empty.nothingFreeNight', 'empty.noMatch',
   'more.applied', 'more.show', 'chip.removeAria',
+  // the hut pop-up
+  'avail.nextFree', 'avail.none', 'book.online', 'book.aria', 'call.label', 'call.aria', 'band.notBookable',
+  'contact.website', 'contact.websiteAria', 'contact.email', 'contact.emailAria',
+  'detail.closeAria', 'detail.hutPageAria', 'detail.description', 'detail.readMore', 'detail.showLess',
+  'detail.priceList', 'detail.priceListAria',
 ]
+/* What the hut pop-up on a region page shows, as in the app's pop-up: the
+   photo, the name (linking to the hut page), how to reach the hut, every tag
+   and the booking row. The hut's own text loads with /hut_texts.json when the
+   first pop-up opens, as in the app. */
+function popData(L, h) {
+  const ph = photos[h.id]
+  const o = { n: h.name, m: [typeLabel(L, h), regionName(L, regionOf(h)), elevText(L, h)].filter(Boolean).join(' · ') }
+  if (builtIds.has(h.id)) o.u = pagePath(L.lang, h)
+  // The credit as on the hut page: plain to look at, but the photographer links
+  // to the photo on Commons and the licence to its terms. HTML, made here.
+  if (ph && ph.full) {
+    const link = (href, text) => (href ? `<a href="${esc(href)}">${text}</a>` : text)
+    o.p = `/${ph.full}`
+    o.c = `${esc(L.t('detail.photoCredit'))} ${link(ph.page, esc(ph.credit || ''))} · ${link(ph.license_url, `<span class="hp-nowrap">${esc(ph.license || '')}</span>`)}`
+  }
+  if (h.phone) o.tel = [telHref(h.phone), phoneLabel(h.phone)]
+  if (h.website) o.web = [webHref(h.website), webLabel(h.website)]
+  if (h.email) o.mail = h.email
+  o.tags = hutTags(L, h).map((g) => (g.club ? [g.label, 1] : [g.label]))
+  if (isBookable(h)) {
+    o.book = h.hr_booking_url
+    const x = (h.club ? CLUB_LABEL[h.club] || h.club : '') +
+      (isNum(h.hr_half_board_eur) ? L.t('detail.halfBoard', { n: h.hr_half_board_eur }) : '') +
+      (h.hr_dogs === true ? L.t('detail.dogsWelcome') : h.hr_dogs === false ? L.t('detail.noDogs') : '')
+    if (x) o.x = x.replace(/^ · /, '')
+    if (h.hr_price_pdf) o.pdf = h.hr_price_pdf
+  }
+  if (h.hr_hut_id != null) o.hr = String(h.hr_hut_id)
+  if (textOf(h)) o.txt = 1
+  return o
+}
+
 function regionFilters(L, d) {
   const listed = [...d.book, ...d.contact]
   const pill = (g, v, label, chip = label) =>
@@ -846,10 +883,10 @@ function regionFilters(L, d) {
     locale: L.locale,
     numLocale: NUMBER_LOCALES[L.lang] || L.locale,
     maxNights: 31,
-    strings: Object.fromEntries(FILTER_STRINGS.map((k) => [k, DICTS[L.lang][k] ?? en[k]])),
+    strings: Object.fromEntries(CLIENT_STRINGS.map((k) => [k, DICTS[L.lang][k] ?? en[k]])),
   }
   return (
-    `<div class="hp-filters" role="search" aria-label="${esc(L.t('page.region.filters'))}" data-filters data-avail="/availability.json">` +
+    `<div class="hp-filters" role="search" aria-label="${esc(L.t('page.region.filters'))}" data-filters data-avail="/availability.json" data-texts="/hut_texts.json">` +
     `<div class="hp-frow">` +
     `<div class="hp-fgroup hp-fdates"><div class="hp-flabel" id="f-dates">${esc(L.t('filter.available'))}</div>` +
     `<div class="hp-dfields" role="group" aria-labelledby="f-dates">${field('start', L.t('date.checkIn'))}${field('end', L.t('date.checkOut'))}` +
@@ -936,7 +973,8 @@ function regionPage(L, r, assets) {
         `<div class="hp-grid">${list.map((h) => card(L, h, null, true)).join('')}</div></section>`
       : ''
   const more = d.hidden
-    ? `<p class="hp-region-more"><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden) }))}</span>&nbsp;→</a></p>`
+    // Not filtered, so the filters hide it while any is on.
+    ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
     : ''
   return (
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
@@ -946,6 +984,7 @@ function regionPage(L, r, assets) {
     section('book-h', 'book', L.t('page.region.book'), d.book) +
     section('contact-h', 'contact', L.t('page.region.contact'), d.contact) +
     more +
+    `<script type="application/json" data-pop>${JSON.stringify(Object.fromEntries([...d.book, ...d.contact].map((h) => [h.id, popData(L, h)]))).replace(/</g, '\\u003c')}</script>` +
     `</main>` +
     siteFooter(L, name, 'page.footer.wrongPage') +
     `</div>\n</body>\n</html>\n`
