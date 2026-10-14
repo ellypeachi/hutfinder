@@ -10,7 +10,7 @@
 import { bedColor, gauge } from './gauge.js'
 
 const BUCKETS = ['dorm', 'shared', 'priv']
-const MULTI = ['type', 'band'] // any mix can be picked; the other groups take one
+const MULTI = ['region', 'type', 'band'] // any mix can be picked; the other groups take one
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])'
 
@@ -41,11 +41,12 @@ export function init(root) {
     return Array.from({ length: 7 }, (_, i) => f.format(new Date(2021, 1, i + 1)).replace(/\./g, '').slice(0, 2))
   })()
 
-  const st = { from: '', to: '', room: '', type: [], band: [], warden: '', assoc: '', shower: '' }
+  const st = { from: '', to: '', region: [], room: '', type: [], band: [], warden: '', assoc: '', shower: '' }
   let avail = null
 
   const huts = [...document.querySelectorAll('[data-hut]')].map((el) => ({
     el,
+    region: el.dataset.region,
     type: el.dataset.type,
     band: el.dataset.band,
     warden: el.dataset.warden,
@@ -59,6 +60,7 @@ export function init(root) {
   const sections = [...document.querySelectorAll('[data-section]')].map((el) => ({
     el,
     kind: el.dataset.section,
+    collapse: 'collapse' in el.dataset,
     count: el.querySelector('[data-count]'),
     note: el.querySelector('[data-note]'),
     empty: el.querySelector('[data-empty]'),
@@ -85,6 +87,7 @@ export function init(root) {
     })
   }
   const passes = (h, nights, skip) => {
+    if (skip !== 'region' && st.region.length && !st.region.includes(h.region)) return false
     if (skip !== 'type' && st.type.length && !st.type.includes(h.type)) return false
     if (skip !== 'band' && st.band.length && !st.band.includes(h.band)) return false
     if (skip !== 'warden' && st.warden && h.warden !== st.warden) return false
@@ -158,6 +161,7 @@ export function init(root) {
   const clearMore = root.querySelector('[data-clearmore]')
   const show = root.querySelector('[data-show]')
   const unfiltered = document.querySelectorAll('[data-unfiltered]')
+  const none = document.querySelector('[data-none]')
 
   function update() {
     const nights = nightsOf()
@@ -172,7 +176,9 @@ export function init(root) {
       }
       total += n
       s.count.textContent = nf(n)
-      s.empty.hidden = n > 0
+      // One of several sections of the same kind (the regions of the dogs page) goes when empty.
+      if (s.collapse) s.el.hidden = !n
+      s.empty.hidden = n > 0 || s.collapse
       if (!n) {
         s.empty.textContent =
           s.kind === 'book' && nights.length
@@ -216,6 +222,12 @@ export function init(root) {
     clearAll.hidden = !on.length
     // The huts the page doesn't list aren't filtered, so their line goes while anything is.
     for (const el of unfiltered) el.hidden = !!(on.length || st.from)
+    if (none) {
+      none.hidden = total > 0
+      none.textContent = nights.length
+        ? nights.length === 1 ? t('empty.nothingFreeNight') : t('empty.nothingFreeNights', { n: nights.length })
+        : t('empty.noMatch')
+    }
     show.textContent = t('more.show', { count: total, n: nf(total) })
   }
 
@@ -437,6 +449,7 @@ export function init(root) {
       Object.assign(st, { type: [], band: [], warden: '', assoc: '', shower: '' })
       if (e.target.closest('[data-clearall]')) {
         st.room = ''
+        st.region = []
         moreBtn.focus({ preventScroll: true })
       }
       update()

@@ -706,7 +706,7 @@ function figure(L, h) {
 
 // What the region page filters read off a card (src/regionpage.js).
 const filterData = (o) =>
-  ` data-hut data-id="${esc(o.id)}" data-type="${esc(o.type || '')}" data-band="${bandOf(o)}" data-warden="${esc(wardenOf(o))}" data-assoc="${esc(assocOf(o))}"` +
+  ` data-hut data-id="${esc(o.id)}" data-region="${esc(o.region || '')}" data-type="${esc(o.type || '')}" data-band="${bandOf(o)}" data-warden="${esc(wardenOf(o))}" data-assoc="${esc(assocOf(o))}"` +
   (o.shower === true ? ' data-shower' : '') +
   (bedsOf(o) != null ? ` data-beds="${bedsOf(o)}"` : '') +
   (o.hr_hut_id != null ? ` data-hr="${esc(o.hr_hut_id)}"` : '')
@@ -783,19 +783,21 @@ const REGIONS = [...new Set(huts.map(regionOf).filter(Boolean))]
   .sort((a, b) => countIn(b) - countIn(a))
 const hasRegionPage = (r) => REGIONS.includes(r)
 
-function regionData(r) {
-  const all = huts.filter((h) => h.region === r)
-  const listed = all.filter((h) => builtIds.has(h.id) && (isBookable(h) || indexable(h)))
-  const book = listed
-    .filter(isBookable)
+// Soonest free beds first; ISO dates compare as plain text, nothing free last.
+const bySoonest = (list) =>
+  list
     .map((h) => ({ h, nf: nextFree(h) }))
-    // Soonest free beds first; ISO dates compare as plain text, nothing free last.
     .sort((a, b) => {
       const x = a.nf ? a.nf.date : '9999'
       const y = b.nf ? b.nf.date : '9999'
       return x < y ? -1 : x > y ? 1 : a.h.name.localeCompare(b.h.name, 'de')
     })
     .map((x) => x.h)
+
+function regionData(r) {
+  const all = huts.filter((h) => h.region === r)
+  const listed = all.filter((h) => builtIds.has(h.id) && (isBookable(h) || indexable(h)))
+  const book = bySoonest(listed.filter(isBookable))
   const contact = listed.filter((h) => !isBookable(h)).sort((a, b) => a.name.localeCompare(b.name, 'de'))
   // Only measured elevations: an estimate shouldn't set the range.
   const known = all.filter((h) => isNum(h.elevation) && !h.elevation_estimated)
@@ -859,8 +861,7 @@ function popData(L, h) {
   return o
 }
 
-function regionFilters(L, d) {
-  const listed = [...d.book, ...d.contact]
+function listFilters(L, listed, regions = null) {
   const pill = (g, v, label, chip = label) =>
     `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="${esc(v)}" data-chip="${esc(chip)}" aria-pressed="false">${esc(label)}<span class="hp-pill-n"></span></button>`
   const all = (g, label) => `<button type="button" class="hf-tap hf-pill hp-pill" data-g="${g}" data-v="" aria-pressed="true">${esc(label)}</button>`
@@ -894,6 +895,8 @@ function regionFilters(L, d) {
     `<p class="hp-dstatus" data-dstatus>${esc(L.t('date.noDates'))}</p><p class="hp-asof" data-asof></p></div>` +
     // The calendar opens under the dates on a phone, under the whole row where there is room.
     `<div class="hp-pick" role="dialog" aria-label="${esc(L.t('date.dialogAria'))}" data-cal hidden></div>` +
+    // A page across regions (huts with dogs) gets the app's region pills too.
+    (regions ? group('f-region', L.t('filter.region'), all('region', L.t('pill.all')) + regions.map((r) => pill('region', r, regionName(L, r))).join('')) : '') +
     group('f-room', L.t('filter.roomType'), all('room', L.t('pill.any')) + BUCKETS.map((k) => pill('room', k, L.t(`bucket.${k}`))).join(''), L.t('filter.roomTypeNote')) +
     `</div>` +
     `<div class="hp-fbar"><button type="button" class="hp-morebtn hf-tap" aria-expanded="false" aria-controls="more-filters">${esc(L.t('more.button'))}` +
@@ -912,30 +915,36 @@ function regionFilters(L, d) {
   )
 }
 
-function regionPage(L, r, assets) {
+/* A section of cards. The note says what the filters can't know about
+   these huts, and the empty line is for when they leave none; the filters
+   fill both in. A section that `collapses` goes instead, when it is one of
+   several of the same kind (the regions on the dogs page). */
+function listSection(L, { id, kind, heading, list, aside = '', collapse = false }) {
+  if (!list.length) return ''
+  const h2 = `<h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count" data-count>${esc(L.nf(list.length))}</span></h2>`
+  return (
+    `<section class="hp-section" aria-labelledby="${id}" data-section="${kind}"${collapse ? ' data-collapse' : ''}>` +
+    (aside ? `<div class="hp-section-head">${h2}${aside}</div>` : h2) +
+    `<p class="hp-note" data-note hidden></p><p class="hp-fempty" data-empty hidden></p>` +
+    `<div class="hp-grid">${list.map((h) => card(L, h, null, true)).join('')}</div></section>`
+  )
+}
+
+/* The frame of a list page (a region, huts with dogs): the head with its
+   structured data, the crumbs, H1 and intro, the filters, the sections, and
+   the data the hut pop-up shows. */
+function listPage(L, p, assets) {
   const other = PAGE_LANGS.find((c) => c !== L.lang)
-  const d = regionData(r)
-  const name = regionName(L, r)
-  // a non-breaking space, so "3,272 m" never splits over two lines
-  const m = (h) => L.t('page.elev', { n: L.nf(Math.round(h.elevation)) }).replace(' ', '\u00a0')
-  const title = L.t('page.region.title', { region: name })
-  const desc = L.t('page.region.meta', { n: L.nf(d.all.length), region: name, b: L.nf(d.book.length) })
-  const url = regionUrl(L.lang, r)
-  const intro = [
-    L.t('page.region.intro', { n: L.nf(d.all.length), region: name, low: m(d.low), high: m(d.high) }),
-    d.book.length ? L.t('page.region.introBook', { count: d.book.length, b: L.nf(d.book.length) }) : '',
-    d.book.length ? (d.free ? L.t('page.region.introFree', { count: d.free, f: L.nf(d.free) }) : L.t('page.region.introNoFree')) : '',
-    L.t('page.region.introHigh', { hut: d.high.name, elev: m(d.high) }),
-  ].filter(Boolean).join(' ')
+  const url = SITE + p.path(L.lang)
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', '@id': `${url}#page`, name: L.t('page.region.h1', { region: name }), url, description: desc, inLanguage: L.lang, isPartOf: { '@id': `${SITE}/#website` } },
+      { '@type': 'CollectionPage', '@id': `${url}#page`, name: p.h1, url, description: p.desc, inLanguage: L.lang, isPartOf: { '@id': `${SITE}/#website` } },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
-          { '@type': 'ListItem', position: 2, name },
+          { '@type': 'ListItem', position: 2, name: p.crumb },
         ],
       },
     ],
@@ -944,17 +953,17 @@ function regionPage(L, r, assets) {
     '<meta charset="utf-8">',
     "<script>document.documentElement.classList.add('hp-js')</script>",
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    `<title>${esc(title)}</title>`,
-    `<meta name="description" content="${esc(desc)}">`,
+    `<title>${esc(p.title)}</title>`,
+    `<meta name="description" content="${esc(p.desc)}">`,
     '<meta name="theme-color" content="#3A2A20">',
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
     `<link rel="canonical" href="${url}">`,
-    ...PAGE_LANGS.map((c) => `<link rel="alternate" hreflang="${c}" href="${regionUrl(c, r)}">`),
-    `<link rel="alternate" hreflang="x-default" href="${regionUrl(DEFAULT_LANG, r)}">`,
+    ...PAGE_LANGS.map((c) => `<link rel="alternate" hreflang="${c}" href="${SITE + p.path(c)}">`),
+    `<link rel="alternate" hreflang="x-default" href="${SITE + p.path(DEFAULT_LANG)}">`,
     '<meta property="og:type" content="website">',
     '<meta property="og:site_name" content="Hüttenfinder">',
-    `<meta property="og:title" content="${esc(title)}">`,
-    `<meta property="og:description" content="${esc(desc)}">`,
+    `<meta property="og:title" content="${esc(p.title)}">`,
+    `<meta property="og:description" content="${esc(p.desc)}">`,
     `<meta property="og:url" content="${url}">`,
     `<meta property="og:locale" content="${OG_LOCALES[L.lang]}">`,
     `<meta property="og:image" content="${SITE}/og-image.png">`,
@@ -963,32 +972,91 @@ function regionPage(L, r, assets) {
   ].join('\n')
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
-    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(name)}</li></ol></nav>`
-  // The note says what the filters can't know about these huts; the empty
-  // line is for when they leave none. Both are filled in by the filters.
-  const section = (id, kind, heading, list) =>
-    list.length
-      ? `<section class="hp-section" aria-labelledby="${id}" data-section="${kind}"><h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count" data-count>${esc(L.nf(list.length))}</span></h2>` +
-        `<p class="hp-note" data-note hidden></p><p class="hp-fempty" data-empty hidden></p>` +
-        `<div class="hp-grid">${list.map((h) => card(L, h, null, true)).join('')}</div></section>`
-      : ''
+    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(p.crumb)}</li></ol></nav>`
+  const pop = Object.fromEntries(p.listed.map((h) => [h.id, popData(L, h)]))
+  return (
+    `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
+    siteHeader(L, other, p.path(other)) +
+    `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(p.h1)}</h1>` +
+    `<p class="hp-summary">${esc(p.intro)}</p></div>${listFilters(L, p.listed, p.regions)}</div>` +
+    p.sections +
+    // When the filters leave no hut in any section that collapses.
+    (p.sections.includes('data-collapse') ? `<p class="hp-fempty" data-none hidden></p>` : '') +
+    (p.more || '') +
+    `<script type="application/json" data-pop>${JSON.stringify(pop).replace(/</g, '\\u003c')}</script>` +
+    `</main>` +
+    siteFooter(L, p.crumb, 'page.footer.wrongPage') +
+    `</div>\n</body>\n</html>\n`
+  )
+}
+
+function regionPage(L, r, assets) {
+  const d = regionData(r)
+  const name = regionName(L, r)
+  // a non-breaking space, so "3,272 m" never splits over two lines
+  const m = (h) => L.t('page.elev', { n: L.nf(Math.round(h.elevation)) }).replace(' ', '\u00a0')
+  const intro = [
+    L.t('page.region.intro', { n: L.nf(d.all.length), region: name, low: m(d.low), high: m(d.high) }),
+    d.book.length ? L.t('page.region.introBook', { count: d.book.length, b: L.nf(d.book.length) }) : '',
+    d.book.length ? (d.free ? L.t('page.region.introFree', { count: d.free, f: L.nf(d.free) }) : L.t('page.region.introNoFree')) : '',
+    L.t('page.region.introHigh', { hut: d.high.name, elev: m(d.high) }),
+  ].filter(Boolean).join(' ')
   const more = d.hidden
     // Not filtered, so the filters hide it while any is on. The app opens on the region.
     ? `<p class="hp-region-more" data-unfiltered><a class="hp-more hf-tap-min" href="/?region=${REGION_KEYS[r]}"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden), region: name }))}</span>&nbsp;→</a></p>`
     : ''
-  return (
-    `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
-    siteHeader(L, other, regionPath(other, r)) +
-    `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(L.t('page.region.h1', { region: name }))}</h1>` +
-    `<p class="hp-summary">${esc(intro)}</p></div>${regionFilters(L, d)}</div>` +
-    section('book-h', 'book', L.t('page.region.book'), d.book) +
-    section('contact-h', 'contact', L.t('page.region.contact'), d.contact) +
-    more +
-    `<script type="application/json" data-pop>${JSON.stringify(Object.fromEntries([...d.book, ...d.contact].map((h) => [h.id, popData(L, h)]))).replace(/</g, '\\u003c')}</script>` +
-    `</main>` +
-    siteFooter(L, name, 'page.footer.wrongPage') +
-    `</div>\n</body>\n</html>\n`
-  )
+  return listPage(L, {
+    path: (c) => regionPath(c, r),
+    title: L.t('page.region.title', { region: name }),
+    desc: L.t('page.region.meta', { n: L.nf(d.all.length), region: name, b: L.nf(d.book.length) }),
+    h1: L.t('page.region.h1', { region: name }),
+    crumb: name,
+    intro,
+    listed: [...d.book, ...d.contact],
+    sections:
+      listSection(L, { id: 'book-h', kind: 'book', heading: L.t('page.region.book'), list: d.book }) +
+      listSection(L, { id: 'contact-h', kind: 'contact', heading: L.t('page.region.contact'), list: d.contact }),
+    more,
+  }, assets)
+}
+
+/* Huts with dogs (/en/huts-with-dogs/): the huts that say on hut-reservation.org
+   that dogs are welcome, all bookable online, by region. Most huts don't say
+   either way; they aren't on the list, and the intro says so. */
+const dogsPath = (lang) => `/${lang}/huts-with-dogs/`
+const DOG_HUTS = huts.filter((h) => h.hr_dogs === true && isBookable(h) && builtIds.has(h.id))
+
+function dogsPage(L, assets) {
+  const groups = new Map()
+  for (const h of DOG_HUTS) groups.set(regionOf(h), [...(groups.get(regionOf(h)) || []), h])
+  const regions = [...groups.keys()].sort((a, b) => groups.get(b).length - groups.get(a).length)
+  const n = DOG_HUTS.length
+  const free = DOG_HUTS.filter((h) => nextFree(h)).length
+  const intro = [
+    L.t('page.dogs.intro', { count: n, n: L.nf(n) }),
+    free ? L.t('page.dogs.introFree', { count: free, f: L.nf(free) }) : L.t('page.dogs.introNoFree'),
+    L.t('page.dogs.introUnknown'),
+  ].join(' ')
+  const sections = regions
+    .map((r) => {
+      const name = r ? regionName(L, r) : L.t('region.other')
+      const aside = hasRegionPage(r)
+        ? `<a class="hp-more hf-tap-min" href="${regionPath(L.lang, r)}"><span class="hp-u">${esc(L.t('page.dogs.allIn', { region: name }))}</span>&nbsp;→</a>`
+        : ''
+      return listSection(L, { id: `dogs-${REGION_KEYS[r] || 'other'}`, kind: 'book', heading: name, list: bySoonest(groups.get(r)), aside, collapse: true })
+    })
+    .join('')
+  return listPage(L, {
+    path: dogsPath,
+    title: L.t('page.dogs.title'),
+    desc: L.t('page.dogs.meta', { count: n, n: L.nf(n) }),
+    h1: L.t('page.dogs.h1'),
+    crumb: L.t('page.dogs.crumb'),
+    intro,
+    listed: regions.flatMap((r) => bySoonest(groups.get(r))),
+    regions: regions.filter(Boolean),
+    sections,
+  }, assets)
 }
 
 // ---------------------------------------------------------------- page frame
@@ -1123,11 +1191,11 @@ function sitemap() {
       .join('\n')
     for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${pageUrl(c, h)}</loc>\n${alts}\n  </url>`)
   }
-  for (const r of REGIONS) {
-    const alts = [...PAGE_LANGS.map((c) => [c, regionUrl(c, r)]), ['x-default', regionUrl(DEFAULT_LANG, r)]]
+  for (const where of [...REGIONS.map((r) => (c) => regionPath(c, r)), dogsPath]) {
+    const alts = [...PAGE_LANGS.map((c) => [c, SITE + where(c)]), ['x-default', SITE + where(DEFAULT_LANG)]]
       .map(([c, u]) => `    <xhtml:link rel="alternate" hreflang="${c}" href="${u}"/>`)
       .join('\n')
-    for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${regionUrl(c, r)}</loc>\n${alts}\n  </url>`)
+    for (const c of PAGE_LANGS) urls.push(`  <url>\n    <loc>${SITE + where(c)}</loc>\n${alts}\n  </url>`)
   }
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`
 }
@@ -1163,14 +1231,15 @@ if (CHECK) {
       fs.writeFileSync(path.join(dir, 'index.html'), page(i18n(c), h, assets))
     }
   }
-  for (const r of REGIONS) {
+  const lists = [...REGIONS.map((r) => [(c) => regionPath(c, r), (L) => regionPage(L, r, assets)]), [dogsPath, (L) => dogsPage(L, assets)]]
+  for (const [where, make] of lists) {
     for (const c of PAGE_LANGS) {
-      const dir = path.join(DIST, c, regionSlug(r))
+      const dir = path.join(DIST, where(c))
       fs.mkdirSync(dir, { recursive: true })
-      fs.writeFileSync(path.join(dir, 'index.html'), regionPage(i18n(c), r, assets))
+      fs.writeFileSync(path.join(dir, 'index.html'), make(i18n(c)))
     }
   }
   fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap())
   fs.rmSync(path.join(DIST, 'hut-template'), { recursive: true, force: true })
-  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages and sitemap.xml.`)
+  console.log(`Wrote ${pages} hut pages (${built.length} huts × ${PAGE_LANGS.length} languages), ${REGIONS.length * PAGE_LANGS.length} region pages, the huts-with-dogs page in ${PAGE_LANGS.length} languages and sitemap.xml.`)
 }

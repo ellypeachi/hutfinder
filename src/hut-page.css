@@ -414,7 +414,7 @@ svg.hp-tape { clip-path: none; }
 }
 .hp-region-more { margin: 0; }
 /* A card the filters leave out; .hp-card's flex would otherwise keep it. */
-[data-section] [hidden] { display: none !important; }
+[data-section] [hidden], [data-section][hidden] { display: none !important; }
 .hp-fempty { margin: 0; font-weight: 600; }
 
 
