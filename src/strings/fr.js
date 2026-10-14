@@ -202,6 +202,12 @@ export const fr = {
   "lang.aria": "Langue : {name}",
 
   // ---------- pied de page ----------
+  "footer.regions": "Régions",
+  "footer.lists": "Listes",
+  "footer.exploreAria": "Refuges par région et par liste",
+  "footer.dogs": "Refuges acceptant les chiens",
+  "footer.priv": "Refuges avec chambres privées",
+  "footer.weekend": "Lits libres ce week-end",
   "footer.faq": "FAQ",
   "footer.imprint": "Mentions légales",
   "footer.privacy": "Confidentialité",

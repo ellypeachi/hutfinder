@@ -221,6 +221,12 @@ export const cs = {
   "lang.aria": "Jazyk: {name}",
 
   // ---------- patička ----------
+  "footer.regions": "Regiony",
+  "footer.lists": "Seznamy",
+  "footer.exploreAria": "Chaty podle regionu a seznamu",
+  "footer.dogs": "Chaty se psem",
+  "footer.priv": "Chaty se soukromými pokoji",
+  "footer.weekend": "Volná lůžka tento víkend",
   "footer.faq": "FAQ",
   "footer.imprint": "Tiráž",
   "footer.privacy": "Soukromí",

@@ -204,6 +204,12 @@ export const en = {
   "lang.aria": "Language: {name}",
 
   // ---------- footer ----------
+  "footer.regions": "Regions",
+  "footer.lists": "Lists",
+  "footer.exploreAria": "Huts by region and list",
+  "footer.dogs": "Huts with dogs",
+  "footer.priv": "Huts with private rooms",
+  "footer.weekend": "Free beds this weekend",
   "footer.faq": "FAQ",
   "footer.imprint": "Imprint",
   "footer.privacy": "Privacy",

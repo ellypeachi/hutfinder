@@ -890,6 +890,8 @@ html.hp-locked { overflow: hidden; }
 .hp-foot-text { max-width: 620px; display: flex; flex-direction: column; gap: 4px; }
 .hp-foot-links { display: flex; gap: 18px; }
 .hp-foot-links a { color: var(--ink-soft); }
+/* The region and list links, above the footer's text; the line under them is the footer's own. */
+.hp-foot .hp-foot-explore { display: block; padding-bottom: 0; }
 
 
 /* ---- phone ------------------------------------------------------------------ */

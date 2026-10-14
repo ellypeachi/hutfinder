@@ -204,6 +204,12 @@ export const de = {
   "lang.aria": "Sprache: {name}",
 
   // ---------- Fuß ----------
+  "footer.regions": "Regionen",
+  "footer.lists": "Listen",
+  "footer.exploreAria": "Hütten nach Region und Liste",
+  "footer.dogs": "Hütten mit Hund",
+  "footer.priv": "Hütten mit Privatzimmer",
+  "footer.weekend": "Freie Betten am Wochenende",
   "footer.faq": "FAQ",
   "footer.imprint": "Impressum",
   "footer.privacy": "Datenschutz",

@@ -411,6 +411,31 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   .hf-hovercard { animation: none; }
 }
 
+/* ---- The footer's links to the region and list pages -------------------
+   On every hut and list page and in the app, so each of those pages has
+   links pointing to it. A caption per group, then plain links. */
+.hf-explore { display: flex; flex-direction: column; gap: 12px; }
+/* The caption above its links, as a filter group's caption above its pills. */
+.hf-explore-h {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.hf-explore ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 16px; }
+.hf-explore a, .hf-explore a:link, .hf-explore a:visited { color: var(--blue-deep); font-size: 0.875rem; text-decoration: none; }
+.hf-explore a span { border-bottom: 1px solid var(--powder); }
+.hf-explore a:hover span { border-bottom-color: currentColor; }
+.hf-explore a[aria-current="page"] { font-weight: 600; }
+.hf-explore a[aria-current="page"] span { border-bottom-color: transparent; }
+@media (pointer: coarse) {
+  .hf-explore a { display: inline-flex; align-items: center; min-height: 44px; }
+  .hf-explore ul { row-gap: 0; }
+  .hf-explore-h { margin-bottom: 0; }
+}
+
 /* ---- The hut pop-up ---------------------------------------------------- */
 .hf-detail-photo {
   display: block;

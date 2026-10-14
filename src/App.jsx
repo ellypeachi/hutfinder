@@ -31,6 +31,19 @@ const REGION_KEYS = {
 };
 const regionLabel = (t, r) => (REGION_KEYS[r] ? t(`region.${REGION_KEYS[r]}`) : r);
 
+/* The region pages (regions with at least 10 huts), most huts first, at the
+   addresses scripts/build_hut_pages.mjs gives them. The footer links to
+   them and to the list pages, so each of those pages has links to it. */
+const REGION_PAGES = [
+  ["Tirol", "tyrol"],
+  ["Salzburg", "salzburg"],
+  ["Steiermark", "styria"],
+  ["Kärnten", "carinthia"],
+  ["Niederösterreich", "lower-austria"],
+  ["Oberösterreich", "upper-austria"],
+  ["Vorarlberg", "vorarlberg"],
+];
+
 /* A region page's "on the map" link (/?region=tirol) opens the app on that
    region. Read once, at the start; App then takes the parameter out of the
    address, so a reload or a shared link doesn't keep a filter that has
@@ -2315,6 +2328,41 @@ export default function App() {
               : { minWidth: 0, margin: "1.5rem 0 0", padding: isNarrow ? "0 0 1.25rem" : 0 }
           }
         >
+          {/* The region and list pages exist in German and English. */}
+          <nav
+            className="hf-explore"
+            aria-label={t("footer.exploreAria")}
+            style={{ padding: "0.75rem 0", borderTop: "1px solid var(--hair)" }}
+          >
+            <div className="hf-explore-group">
+              <span className="hf-explore-h" id="explore-regions">{t("footer.regions")}</span>
+              <ul aria-labelledby="explore-regions">
+                {REGION_PAGES.map(([r, slug]) => (
+                  <li key={slug}>
+                    <a href={`${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}/${slug}/`}>
+                      <span>{regionLabel(t, r)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="hf-explore-group">
+              <span className="hf-explore-h" id="explore-lists">{t("footer.lists")}</span>
+              <ul aria-labelledby="explore-lists">
+                {[
+                  ["huts-with-dogs", "footer.dogs"],
+                  ["huts-with-private-rooms", "footer.priv"],
+                  ["free-beds-this-weekend", "footer.weekend"],
+                ].map(([slug, key]) => (
+                  <li key={slug}>
+                    <a href={`${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}/${slug}/`}>
+                      <span>{t(key)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </nav>
           <div
             style={{
               display: "flex",

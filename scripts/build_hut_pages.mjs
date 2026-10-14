@@ -1007,7 +1007,7 @@ function listPage(L, p, assets) {
     (p.more || '') +
     `<script type="application/json" data-pop>${JSON.stringify(pop).replace(/</g, '\\u003c')}</script>` +
     `</main>` +
-    siteFooter(L, p.crumb, 'page.footer.wrongPage') +
+    siteFooter(L, p.crumb, 'page.footer.wrongPage', p.path(L.lang)) +
     `</div>\n</body>\n</html>\n`
   )
 }
@@ -1204,9 +1204,27 @@ function siteHeader(L, other, otherPath) {
     `</div></header>`
   )
 }
-function siteFooter(L, subject, wrongKey = 'page.footer.wrong') {
+// The footer's links to every region and list page, so each has links to it.
+// `here`: the page's own address, marked as the current one.
+function explore(L, here) {
+  const item = (href, text) => `<li><a href="${href}"${href === here ? ' aria-current="page"' : ''}><span>${esc(text)}</span></a></li>`
+  const group = (id, caption, items) =>
+    `<div class="hf-explore-group"><span class="hf-explore-h" id="${id}">${esc(caption)}</span><ul aria-labelledby="${id}">${items.join('')}</ul></div>`
   return (
-    `<footer class="hp-foot"><div class="hp-wrap"><div class="hp-foot-text">` +
+    `<nav class="hf-explore" aria-label="${esc(L.t('footer.exploreAria'))}">` +
+    group('explore-regions', L.t('footer.regions'), REGIONS.map((r) => item(regionPath(L.lang, r), regionName(L, r)))) +
+    group('explore-lists', L.t('footer.lists'), [
+      item(dogsPath(L.lang), L.t('footer.dogs')),
+      item(privPath(L.lang), L.t('footer.priv')),
+      item(weekendPath(L.lang), L.t('footer.weekend')),
+    ]) +
+    `</nav>`
+  )
+}
+
+function siteFooter(L, subject, wrongKey = 'page.footer.wrong', here = '') {
+  return (
+    `<footer class="hp-foot"><div class="hp-wrap hp-foot-explore">${explore(L, here)}</div><div class="hp-wrap"><div class="hp-foot-text">` +
     `<span>${esc(L.t('page.footer.data', { osm: '\u0000' })).replace('\u0000', '<a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>')} ${esc(L.t('page.footer.check'))}</span>` +
     `<span>${esc(L.t(wrongKey, { email: '\u0000' })).replace('\u0000', `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}">${CONTACT_EMAIL}</a>`)}</span>` +
     `</div><div class="hp-foot-links"><a href="/faq/">${esc(L.t('footer.faq'))}</a><a href="/imprint/">${esc(L.t('footer.imprint'))}</a><a href="/privacy/">${esc(L.t('footer.privacy'))}</a></div></div></footer>`

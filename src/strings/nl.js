@@ -201,6 +201,12 @@ export const nl = {
   "lang.aria": "Taal: {name}",
 
   // ---------- voet ----------
+  "footer.regions": "Regio's",
+  "footer.lists": "Lijsten",
+  "footer.exploreAria": "Hutten per regio en lijst",
+  "footer.dogs": "Hutten met hond",
+  "footer.priv": "Hutten met privékamers",
+  "footer.weekend": "Vrije bedden dit weekend",
   "footer.faq": "FAQ",
   "footer.imprint": "Colofon",
   "footer.privacy": "Privacy",
