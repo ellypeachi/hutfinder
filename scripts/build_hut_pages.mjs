@@ -271,6 +271,12 @@ function typeLabel(L, h) {
   return TYPE_KEYS.includes(h.type) ? L.t(`type.${h.type}`) : h.type || ''
 }
 const regionOf = (h) => (h.region && h.region !== 'Other/Unknown' ? h.region : null)
+// The regions' English names, for the English pages. The data keeps the German ones.
+const REGION_EN = {
+  Tirol: 'Tyrol', Steiermark: 'Styria', Kärnten: 'Carinthia', Niederösterreich: 'Lower Austria',
+  Oberösterreich: 'Upper Austria', Salzburg: 'Salzburg', Vorarlberg: 'Vorarlberg', Burgenland: 'Burgenland', Wien: 'Vienna',
+}
+const regionName = (L, r) => (r && L.lang === 'en' ? REGION_EN[r] || r : r)
 const bedsOf = (h) => (isNum(h.hr_capacity) ? h.hr_capacity : isNum(h.sleeping) ? h.sleeping : null)
 const elevText = (L, h) =>
   isNum(h.elevation) ? L.t(h.elevation_estimated ? 'page.elevApprox' : 'page.elev', { n: L.nf(Math.round(h.elevation)) }) : null
@@ -338,7 +344,7 @@ function opening(L, h, { meta = false, rooms = true, beds = true } = {}) {
   let s = L.t(meta ? 'page.m.lead' : 'page.s.lead', { a: article(L, w), who: w }).trim()
   const el = elevText(L, h)
   if (!meta && el) s += L.t('page.s.at', { elev: el })
-  if (regionOf(h)) s += L.t('page.s.in', { region: regionOf(h) })
+  if (regionOf(h)) s += L.t('page.s.in', { region: regionName(L, regionOf(h)) })
   const n = bedsOf(h)
   if (beds && n > 0) {
     s += L.t('page.s.with', { beds: L.t('tag.beds', { count: n, n: L.nf(n) }) })
@@ -669,7 +675,7 @@ function figure(L, h) {
       `<svg class="hp-spark" aria-hidden="true" focusable="false" viewBox="92 23 59 87" style="left:${pct(sp.single[0] / 10)};top:${pct((sp.single[1] / c.main_h) * 100)};width:4.8%">${SPARK_SINGLE}</svg>`
     : ''
   const el = isNum(h.elevation) ? elevText(L, h) : null
-  const labels = [el, regionOf(h)].filter(Boolean)
+  const labels = [el, regionName(L, regionOf(h))].filter(Boolean)
   const s = c.second
   return (
     `<figure class="hp-figure"><div class="hp-collage" style="aspect-ratio:1000/${fh}">` +
@@ -743,7 +749,8 @@ function nearbySection(L, h) {
    are the plain links a search engine can follow to the huts. A region with
    fewer than REGION_MIN huts gets no page. */
 const REGION_MIN = 10
-const regionPath = (lang, r) => `/${lang}/${slugify(r)}/`
+const regionSlug = (r) => slugify(REGION_EN[r] || r)
+const regionPath = (lang, r) => `/${lang}/${regionSlug(r)}/`
 const regionUrl = (lang, r) => SITE + regionPath(lang, r)
 const countIn = (r) => huts.filter((h) => h.region === r).length
 const REGIONS = [...new Set(huts.map(regionOf).filter(Boolean))]
@@ -777,16 +784,30 @@ function regionData(r) {
   }
 }
 
+/* A hut as one line: its name (linking to its page), type and elevation,
+   and the way to reach it. The shorter alternative to a card. */
+function row(L, o) {
+  const meta = [typeLabel(L, o), elevText(L, o)].filter(Boolean).join(' · ')
+  const act = o.phone
+    ? `<a class="hp-row-act hf-tap-min" href="${esc(telHref(o.phone))}" aria-label="${esc(L.t('call.aria', { hut: o.name, phone: phoneLabel(o.phone) }))}">${icon('phone', 14, 1.8)}<span class="hp-u">${esc(phoneLabel(o.phone))}</span></a>`
+    : o.website
+      ? `<a class="hp-row-act hf-tap-min" href="${esc(webHref(o.website))}" target="_blank" rel="noopener" aria-label="${esc(L.t('contact.websiteAria', { hut: o.name, host: webLabel(o.website) }))}">${icon('globe', 14, 1.8)}<span class="hp-u">${esc(webLabel(o.website))}</span></a>`
+      : ''
+  const name = builtIds.has(o.id) ? `<a class="hp-row-name" href="${pagePath(L.lang, o)}">${esc(o.name)}</a>` : `<span class="hp-row-name">${esc(o.name)}</span>`
+  return `<li class="hp-row"><div class="hp-row-main">${name}${meta ? `<span class="hp-row-meta">${esc(meta)}</span>` : ''}</div>${act}</li>`
+}
+
 function regionPage(L, r, assets) {
   const other = PAGE_LANGS.find((c) => c !== L.lang)
   const d = regionData(r)
+  const name = regionName(L, r)
   // a non-breaking space, so "3,272 m" never splits over two lines
   const m = (h) => L.t('page.elev', { n: L.nf(Math.round(h.elevation)) }).replace(' ', '\u00a0')
-  const title = L.t('page.region.title', { region: r })
-  const desc = L.t('page.region.meta', { n: L.nf(d.all.length), region: r, b: L.nf(d.book.length) })
+  const title = L.t('page.region.title', { region: name })
+  const desc = L.t('page.region.meta', { n: L.nf(d.all.length), region: name, b: L.nf(d.book.length) })
   const url = regionUrl(L.lang, r)
   const intro = [
-    L.t('page.region.intro', { n: L.nf(d.all.length), region: r, low: m(d.low), high: m(d.high) }),
+    L.t('page.region.intro', { n: L.nf(d.all.length), region: name, low: m(d.low), high: m(d.high) }),
     d.book.length ? L.t('page.region.introBook', { count: d.book.length, b: L.nf(d.book.length) }) : '',
     d.book.length ? (d.free ? L.t('page.region.introFree', { count: d.free, f: L.nf(d.free) }) : L.t('page.region.introNoFree')) : '',
     L.t('page.region.introHigh', { hut: d.high.name, elev: m(d.high) }),
@@ -794,12 +815,12 @@ function regionPage(L, r, assets) {
   const ld = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', '@id': `${url}#page`, name: L.t('page.region.h1', { region: r }), url, description: desc, inLanguage: L.lang, isPartOf: { '@id': `${SITE}/#website` } },
+      { '@type': 'CollectionPage', '@id': `${url}#page`, name: L.t('page.region.h1', { region: name }), url, description: desc, inLanguage: L.lang, isPartOf: { '@id': `${SITE}/#website` } },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
-          { '@type': 'ListItem', position: 2, name: r },
+          { '@type': 'ListItem', position: 2, name },
         ],
       },
     ],
@@ -827,11 +848,16 @@ function regionPage(L, r, assets) {
   ].join('\n')
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
-    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(r)}</li></ol></nav>`
+    `<li><a href="/">${esc(L.t('page.huts'))}</a></li><li aria-current="page">${esc(name)}</li></ol></nav>`
   const section = (id, heading, list) =>
     list.length
       ? `<section class="hp-section" aria-labelledby="${id}"><h2 class="hp-h2" id="${id}">${esc(heading)} <span class="hp-count">${esc(L.nf(list.length))}</span></h2>` +
         `<div class="hp-grid">${list.map((h) => card(L, h, null)).join('')}</div></section>`
+      : ''
+  const contactSection = (L2, list) =>
+    list.length
+      ? `<section class="hp-section" aria-labelledby="contact-h"><h2 class="hp-h2" id="contact-h">${esc(L2.t('page.region.contact'))} <span class="hp-count">${esc(L2.nf(list.length))}</span></h2>` +
+        `<ul class="hp-rows">${list.map((h) => row(L2, h)).join('')}</ul></section>`
       : ''
   const more = d.hidden
     ? `<p class="hp-region-more"><a class="hp-more hf-tap-min" href="/"><span class="hp-u">${esc(L.t('page.region.more', { count: d.hidden, n: L.nf(d.hidden) }))}</span>&nbsp;→</a></p>`
@@ -839,13 +865,17 @@ function regionPage(L, r, assets) {
   return (
     `<!doctype html>\n<html lang="${L.lang}">\n<head>\n${head}\n</head>\n<body>\n<div class="hp">` +
     siteHeader(L, other, regionPath(other, r)) +
-    `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(L.t('page.region.h1', { region: r }))}</h1>` +
+    `<main class="hp-wrap hp-main"><div>${crumbs}<div class="hp-region-top"><h1 class="hp-name">${esc(L.t('page.region.h1', { region: name }))}</h1>` +
     `<p class="hp-summary">${esc(intro)}</p></div></div>` +
     section('book-h', L.t('page.region.book'), d.book) +
-    section('contact-h', L.t('page.region.contact'), d.contact) +
+    (process.env.REGION_CONTACT === 'both'
+      ? `<div class="mk-cards">${section('contact-h', L.t('page.region.contact'), d.contact)}</div><div class="mk-list">${contactSection(L, d.contact)}</div>`
+      : process.env.REGION_CONTACT === 'list'
+        ? contactSection(L, d.contact)
+        : section('contact-h', L.t('page.region.contact'), d.contact)) +
     more +
     `</main>` +
-    siteFooter(L, r, 'page.footer.wrongPage') +
+    siteFooter(L, name, 'page.footer.wrongPage') +
     `</div>\n</body>\n</html>\n`
   )
 }
@@ -896,7 +926,7 @@ function jsonLd(L, h, desc) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Hüttenfinder', item: `${SITE}/` },
-      ...(hasRegionPage(regionOf(h)) ? [{ '@type': 'ListItem', position: 2, name: regionOf(h), item: regionUrl(L.lang, regionOf(h)) }] : []),
+      ...(hasRegionPage(regionOf(h)) ? [{ '@type': 'ListItem', position: 2, name: regionName(L, regionOf(h)), item: regionUrl(L.lang, regionOf(h)) }] : []),
       { '@type': 'ListItem', position: hasRegionPage(regionOf(h)) ? 3 : 2, name: h.name },
     ],
   }
@@ -911,7 +941,7 @@ function page(L, h, assets) {
   const ph = photos[h.id]
   const fig = figure(L, h)
   const b = band(L, h)
-  const meta = [typeLabel(L, h), regionOf(h), elevText(L, h)].filter(Boolean).join(' · ')
+  const meta = [typeLabel(L, h), regionName(L, regionOf(h)), elevText(L, h)].filter(Boolean).join(' · ')
 
   const head = [
     '<meta charset="utf-8">',
@@ -945,7 +975,7 @@ function page(L, h, assets) {
   const crumbs =
     `<nav class="hp-crumbs" aria-label="${esc(L.t('page.crumbs'))}"><ol>` +
     `<li><a href="/">${esc(L.t('page.huts'))}</a></li>` +
-    (regionOf(h) ? `<li>${hasRegionPage(regionOf(h)) ? `<a href="${regionPath(L.lang, regionOf(h))}">${esc(regionOf(h))}</a>` : esc(regionOf(h))}</li>` : '') +
+    (regionOf(h) ? `<li>${hasRegionPage(regionOf(h)) ? `<a href="${regionPath(L.lang, regionOf(h))}">${esc(regionName(L, regionOf(h)))}</a>` : esc(regionName(L, regionOf(h)))}</li>` : '') +
     `<li aria-current="page">${esc(h.name)}</li></ol></nav>`
 
   const facts =
@@ -1024,7 +1054,7 @@ if (CHECK) {
   }
   for (const r of REGIONS) {
     for (const c of PAGE_LANGS) {
-      const dir = path.join(DIST, c, slugify(r))
+      const dir = path.join(DIST, c, regionSlug(r))
       fs.mkdirSync(dir, { recursive: true })
       fs.writeFileSync(path.join(dir, 'index.html'), regionPage(i18n(c), r, assets))
     }

@@ -413,6 +413,30 @@ svg.hp-tape { clip-path: none; }
   gap: 12px;
 }
 .hp-region-more { margin: 0; }
+/* The compact list: one line per hut, two columns where there is room. */
+.hp-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+  column-gap: 32px;
+}
+.hp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hair);
+  min-width: 0;
+}
+.hp-row-main { display: flex; flex-direction: column; min-width: 0; }
+.hp .hp-row-name { color: var(--ink); font-weight: 600; text-decoration: none; }
+.hp a.hp-row-name:hover { color: var(--blue-deep); }
+.hp-row-meta { color: var(--ink-soft); font-size: 14px; }
+.hp .hp-row-act { display: inline-flex; align-items: center; gap: 6px; color: var(--blue-deep); font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap; }
 
 
 /* ---- huts nearby ---------------------------------------------------------- */
