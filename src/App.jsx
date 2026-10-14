@@ -31,6 +31,16 @@ const REGION_KEYS = {
 };
 const regionLabel = (t, r) => (REGION_KEYS[r] ? t(`region.${REGION_KEYS[r]}`) : r);
 
+/* A region page's "on the map" link (/?region=tirol) opens the app on that
+   region. Read once, at the start; App then takes the parameter out of the
+   address, so a reload or a shared link doesn't keep a filter that has
+   since been changed. */
+function regionFromURL() {
+  const key = new URLSearchParams(window.location.search).get("region");
+  const r = Object.keys(REGION_KEYS).find((k) => REGION_KEYS[k] === key);
+  return r ? [r] : [];
+}
+
 const CLUB_LABEL = {
   OEAV: "ÖAV",
   DAV: "DAV",
@@ -443,7 +453,7 @@ export default function App() {
   const [hutTexts, setHutTexts] = useState(null); // hr_hut_id -> the hut's text per language
   const [status, setStatus] = useState("loading");
   const [query, setQuery] = useState("");
-  const [region, setRegion] = useState([]); // MULTI_SELECT
+  const [region, setRegion] = useState(regionFromURL); // MULTI_SELECT
   const [type, setType] = useState([]); // MULTI_SELECT
   const [warden, setWarden] = useState(null);
   const [elev, setElev] = useState([]); // MULTI_SELECT
@@ -599,6 +609,13 @@ export default function App() {
 
   const scrollToTop = () =>
     window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
+  // The region came in with the address (regionFromURL); the address goes back to plain.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("region")) return;
+    url.searchParams.delete("region");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, []);
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}huts.json`)
       .then((res) => {
