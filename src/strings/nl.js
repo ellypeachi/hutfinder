@@ -196,6 +196,7 @@ export const nl = {
   "date.nights": { one: "{n} nacht", other: "{n} nachten" },
   "date.checkInPending": "Aankomst {date} · kies de vertrekdatum",
   "date.noDates": "Geen datums — alle hutten worden getoond",
+  "link.weekend": "Vrije bedden dit weekend",
 
   // ---------- taalmenu ----------
   "lang.label": "Taal",

@@ -622,6 +622,17 @@ export default function App() {
     };
   }, [isNarrow]);
 
+  /* The free-beds-this-weekend page (German or English), beside Bookable
+     online: a link that looks like the pills, with an arrow because it opens
+     a page instead of filtering this one. */
+  const weekendLink = (
+    <a
+      className="hf-tap hf-pill hf-pill-link"
+      href={`${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}/free-beds-this-weekend/`}
+    >
+      {t("link.weekend")}&nbsp;→
+    </a>
+  );
   const scrollToTop = () =>
     window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
   // The region came in with the address (regionFromURL); the address goes back to plain.
@@ -1859,11 +1870,14 @@ export default function App() {
               </div>
             ) : null}
 
-            {/* MORE_FILTERS_PANEL */}
-            {showMore ? (
+            {/* MORE_FILTERS_PANEL
+                In the page while closed, only hidden, so what it links to (the
+                weekend page) is a link search engines see. */}
+            {(
               <div
                 id="more-filters"
                 ref={moreRef}
+                hidden={!showMore}
                 /* On a phone this is a full-screen overlay and is announced as
                    one; on desktop the same markup is an inline panel, where
                    dialog semantics would be a lie. */
@@ -1872,7 +1886,9 @@ export default function App() {
                 aria-label={isNarrow ? t("more.button") : undefined}
                 tabIndex={isNarrow ? -1 : undefined}
                 style={
-                  isNarrow
+                  !showMore
+                    ? { display: "none" }
+                    : isNarrow
                     ? {
                         position: "fixed",
                         inset: 0,
@@ -1950,6 +1966,7 @@ export default function App() {
                 label={t("pill.bookableOnline")}
                 count={bookableCount}
               />
+              {weekendLink}
             </FilterGroup>
 
             <FilterGroup label={t("filter.type")}>
@@ -2095,7 +2112,7 @@ export default function App() {
               </div>
             ) : null}
               </div>
-            ) : null}
+            )}
 
             {anyFilter && (
               <button

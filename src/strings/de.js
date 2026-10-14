@@ -199,6 +199,7 @@ export const de = {
   "date.nights": { one: "{n} Nacht", other: "{n} Nächte" },
   "date.checkInPending": "Anreise {date} · wähle die Abreise",
   "date.noDates": "Kein Zeitraum — alle Hütten werden gezeigt",
+  "link.weekend": "Freie Betten am Wochenende",
 
   // ---------- Sprachmenü ----------
   "lang.label": "Sprache",

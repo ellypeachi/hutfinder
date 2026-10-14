@@ -411,6 +411,23 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   .hf-hovercard { animation: none; }
 }
 
+/* A link among the filter pills (Free beds this weekend, in More filters):
+   a pill's shape, with a control's edge and link text, like a linked tag. */
+.hf-pill-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.72rem;
+  margin: 0 0.4rem 0.4rem 0;
+  border: 1px solid var(--line-control);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--blue-deep);
+  font-size: 0.85rem;
+  line-height: 1.2;
+  text-decoration: none;
+}
+.hf-pill-link:hover { border-color: var(--blue-deep); }
+
 /* ---- The hut pop-up ---------------------------------------------------- */
 .hf-detail-photo {
   display: block;

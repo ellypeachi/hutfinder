@@ -216,6 +216,7 @@ export const cs = {
   "date.nights": { one: "{n} noc", few: "{n} noci", other: "{n} nocí" },
   "date.checkInPending": "Příjezd {date} · vyberte odjezd",
   "date.noDates": "Bez termínu — zobrazují se všechny chaty",
+  "link.weekend": "Volná lůžka tento víkend",
 
   // ---------- nabídka jazyků ----------
   "lang.label": "Jazyk",
