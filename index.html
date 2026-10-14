@@ -1,7 +1,10 @@
 <!doctype html>
-<!-- The interface is written in English; only the hut names are German. A
-     screen reader set to de-AT reads "Bookable online" as German, which is
-     unintelligible. og:locale below is a separate thing and stays. -->
+<!-- The English homepage. scripts/build_hut_pages.mjs copies it to /de/, /nl/,
+     /fr/ and /cs/ with their own lang, title, description and link preview,
+     so search engines show each language its own text. All five, this one
+     included, take that text from the meta.* strings in src/strings/; what
+     is written below is what `npm run dev` shows. The app reads its language
+     from the address. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -48,6 +51,13 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="canonical" href="https://www.hutfinder.at/" />
+    <!-- The same homepage in each language, so a search shows the searcher's. -->
+    <link rel="alternate" hreflang="en" href="https://www.hutfinder.at/" />
+    <link rel="alternate" hreflang="de" href="https://www.hutfinder.at/de/" />
+    <link rel="alternate" hreflang="nl" href="https://www.hutfinder.at/nl/" />
+    <link rel="alternate" hreflang="fr" href="https://www.hutfinder.at/fr/" />
+    <link rel="alternate" hreflang="cs" href="https://www.hutfinder.at/cs/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.hutfinder.at/" />
 
     <!-- What shows when the link is pasted into WhatsApp, Slack, Signal, etc. -->
     <meta property="og:type" content="website" />
@@ -60,7 +70,7 @@
     <meta property="og:image" content="https://www.hutfinder.at/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="de_AT" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:site_name" content="Hüttenfinder" />
 
     <meta name="twitter:card" content="summary_large_image" />

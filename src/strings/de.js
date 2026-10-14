@@ -5,6 +5,12 @@
    Zahlen, Monatsnamen und Datumsformate kommen aus Intl mit de-AT, stehen
    also nicht hier: Jänner statt Januar, 1.524 statt 1,524. */
 export const de = {
+  // ---------- die Startseite in Suchergebnissen und Linkvorschauen (/de/) ----------
+  "meta.title": "Hüttenfinder: freie Betten auf Österreichs Hütten",
+  "meta.description": "Finde und buch Hütten in Österreich für deine nächste Wanderung. Durchsuch {n} Hütten nach freien Betten, Region und Zimmerart und buch direkt.",
+  "meta.share": "Alle Hütten in Österreich, mit den Betten, die noch frei sind. Durchsuch {n} Hütten nach freien Betten.",
+  "meta.shareShort": "Alle Hütten in Österreich, mit den Betten, die noch frei sind.",
+
   // ---------- Kopf ----------
   "site.tagline": "Hütten in Österreich finden und buchen.",
   "search.aria": "Hütten nach Namen suchen",

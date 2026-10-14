@@ -7,13 +7,14 @@ import { Ctx, buildApi, detect } from "./i18n";
 export function I18nProvider({ children }) {
   const [lang, setLang] = useState(detect);
 
+  const api = useMemo(() => buildApi(lang, setLang), [lang]);
+
   /* Screen readers pick their voice from this, and search engines read it as
-     the page's language. */
+     the page's language. The tab's title changes with it. */
   useEffect(() => {
     document.documentElement.lang = lang;
-  }, [lang]);
-
-  const api = useMemo(() => buildApi(lang, setLang), [lang]);
+    document.title = api.t("meta.title");
+  }, [lang, api]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

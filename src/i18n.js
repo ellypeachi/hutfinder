@@ -48,9 +48,22 @@ const NUMBER_LOCALES = { de: "de-DE" };
 
 const STORE_KEY = "hf-lang";
 
-/* The browser's preferred languages, best match first. Region is ignored:
-   de-CH and de-AT both get German. */
+/* The homepage's address in each language: / in English, /de/, /nl/, /fr/
+   and /cs/ for the others. Each has its own title and description for search
+   engines (scripts/build_hut_pages.mjs writes them from index.html). */
+export const homePath = (code) => `${import.meta.env.BASE_URL}${code === "en" ? "" : `${code}/`}`;
+
+function langFromURL() {
+  const first = window.location.pathname.slice(import.meta.env.BASE_URL.length).split("/")[0];
+  return first !== "en" && DICTS[first] ? first : null;
+}
+
+/* The address first: /de/ is German whatever the browser says. Then the
+   visitor's own earlier choice, then the browser's preferred languages, best
+   match first. Region is ignored: de-CH and de-AT both get German. */
 export function detect() {
+  const fromURL = langFromURL();
+  if (fromURL) return fromURL;
   try {
     const saved = localStorage.getItem(STORE_KEY);
     if (saved && DICTS[saved]) return saved;
@@ -94,6 +107,9 @@ export function buildApi(lang, setLang) {
     } catch {
       // the choice still holds for this visit
     }
+    // The address follows the language, keeping any ?query and #hash.
+    const { search, hash } = window.location;
+    window.history.replaceState(window.history.state, "", homePath(code) + search + hash);
     setLang(code);
   };
 
