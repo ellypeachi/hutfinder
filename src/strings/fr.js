@@ -32,6 +32,15 @@ export const fr = {
   "bucketPlural.shared": "chambres partagées",
   "bucketPlural.priv": "chambres privées",
   "region.other": "Autre/Inconnu",
+  "region.tirol": "Tyrol",
+  "region.salzburg": "Salzbourg",
+  "region.steiermark": "Styrie",
+  "region.kaernten": "Carinthie",
+  "region.niederoesterreich": "Basse-Autriche",
+  "region.oberoesterreich": "Haute-Autriche",
+  "region.vorarlberg": "Vorarlberg",
+  "region.burgenland": "Burgenland",
+  "region.wien": "Vienne",
 
   // ---------- étiquettes d'une fiche ----------
   "tag.beds": { one: "{n} lit", other: "{n} lits" },

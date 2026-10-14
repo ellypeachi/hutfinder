@@ -10,8 +10,8 @@ the booking page. Other sites don't offer that.
 - `npm run dev`: local dev server. Add `-- --host` to open it on a phone on the same wifi.
 - `npm run build`: production build into `dist/`.
 - `npm run lint`: there are pre-existing findings. Don't add new ones.
-- Hut pages: `npm run build && node scripts/build_hut_pages.mjs && npx vite preview`, then
-  open `/de/hut/<slug>/`. They don't exist under `npm run dev`.
+- Hut and region pages: `npm run build && node scripts/build_hut_pages.mjs && npx vite preview`,
+  then open `/de/hut/<slug>/` or `/en/tyrol/`. They don't exist under `npm run dev`.
 
 Stack: React 19, Vite 8, react-leaflet 5, plain CSS. Map tiles come from
 basemap.at inside Austria and OpenStreetMap outside it.
@@ -36,7 +36,8 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | `data/hr_mapping.json` | Hut ↔ HRS booking matches. Entries with `verified: true` are kept by `match_huts.py` on re-runs. |
 | `scripts/` | Data pipeline: OSM import, HRS matching, availability fetch. |
 | `QA/mobile-qa.md` | The mobile QA checklist. Run it the same way every time. |
-| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), plus `dist/sitemap.xml`. Every hut gets a page; only huts with a photo, a description of their own or contact details are indexed and in the sitemap, the rest are `noindex` until they have one. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
+| `scripts/build_hut_pages.mjs` | One static page per hut in German and English (`/de/hut/<slug>/`), one per region with at least 10 huts (`/en/tyrol/`, `/de/tyrol/`: the address is English in both), plus `dist/sitemap.xml`. Every hut gets a page; only huts with a photo, a description of their own or contact details are indexed and in the sitemap, the rest are `noindex` until they have one. Runs in `deploy.yml` after the build, so each deploy carries the latest free beds. Text is the `page.*` keys in `src/strings/`. Styles in `src/hut-page.css`, script in `src/hutpage.js` (the map, `src/hutmap.js`, loads only when scrolled near). `hut-template/` is a Vite entry that exists only to name those assets. |
+| `src/regionpage.js` | The region pages' script, loaded only there: the app's filters on the cards in the page (same rules as `passes()` in `App.jsx`) and the app's hut pop-up. A plain click on a card opens the pop-up; its name opens the hut page. Reads `availability.json`, and `hut_texts.json` when the first pop-up opens. |
 | `data/hut_pages.json` | Optional, and not there now: a list of hut ids that limits which huts get a page (it held the ten test huts). |
 | `public/hut_slugs.json` | Every hut page's address, so it never changes once it's out. The app loads it to link cards and pop-ups to the pages. `build_hut_pages.mjs --write-slugs` adds new huts; commit the file. |
 | `scripts/make_collages.py` | The photo collage on a hut page, made once on a laptop (needs rembg): writes `public/collages/` and `data/collages.json`. Keeps existing collages unless `--force`. Main photos taller than 5:4 (tall or square) are cropped to 4:3, so every collage has the same shape. `data/collage_choices.json` lists the huts Elly wants a close-up for instead of the cut-out. |
@@ -91,6 +92,8 @@ language, remembers a change, and sets `<html lang>`.
   formal (vous / vykání), each following that country's alpine club.
 - **Hut types stay German** in every language (Schutzhütte, Alm,
   Jausenstation): that is what is written on the hut and on the map.
+- **Region names** are each language's own (Styria, Steiermark, Styrie): the
+  `region.*` keys, used by the app and the pages. The data keeps the German names.
 - **Czech** avoids `{rooms}` in four sentences, because the word would need a
   different case in each; `src/strings/cs.js` says so at the top.
 - The huts' own descriptions are not UI strings: they come from

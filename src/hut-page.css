@@ -402,6 +402,352 @@ svg.hp-tape { clip-path: none; }
 }
 
 
+/* ---- region pages --------------------------------------------------------- */
+
+.hp-region-top { display: flex; flex-direction: column; gap: 12px; max-width: 680px; }
+.hp-count { color: var(--ink-soft); font-weight: 400; }
+/* The region's huts: as many columns of cards as fit, one on a phone. */
+.hp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+}
+.hp-region-more { margin: 0; }
+/* A card the filters leave out; .hp-card's flex would otherwise keep it. */
+[data-section] [hidden] { display: none !important; }
+.hp-fempty { margin: 0; font-weight: 600; }
+
+
+/* ---- region filters (src/regionpage.js) -------------------------------
+   The app's filters and their look: uppercase captions, pills with counts,
+   the check-in/check-out pair with one calendar. Only with JavaScript, which
+   they need; without it every card shows. */
+
+.hp-filters { display: none; margin-top: 28px; }
+.hp-js .hp-filters { display: block; }
+.hp-filters [hidden] { display: none !important; }
+/* Each control shows its own pressed state. */
+.hp-filters button { -webkit-tap-highlight-color: transparent; }
+.hp-filters.no-avail .hp-frow { display: none; }
+.hp-frow { display: flex; flex-wrap: wrap; gap: 0 40px; align-items: flex-start; }
+.hp-frow > .hp-fgroup { flex: 1 1 300px; }
+.hp-frow > .hp-fdates { max-width: 460px; }
+.hp-fgroup { margin-bottom: 14px; min-width: 0; }
+.hp-flabel {
+  font-size: 11.2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+.hp-pills { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.hp-pill {
+  font: inherit;
+  font-size: 13.6px;
+  line-height: 1.2;
+  padding: 5px 11.5px;
+  border: 1px solid var(--line-control);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+}
+.hp-pill[aria-pressed="true"] { background: var(--blue); border-color: var(--ink); color: #fff; }
+.hp-pill.is-empty { background: transparent; color: var(--ink-soft); }
+.hp-pill-n { color: var(--ink-soft); margin-left: 6px; }
+.hp-pill-n:empty { display: none; }
+.hp-pill[aria-pressed="true"] .hp-pill-n { color: rgba(255, 255, 255, 0.8); }
+.hp-fnote { margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+
+/* Check in / check out */
+.hp-dfields { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+.hp-dfield {
+  flex: 1 1 140px;
+  min-width: 0;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line-control);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.hp-dfield.is-active { border-color: var(--blue); box-shadow: 0 0 0 2px var(--powder-lt); }
+.hp-dcap { display: block; font-size: 11px; color: var(--ink-soft); margin-bottom: 2px; }
+.hp-dval { display: block; font-size: 15px; color: var(--ink-soft); }
+.hp-dfield.is-set .hp-dval { color: var(--ink); font-weight: 600; }
+.hp-dclear {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 13px;
+  border: 1px solid var(--line-control);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hp-dstatus { margin: 8px 0 0; font-size: 12.8px; color: var(--ink-soft); }
+.hp-dstatus strong { color: var(--ink); }
+.hp-asof { margin: 4px 0 0; font-size: 11.5px; color: var(--ink-soft); }
+.hp-asof:empty { display: none; }
+
+/* The calendar: two months, or one on a phone. (.hp-cal is the hut pages' bed calendar.) */
+.hp-pick {
+  order: 3;
+  flex: 1 1 100%;
+  max-width: 620px;
+  margin: 0 0 14px;
+  padding: 13px 13px 10px;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: 10px;
+}
+.hp-calnav { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.hp-calstep {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line-control);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.hp-calstep:disabled { color: var(--hair); border-color: var(--hair); cursor: default; }
+.hp-calmonths { display: flex; gap: 26px; }
+.hp-calmonth { flex: 1 1 0; min-width: 0; }
+.hp-calname { text-align: center; font-weight: 600; font-size: 14px; margin-bottom: 8px; }
+.hp-caldow, .hp-caldays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.hp-caldow { margin-bottom: 4px; }
+.hp-caldow span { text-align: center; font-size: 10.2px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.hp-pday {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  min-height: 38px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.hp-pday:disabled { color: var(--hair); cursor: default; }
+.hp-pday.is-in { background: var(--powder-lt); border-radius: 0; }
+.hp-pday.is-edge { background: var(--blue); color: #fff; }
+.hp-pday.is-first { border-radius: 6px 0 0 6px; }
+.hp-pday.is-last { border-radius: 0 6px 6px 0; }
+.hp-pday.is-today::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  transform: translateX(-50%);
+}
+.hp-pday.is-edge.is-today::after { background: #fff; }
+.hp-calhint { margin: 10px 0 0; font-size: 12px; color: var(--ink-soft); text-align: center; }
+
+/* More filters, the picked filters as chips, Clear filters */
+.hp-fbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hp-chips { display: contents; }
+.hp-morebtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 15px;
+  border: 1px solid var(--line-control);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.hp-badge { padding: 1px 7px; border-radius: 100px; background: var(--blue); color: #fff; font-size: 11.5px; font-weight: 700; }
+.hp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--powder);
+  border-radius: 100px;
+  background: var(--powder-lt);
+  color: var(--blue-deep);
+  font: inherit;
+  font-size: 12.8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hp-chip span { font-size: 15px; line-height: 1; }
+.hp-linkbtn {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 13.6px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.hp-morepanel {
+  margin-top: 12px;
+  padding: 16px 16px 4px;
+  background: var(--card);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  outline: none;
+}
+.hp-morehead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.hp-moretitle { font-weight: 700; font-size: 15px; }
+.hp-moregroups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); column-gap: 32px; }
+.hp-done {
+  padding: 8px 18px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--blue);
+  color: #fff;
+  font: inherit;
+  font-size: 14.4px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hp-morepanel .hp-x, .hp-morepanel .hp-morefoot { display: none; }
+
+/* On a phone: a full-screen layer, closed with × or the Show button. */
+.hp-morepanel.is-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 16px 16px 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--cream);
+  overflow-y: auto;
+}
+.hp-morepanel.is-layer .hp-done { display: none; }
+.hp-morepanel.is-layer .hp-x { display: inline-flex; padding: 6px 10px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+.hp-morepanel.is-layer .hp-moregroups { display: block; }
+.hp-morepanel.is-layer .hp-morefoot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: auto -16px 0;
+  padding: 12px 16px 16px;
+  background: var(--cream);
+  border-top: 1px solid var(--hair);
+  box-shadow: 0 -8px 12px -10px rgba(58, 42, 32, 0.22);
+}
+.hp-show {
+  flex-grow: 1;
+  max-width: 240px;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--blue);
+  color: #fff;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+html.hp-locked { overflow: hidden; }
+
+/* ---- the hut pop-up (src/regionpage.js) ----------------------------------
+   The app's pop-up, with the app's classes from tokens.css; what the app
+   sets inline is here. */
+.hp-pop-back {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(20, 18, 14, 0);
+  transition: background-color var(--dur) var(--ease);
+}
+.hp-pop-back[hidden] { display: none; }
+.hp-pop-back.is-open { background: rgba(20, 18, 14, 0.45); }
+.hp-pop {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--card);
+  border-radius: 12px;
+  outline: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.hp-pop-back.is-open .hp-pop { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hp-pop-back, .hp-pop { transition: none; }
+}
+.hp-pop-x {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  padding: 0.2rem;
+  border: 0;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+/* On a photo it needs its own backing to stay readable. */
+.hp-pop-x.on-photo {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--card) 65%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--ink);
+}
+.hp-pop-body { display: flex; flex-direction: column; gap: 0.9rem; padding: 0.75rem 1.4rem 1.25rem; }
+.hp-pop-body.no-photo { padding: 1.25rem 1.4rem; }
+.hp-pop .hf-card-meta { font-size: 0.9rem; }
+.hp .hp-pop .hf-detail-namelink { color: var(--ink); }
+.hp .hp-pop .hf-call { color: var(--ink); }
+.hp .hp-pop .hf-credit a, .hp .hp-pop .hf-credit a:hover { color: inherit; text-decoration: none; }
+.hp-pop-book { margin-top: 0.35rem; padding-top: 1rem; border-top: 1px solid var(--hair); font-size: 0.85rem; color: var(--ink-soft); }
+.hp-pop-bookrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; }
+.hp-pop .hp-btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
+@media (pointer: coarse) { .hp-pop .hp-btn { min-height: 44px; } }
+.hp .hp-pop-pdf { color: var(--blue-deep); font-weight: 600; text-decoration: none; }
+.hp-pop-avail { margin-top: 0.5rem; }
+@media (max-width: 860px) {
+  .hp-pop-body.no-photo { padding-top: 2.6rem; }
+}
+
+/* With dates picked: the free beds of those nights, per room type. */
+.hp-avail .hp-free { display: block; font-size: 12.8px; margin-bottom: 6px; color: var(--ink-soft); }
+.hp-avail .hp-free b { color: var(--ink); }
+.hp-avail .hp-free-row { display: flex; justify-content: space-between; max-width: 240px; padding: 1px 0; }
+.hp-avail .hp-free-row > span { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); }
+
+
 /* ---- huts nearby ---------------------------------------------------------- */
 
 .hp-near {
@@ -579,6 +925,10 @@ svg.hp-tape { clip-path: none; }
   .hp-cal-foot { flex-direction: column; align-items: stretch; }
   .hp-cal-foot .hp-legend { justify-content: center; font-size: 12.5px; }
   .hp-cal-foot .hp-btn { align-self: flex-start; }
+
+  .hp-filters { margin-top: 20px; }
+  /* Straight under the dates, before the room types. */
+  .hp-frow > .hp-pick { order: 0; }
 
   .hp-near { flex-direction: column; gap: 24px; }
   .hp-cards { max-width: none; flex-basis: auto; }

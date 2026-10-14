@@ -15,8 +15,21 @@ const wardenLabel = (t, k) => (WARDEN_KEYS.includes(k) ? t(`warden.${k}`) : k);
 const ASSOC_KEYS = ["alpine_club", "naturfreunde", "private"];
 const assocName = (t, k) => (ASSOC_KEYS.includes(k) ? t(`assoc.${k}`) : k);
 
-// Region names are place names and stay as they are; only the catch-all is text.
-const regionLabel = (t, r) => (r === "Other/Unknown" ? t("region.other") : r);
+/* Each language's own name for a region (Styria, Steiermark, Styrie…). The
+   data keeps the German names; anything without a key shows as it is. */
+const REGION_KEYS = {
+  Tirol: "tirol",
+  Salzburg: "salzburg",
+  Steiermark: "steiermark",
+  Kärnten: "kaernten",
+  Niederösterreich: "niederoesterreich",
+  Oberösterreich: "oberoesterreich",
+  Vorarlberg: "vorarlberg",
+  Burgenland: "burgenland",
+  Wien: "wien",
+  "Other/Unknown": "other",
+};
+const regionLabel = (t, r) => (REGION_KEYS[r] ? t(`region.${REGION_KEYS[r]}`) : r);
 
 const CLUB_LABEL = {
   OEAV: "ÖAV",
