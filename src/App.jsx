@@ -163,7 +163,9 @@ function fmtGenerated(iso, locale) {
    three and the pop-up all of them. Anything the data doesn't know is left
    out rather than shown as "unknown", and an inferred value says so
    ("Usually serviced"). */
-function hutTags(hut, t) {
+/* `dogsPage`: the huts-with-dogs page, for the pop-up's Dogs welcome tag.
+   A card leaves it out: the whole card opens the pop-up. */
+function hutTags(hut, t, dogsPage = null) {
   const tags = [];
   if (hut.club) tags.push({ label: CLUB_LABEL[hut.club] || hut.club, club: true });
   else if (hut.association) tags.push({ label: assocName(t, hut.association) });
@@ -178,7 +180,7 @@ function hutTags(hut, t) {
   else if (hut.warden === "selbstversorger") tags.push({ label: t("warden.selbstversorger") });
   if (hut.shower === true) tags.push({ label: t("tag.shower") });
   if (hut.winterraum === true) tags.push({ label: t("tag.winterRoom") });
-  if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome") });
+  if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome"), href: dogsPage });
   else if (hut.hr_dogs === false) tags.push({ label: t("tag.noDogs") });
   return tags;
 }
@@ -187,8 +189,8 @@ function Tags({ tags }) {
   return (
     <ul className="hf-tags">
       {tags.map((t) => (
-        <li key={t.label} className={t.club ? "hf-tag hf-tag-club" : "hf-tag"}>
-          {t.label}
+        <li key={t.label} className={t.href ? "hf-tag hf-tag-link" : t.club ? "hf-tag hf-tag-club" : "hf-tag"}>
+          {t.href ? <a href={t.href}>{t.label}</a> : t.label}
         </li>
       ))}
     </ul>
@@ -917,7 +919,8 @@ export default function App() {
     const own = hutText(hut);
     const notes = own ? plainText(own.text) : "";
     const source = own && own.source ? { code: own.source.code, text: plainText(own.source.text) } : null;
-    const tags = hutTags(hut, t);
+    // The list pages exist in German and English.
+    const tags = hutTags(hut, t, `${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}/huts-with-dogs/`);
     return (
       <>
         {photo ? (

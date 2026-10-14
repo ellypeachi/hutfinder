@@ -310,12 +310,18 @@ function hutTags(L, h) {
   else if (h.warden === 'selbstversorger') tags.push({ label: t('warden.selbstversorger') })
   if (h.shower === true) tags.push({ label: t('tag.shower') })
   if (h.winterraum === true) tags.push({ label: t('tag.winterRoom') })
-  if (h.hr_dogs === true) tags.push({ label: t('tag.dogsWelcome') })
+  if (h.hr_dogs === true) tags.push({ label: t('tag.dogsWelcome'), href: dogsPath(L.lang) })
   else if (h.hr_dogs === false) tags.push({ label: t('tag.noDogs') })
   return tags
 }
+// A tag with an address opens that list page (Dogs welcome: the huts with dogs).
 const tagList = (tags) =>
-  `<ul class="hf-tags">${tags.map((g) => `<li class="${g.club ? 'hf-tag hf-tag-club' : 'hf-tag'}">${esc(g.label)}</li>`).join('')}</ul>`
+  `<ul class="hf-tags">${tags
+    .map((g) =>
+      g.href
+        ? `<li class="hf-tag hf-tag-link"><a href="${g.href}">${esc(g.label)}</a></li>`
+        : `<li class="${g.club ? 'hf-tag hf-tag-club' : 'hf-tag'}">${esc(g.label)}</li>`)
+    .join('')}</ul>`
 
 const webHref = (u) => (/^https?:\/\//i.test(u) ? u : `https://${u}`)
 const webLabel = (u) => {
@@ -847,7 +853,7 @@ function popData(L, h) {
   if (h.phone) o.tel = [telHref(h.phone), phoneLabel(h.phone)]
   if (h.website) o.web = [webHref(h.website), webLabel(h.website)]
   if (h.email) o.mail = h.email
-  o.tags = hutTags(L, h).map((g) => (g.club ? [g.label, 1] : [g.label]))
+  o.tags = hutTags(L, h).map((g) => (g.href ? [g.label, 0, g.href] : g.club ? [g.label, 1] : [g.label]))
   if (isBookable(h)) {
     o.book = h.hr_booking_url
     const x = (h.club ? CLUB_LABEL[h.club] || h.club : '') +

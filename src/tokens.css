@@ -351,6 +351,11 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   color: var(--blue-deep);
   font-weight: 600;
 }
+/* A tag that opens a list page ("Dogs welcome" opens the huts with dogs):
+   the same pill, with a control's edge and link text, so it reads as one. */
+.hf-tag-link { padding: 0; border-color: var(--line-control); }
+.hf-tag-link:hover { border-color: var(--blue-deep); }
+.hf-tag-link a { display: block; padding: 0 8px; border-radius: inherit; color: var(--blue-deep); text-decoration: none; }
 
 /* The bottom of a card: availability and Book, or Call. Pushed to the
    bottom so cards in the same row line up. */

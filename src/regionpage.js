@@ -540,7 +540,13 @@ export function init(root) {
     ].filter(Boolean)
     let body = `<div><h2 class="hf-detail-name">${name}</h2><div class="hf-card-meta">${escHTML(o.m)}</div></div>`
     if (contact.length) body += `<div class="hf-contact">${contact.join('')}</div>`
-    if (o.tags.length) body += `<ul class="hf-tags">${o.tags.map(([l, club]) => `<li class="hf-tag${club ? ' hf-tag-club' : ''}">${escHTML(l)}</li>`).join('')}</ul>`
+    if (o.tags.length)
+      body += `<ul class="hf-tags">${o.tags
+        .map(([l, club, href]) =>
+          href
+            ? `<li class="hf-tag hf-tag-link"><a href="${escAttr(href)}">${escHTML(l)}</a></li>`
+            : `<li class="hf-tag${club ? ' hf-tag-club' : ''}">${escHTML(l)}</li>`)
+        .join('')}</ul>`
     body += descHTML(o)
     if (o.book) {
       // The free beds of the picked nights, or else the next free date.

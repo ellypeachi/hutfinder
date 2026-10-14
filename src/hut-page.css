@@ -784,6 +784,7 @@ html.hp-locked { overflow: hidden; }
 .hp-card-link::after { content: ""; position: absolute; inset: 0; border-radius: 8px; }
 .hp-card .hf-card-band { position: relative; }
 .hp-card .hf-card-band a { position: relative; z-index: 1; }
+.hp-card .hf-tag-link { position: relative; z-index: 1; }
 .hp-card .hp-btn { min-height: 36px; padding: 0 12px; font-size: 13px; }
 @media (pointer: coarse) { .hp-card .hp-btn { min-height: 44px; } }
 
