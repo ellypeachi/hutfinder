@@ -49,6 +49,7 @@ export const fr = {
   "tag.shower": "Douche",
   "tag.winterRoom": "Refuge d'hiver",
   "tag.privateRooms": "Chambres privées",
+  "tag.freeWeekend": "Libre ce week-end",
   "tag.dogsWelcome": "Chiens acceptés",
   "tag.noDogs": "Chiens non acceptés",
 

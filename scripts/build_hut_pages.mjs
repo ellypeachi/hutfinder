@@ -313,6 +313,8 @@ function hutTags(L, h) {
   // Private rooms, from the hut's booking page; it opens the huts with private rooms.
   if (isBookable(h) && recOf(h)?.caps?.[PRIV] > 0) tags.push({ label: t('tag.privateRooms'), href: privPath(L.lang) })
   if (h.hr_dogs === true) tags.push({ label: t('tag.dogsWelcome'), href: dogsPath(L.lang) })
+  // Free every night of the coming weekend (pages rebuild with the free beds); it opens that list.
+  if (isBookable(h) && weekendFree(h) > 0) tags.push({ label: t('tag.freeWeekend'), href: weekendPath(L.lang) })
   else if (h.hr_dogs === false) tags.push({ label: t('tag.noDogs') })
   return tags
 }

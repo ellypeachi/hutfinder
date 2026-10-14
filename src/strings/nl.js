@@ -48,6 +48,7 @@ export const nl = {
   "tag.shower": "Douche",
   "tag.winterRoom": "Winterruimte",
   "tag.privateRooms": "Privékamers",
+  "tag.freeWeekend": "Vrij dit weekend",
   "tag.dogsWelcome": "Honden welkom",
   "tag.noDogs": "Geen honden",
 

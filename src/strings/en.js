@@ -49,6 +49,7 @@ export const en = {
   "tag.shower": "Shower",
   "tag.winterRoom": "Winter room",
   "tag.privateRooms": "Private rooms",
+  "tag.freeWeekend": "Free this weekend",
   "tag.dogsWelcome": "Dogs welcome",
   "tag.noDogs": "No dogs",
 
