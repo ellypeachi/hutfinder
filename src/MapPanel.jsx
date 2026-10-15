@@ -10,6 +10,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { AustriaTiles } from "./AustriaTiles";
 
 /* --------------------------------------------------------------------------
    Palette
@@ -70,9 +71,31 @@ const WORLD_ATTR =
 const AUSTRIA_URL =
   "https://mapsneu.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png";
 
+/* The same map as 512px tiles, for high-DPI screens (every iPhone, most Macs):
+   at 256px they are stretched to 512 or 768 device pixels, which is the blur.
+   JPEG, so opaque outside Austria; AustriaTiles cuts them to the border. */
+const AUSTRIA_SHARP_URL =
+  "https://mapsneu.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg";
+
 /* Required by basemap.at's CC-BY licence. */
 const AUSTRIA_ATTR =
   'Datenquelle: <a href="https://basemap.at" target="_blank" rel="noopener">basemap.at</a>';
+
+function SharpAustriaTiles() {
+  const map = useMap();
+  useEffect(() => {
+    const layer = new AustriaTiles(AUSTRIA_SHARP_URL, AUSTRIA_URL, {
+      attribution: AUSTRIA_ATTR,
+      maxZoom: 19,
+      bounds: AT_BOUNDS,
+    });
+    layer.addTo(map);
+    return () => {
+      layer.remove();
+    };
+  }, [map]);
+  return null;
+}
 
 function FitToHuts({ huts }) {
   const map = useMap();
@@ -355,12 +378,16 @@ export default function MapPanel({
     >
       <TileLayer url={WORLD_URL} attribution={WORLD_ATTR} maxZoom={19} />
 
-      <TileLayer
-        url={AUSTRIA_URL}
-        attribution={AUSTRIA_ATTR}
-        maxZoom={19}
-        bounds={AT_BOUNDS}
-      />
+      {L.Browser.retina ? (
+        <SharpAustriaTiles />
+      ) : (
+        <TileLayer
+          url={AUSTRIA_URL}
+          attribution={AUSTRIA_ATTR}
+          maxZoom={19}
+          bounds={AT_BOUNDS}
+        />
+      )}
       <ZoomControl position="bottomright" />
       <AutoResize />
       <FitToHuts huts={pins} />
