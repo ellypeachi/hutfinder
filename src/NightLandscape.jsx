@@ -19,14 +19,18 @@ const PRESETS = ["sunrise", "noon", "sunset", "night", "rain", "storm", "snow"];
 
 /* Per preset: the haze it clears from, and which text treatment it needs
    where text sits on it — "light" (cream) or "dark" (deeper brown than the
-   usual --ink-soft). See night-landscape.css. */
+   usual --ink-soft). See night-landscape.css.
+
+   scrim, where there is one: the soft fade behind the notes and the footer
+   (see SCRIM_TONE). Only the presets where the text alone stays under 4.5:1
+   have one, at the lowest strength that passes on a computer and a phone. */
 const LOOK = {
-  sunrise: { haze: "#F1DCC4", text: "dark" },
+  sunrise: { haze: "#F1DCC4", text: "dark", scrim: { tone: "cream", alpha: 0.42 } },
   noon: { haze: "#F4F0E8", text: "dark" },
-  sunset: { haze: "#EBCFB1", text: "light" },
+  sunset: { haze: "#EBCFB1", text: "light", scrim: { tone: "dark", alpha: 0.82 } },
   night: { haze: "#EBCFB1", text: "light" },
-  rain: { haze: "#E6E2D9", text: "dark" },
-  storm: { haze: "#E6E2D9", text: "light" },
+  rain: { haze: "#E6E2D9", text: "dark", scrim: { tone: "cream", alpha: 0.55 } },
+  storm: { haze: "#E6E2D9", text: "light", scrim: { tone: "dark", alpha: 0.45 } },
   snow: { haze: "#F4F0E8", text: "dark" },
 };
 
@@ -52,6 +56,13 @@ const TEXT_AT = 0.4; // how much scene behind text before its colour changes
    the preset. A short list (a region filter with two huts) never scrolls
    past it. */
 const HAZE_CLEARED = 0.6;
+/* The scrim's colour: a "dark" fade sits under cream text, a "cream" fade
+   under dark text. It comes in with the same switch as the text (HAZE_CLEARED),
+   so a dark fade never sits under the dark text used while the haze is on. */
+const SCRIM_TONE = { dark: "30, 20, 13", cream: "244, 240, 232" };
+const SCRIM_HEIGHT = 280; // px, from the bottom of the window
+const scrimGradient = ({ tone, alpha }) =>
+  `linear-gradient(to top, rgba(${SCRIM_TONE[tone]}, ${alpha}) 0%, rgba(${SCRIM_TONE[tone]}, ${(alpha * 0.68).toFixed(2)}) 45%, rgba(${SCRIM_TONE[tone]}, 0) 100%)`;
 /* The scene is rendered taller than the band and cropped at the bottom, so
    the band shows mostly sky and the mountains, with only a strip of meadow. */
 const FRAME_SCALE = 1.6;
@@ -157,6 +168,20 @@ export default function NightLandscape({ wide, hidden }) {
           opacity: 0.8 * (1 - p),
         }}
       />
+      {look.scrim && (
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: SCRIM_HEIGHT,
+            background: scrimGradient(look.scrim),
+            opacity: p >= HAZE_CLEARED ? 1 : 0,
+            transition: "opacity var(--dur) var(--ease)",
+          }}
+        />
+      )}
     </div>
   );
 }
