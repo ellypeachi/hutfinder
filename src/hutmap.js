@@ -4,6 +4,7 @@
 import 'leaflet/dist/leaflet.css'
 import './map.css'
 import L from 'leaflet'
+import { AustriaTiles } from './AustriaTiles.js'
 
 const AT_BOUNDS = [
   [46.35877, 8.782379],
@@ -13,6 +14,8 @@ const WORLD_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 const WORLD_ATTR =
   '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'
 const AUSTRIA_URL = 'https://mapsneu.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png'
+// The same map as 512px tiles for high-DPI screens; see AustriaTiles.js.
+const AUSTRIA_SHARP_URL = 'https://mapsneu.wien.gv.at/basemap/bmaphidpi/normal/google3857/{z}/{y}/{x}.jpeg'
 // Required by basemap.at's CC BY licence.
 const AUSTRIA_ATTR = 'Datenquelle: <a href="https://basemap.at" target="_blank" rel="noopener">basemap.at</a>'
 
@@ -36,7 +39,11 @@ export function init(box) {
     attributionControl: true,
   })
   L.tileLayer(WORLD_URL, { attribution: WORLD_ATTR, maxZoom: 19 }).addTo(map)
-  L.tileLayer(AUSTRIA_URL, { attribution: AUSTRIA_ATTR, maxZoom: 19, bounds: AT_BOUNDS }).addTo(map)
+  const austriaOptions = { attribution: AUSTRIA_ATTR, maxZoom: 19, bounds: AT_BOUNDS }
+  const austria = L.Browser.retina
+    ? new AustriaTiles(AUSTRIA_SHARP_URL, AUSTRIA_URL, austriaOptions)
+    : L.tileLayer(AUSTRIA_URL, austriaOptions)
+  austria.addTo(map)
   L.control.zoom({ position: 'bottomright' }).addTo(map)
 
   const all = [data.self, ...data.near]
