@@ -22,15 +22,17 @@ const PRESETS = ["sunrise", "noon", "sunset", "night", "rain", "storm", "snow"];
    usual --ink-soft). See night-landscape.css.
 
    scrim, where there is one: the soft fade behind the notes and the footer
-   (see SCRIM_TONE). Only the presets where the text alone stays under 4.5:1
-   have one, at the lowest strength that passes on a computer and a phone. */
+   once the text has taken the preset's own colour (see SCRIM_TONE). Only the
+   presets where the text alone stays under 4.5:1 have one, at the lowest
+   strength that passes on a computer and a phone. extra is added right after
+   the switch and eases off as you scroll on (Storm needs it there). */
 const LOOK = {
   sunrise: { haze: "#F1DCC4", text: "dark", scrim: { tone: "cream", alpha: 0.42 } },
   noon: { haze: "#F4F0E8", text: "dark" },
-  sunset: { haze: "#EBCFB1", text: "light", scrim: { tone: "dark", alpha: 0.82 } },
-  night: { haze: "#EBCFB1", text: "light" },
+  sunset: { haze: "#EBCFB1", text: "light", scrim: { tone: "dark", alpha: 0.82, extra: 0.1 } },
+  night: { haze: "#EBCFB1", text: "light", scrim: { tone: "dark", alpha: 0.45 } },
   rain: { haze: "#E6E2D9", text: "dark", scrim: { tone: "cream", alpha: 0.55 } },
-  storm: { haze: "#E6E2D9", text: "light", scrim: { tone: "dark", alpha: 0.45 } },
+  storm: { haze: "#E6E2D9", text: "light", scrim: { tone: "dark", alpha: 0.45, extra: 0.4 } },
   snow: { haze: "#F4F0E8", text: "dark" },
 };
 
@@ -57,12 +59,20 @@ const TEXT_AT = 0.4; // how much scene behind text before its colour changes
    past it. */
 const HAZE_CLEARED = 0.6;
 /* The scrim's colour: a "dark" fade sits under cream text, a "cream" fade
-   under dark text. It comes in with the same switch as the text (HAZE_CLEARED),
-   so a dark fade never sits under the dark text used while the haze is on. */
+   under dark text. The preset's own fade comes in with the same switch as the
+   text (HAZE_CLEARED), so a dark fade never sits under the dark text used
+   while the haze is on. On the presets whose own text is cream, that dark
+   text meanwhile gets a cream fade (LIFT_MAX) that grows from LIFT_FROM to
+   HAZE_CLEARED: halfway through the fade-in the scene behind the text is a
+   grey-brown that neither colour reads on. */
 const SCRIM_TONE = { dark: "30, 20, 13", cream: "244, 240, 232" };
 const SCRIM_HEIGHT = 280; // px, from the bottom of the window
-const scrimGradient = ({ tone, alpha }) =>
-  `linear-gradient(to top, rgba(${SCRIM_TONE[tone]}, ${alpha}) 0%, rgba(${SCRIM_TONE[tone]}, ${(alpha * 0.68).toFixed(2)}) 45%, rgba(${SCRIM_TONE[tone]}, 0) 100%)`;
+const LIFT_FROM = 0.4;
+const LIFT_MAX = 0.5;
+const scrimGradient = ({ tone, alpha }) => {
+  const c = SCRIM_TONE[tone];
+  return `linear-gradient(to top, rgba(${c}, ${alpha.toFixed(3)}) 0%, rgba(${c}, ${(alpha * 0.68).toFixed(3)}) 45%, rgba(${c}, 0) 100%)`;
+};
 /* The scene is rendered taller than the band and cropped at the bottom, so
    the band shows mostly sky and the mountains, with only a strip of meadow. */
 const FRAME_SCALE = 1.6;
@@ -121,6 +131,16 @@ export default function NightLandscape({ wide, hidden }) {
 
   const look = LOOK[preset];
   const p = clamp(y / CLEAR_AT); // 0 = haze, 1 = clear
+  const ownText = p >= HAZE_CLEARED; // the text has the preset's own colour
+  const scrims = [];
+  if (look.text === "light") {
+    const alpha = LIFT_MAX * clamp((p - LIFT_FROM) / (HAZE_CLEARED - LIFT_FROM));
+    scrims.push({ key: "lift", tone: "cream", alpha, on: !ownText });
+  }
+  if (look.scrim) {
+    const { tone, alpha, extra = 0 } = look.scrim;
+    scrims.push({ key: "own", tone, alpha: alpha + extra * clamp((1 - p) / (1 - HAZE_CLEARED)), on: ownText });
+  }
   const fade = `linear-gradient(to bottom, transparent 0%, #000 ${SOLID_FROM * 100}%)`;
   const src = `${import.meta.env.BASE_URL}landscape.html?variant=${preset}`;
 
@@ -168,20 +188,21 @@ export default function NightLandscape({ wide, hidden }) {
           opacity: 0.8 * (1 - p),
         }}
       />
-      {look.scrim && (
+      {scrims.map((s) => (
         <div
+          key={s.key}
           style={{
             position: "absolute",
             left: 0,
             right: 0,
             bottom: 0,
             height: SCRIM_HEIGHT,
-            background: scrimGradient(look.scrim),
-            opacity: p >= HAZE_CLEARED ? 1 : 0,
+            background: scrimGradient(s),
+            opacity: s.on ? 1 : 0,
             transition: "opacity var(--dur) var(--ease)",
           }}
         />
-      )}
+      ))}
     </div>
   );
 }
