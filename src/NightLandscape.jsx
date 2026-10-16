@@ -3,7 +3,8 @@ import "./night-landscape.css";
 
 /* A live ThreeUI landscape at the foot of the list column (mockup C). It
    appears once the list starts scrolling and clears from a soft haze to the
-   full scene the further down you go.
+   full scene the further down you go: after about a screenful of scrolling,
+   or at the foot of the page on a list that is shorter than that.
 
    Text that can end up on top of it carries the class hf-on-scene. When the
    scene is behind such text, the text switches to a colour that reads on
@@ -49,14 +50,13 @@ function pickPreset() {
   return PRESETS.includes(asked) ? asked : presetFromClock();
 }
 
-const CLEAR_AT = 1000; // px scrolled until the haze is gone
+const CLEAR_AT = 1000; // px scrolled until the haze is gone (less on a short page, see clearAtNow)
 const HEIGHT = 0.5; // share of the window the scene takes, from the bottom
 const SOLID_FROM = 0.45; // the top of the scene fades in over this share
 const TEXT_AT = 0.4; // how much scene behind text before its colour changes
-/* Until this share of CLEAR_AT is scrolled, the haze is still light enough
-   to wash the scene out, so the dark text is the one that reads, whatever
-   the preset. A short list (a region filter with two huts) never scrolls
-   past it. */
+/* Until this share of the way to a clear scene is scrolled, the haze is still
+   light enough to wash the scene out, so the dark text is the one that
+   reads, whatever the preset. */
 const HAZE_CLEARED = 0.6;
 /* The scrim's colour: a "dark" fade sits under cream text, a "cream" fade
    under dark text. The preset's own fade comes in with the same switch as the
@@ -78,26 +78,35 @@ const scrimGradient = ({ tone, alpha }) => {
 const FRAME_SCALE = 1.6;
 
 const clamp = (v) => Math.min(1, Math.max(0, v));
-const strengthAt = (y) => clamp((y - 20) / 180) * (0.55 + 0.45 * clamp(y / CLEAR_AT));
+const strengthAt = (y, clearAt = CLEAR_AT) => clamp((y - 20) / 180) * (0.55 + 0.45 * clamp(y / clearAt));
+
+/* How far to scroll before the haze is gone: CLEAR_AT px, or less on a page
+   that doesn't scroll that far. Either way the scene is fully clear at the
+   foot of the page, where the notes and the footer sit on it. */
+const clearAtNow = () =>
+  Math.max(60, Math.min(CLEAR_AT, document.documentElement.scrollHeight - window.innerHeight));
 
 export default function NightLandscape({ wide, hidden }) {
   const [preset] = useState(pickPreset);
   const [y, setY] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [clearAt, setClearAt] = useState(CLEAR_AT);
   const live = useRef({ hidden, text: LOOK[preset].text });
 
   useEffect(() => {
     let frame = 0;
     const update = () => {
       const sy = window.scrollY;
+      const c = clearAtNow();
       setY(sy);
+      setClearAt(c);
       if (sy > 20) setMounted(true); // nothing loads until someone scrolls
 
       // Which text sits on a dark enough part of the scene?
       const vh = window.innerHeight;
       const top = vh * (1 - HEIGHT);
-      const strength = live.current.hidden ? 0 : strengthAt(sy);
-      const text = sy / CLEAR_AT < HAZE_CLEARED ? "dark" : live.current.text;
+      const strength = live.current.hidden ? 0 : strengthAt(sy, c);
+      const text = sy / c < HAZE_CLEARED ? "dark" : live.current.text;
       document.querySelectorAll(".hf-on-scene").forEach((el) => {
         const r = el.getBoundingClientRect();
         const mid = (r.top + r.bottom) / 2;
@@ -113,8 +122,12 @@ export default function NightLandscape({ wide, hidden }) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
+    // The page end moves when the list changes (a filter), so re-check then.
+    const watch = new ResizeObserver(onScroll);
+    watch.observe(document.body);
     return () => {
       cancelAnimationFrame(frame);
+      watch.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       document.querySelectorAll(".hf-on-scene").forEach((el) => delete el.dataset.contrast);
@@ -130,7 +143,7 @@ export default function NightLandscape({ wide, hidden }) {
   if (hidden || !mounted) return null;
 
   const look = LOOK[preset];
-  const p = clamp(y / CLEAR_AT); // 0 = haze, 1 = clear
+  const p = clamp(y / clearAt); // 0 = haze, 1 = clear
   const ownText = p >= HAZE_CLEARED; // the text has the preset's own colour
   const scrims = [];
   if (look.text === "light") {
@@ -156,7 +169,7 @@ export default function NightLandscape({ wide, hidden }) {
         height: `${HEIGHT * 100}vh`,
         zIndex: 0,
         pointerEvents: "none",
-        opacity: strengthAt(y),
+        opacity: strengthAt(y, clearAt),
         WebkitMaskImage: fade,
         maskImage: fade,
         transition: "opacity 120ms linear",
