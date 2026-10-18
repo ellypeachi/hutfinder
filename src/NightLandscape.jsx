@@ -7,7 +7,8 @@ import "./night-landscape.css";
    once the list starts scrolling and clears from a soft haze to the full
    scene the further down you go: after about a screenful of scrolling, or at
    the foot of the page on a list that is shorter than that. With the
-   system's reduce-motion setting on, it is a still picture instead.
+   system's reduce-motion setting on, it is a still picture instead, and it
+   only draws while someone is scrolling (see IDLE_MS).
 
    Text that can end up on top of it carries the class hf-on-scene. When the
    scene is behind such text, the text switches to a colour that reads on
@@ -110,6 +111,18 @@ function useReducedMotion() {
   return reduced;
 }
 
+/* Battery. The live scene is the most expensive thing on the site to draw, so
+   it only draws while someone is scrolling: it is told to stop IDLE_MS after
+   the last scroll and to start again at the next one. (In landscape.html it
+   also draws about 30 frames a second at one pixel per CSS pixel, and asks
+   the browser for the efficient graphics chip.) Visitors with save-data on, or
+   whose browser can't draw the scene, get the still, as with reduce-motion.
+   The messages go to an iframe with an opaque origin, hence "*"; they carry
+   only a boolean, and the frame ignores any sender but this page. */
+const IDLE_MS = 4000;
+const tell = (frame, run) => frame?.contentWindow?.postMessage({ hf: "landscape", run }, "*");
+const saveData = () => navigator.connection?.saveData === true;
+
 /* The scene is drawn at this size inside the band, live or still. */
 const FRAME_STYLE = {
   position: "absolute",
@@ -129,10 +142,37 @@ export default function NightLandscape({ wide, hidden }) {
   const [y, setY] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [clearAt, setClearAt] = useState(CLEAR_AT);
+  const [failed, setFailed] = useState(false); // the page says it can't draw (no WebGL)
   const live = useRef({ hidden, text: LOOK[preset].text });
+  const frameRef = useRef(null);
+  const idle = useRef({ timer: 0, running: true });
+
+  // The scene page says so if it can't draw: show the still instead.
+  useEffect(() => {
+    const on = (e) => {
+      if (e.source === frameRef.current?.contentWindow && e.data?.hf === "landscape" && e.data.event === "fallback") {
+        setFailed(true);
+      }
+    };
+    window.addEventListener("message", on);
+    return () => window.removeEventListener("message", on);
+  }, []);
 
   useEffect(() => {
     let frame = 0;
+    const s = idle.current;
+    // Draw while someone is scrolling; stop IDLE_MS after the last scroll.
+    const wake = () => {
+      clearTimeout(s.timer);
+      if (!s.running) {
+        s.running = true;
+        tell(frameRef.current, true);
+      }
+      s.timer = setTimeout(() => {
+        s.running = false;
+        tell(frameRef.current, false);
+      }, IDLE_MS);
+    };
     const update = () => {
       const sy = window.scrollY;
       const c = clearAtNow();
@@ -154,6 +194,7 @@ export default function NightLandscape({ wide, hidden }) {
       });
     };
     const onScroll = () => {
+      wake();
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(update);
     };
@@ -165,6 +206,7 @@ export default function NightLandscape({ wide, hidden }) {
     watch.observe(document.body);
     return () => {
       cancelAnimationFrame(frame);
+      clearTimeout(s.timer);
       watch.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
@@ -214,7 +256,7 @@ export default function NightLandscape({ wide, hidden }) {
         transition: "opacity 120ms linear",
       }}
     >
-      {reduced ? (
+      {reduced || failed || saveData() ? (
         <img
           src={still}
           alt=""
@@ -224,10 +266,13 @@ export default function NightLandscape({ wide, hidden }) {
       ) : (
         <iframe
           key={preset}
+          ref={frameRef}
           src={src}
           title={t("landscape.title")}
           tabIndex={-1}
           sandbox="allow-scripts"
+          // A frame that finishes loading while idle must be told to stand still.
+          onLoad={() => tell(frameRef.current, idle.current.running)}
           style={FRAME_STYLE}
         />
       )}

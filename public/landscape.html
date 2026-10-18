@@ -2051,7 +2051,16 @@ function buildScaffoldGroup(yTop,yBase,width,depth,bays){
  * 7.  scene
  * ------------------------------------------------------------------ */
 const cvs=document.getElementById('stage');
-const renderer=new T.WebGLRenderer({canvas:cvs,antialias:true,alpha:true,powerPreference:'high-performance'});
+/* low-power: on a laptop with two graphics chips, use the efficient one */
+let renderer;
+try{renderer=new T.WebGLRenderer({canvas:cvs,antialias:true,alpha:true,powerPreference:'low-power'});}
+catch(e){
+  /* no WebGL here: tell the page around us to show a still picture instead */
+  try{window.parent.postMessage({hf:'landscape',event:'fallback'},'*');}catch(_){}
+  throw e;
+}
+/* whether we are drawing; the page around us switches this (see the end) */
+let running=true;
 renderer.setClearColor(0x000000,0);
 renderer.localClippingEnabled=true;
 renderer.shadowMap.enabled=true;
@@ -2952,12 +2961,15 @@ function layout(){
   cvs.style.top='0px';
   cvs.style.width=canvasW+'px';
   cvs.style.height=canvasH+'px';
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  /* one pixel per CSS pixel: the scene is soft and fogged and sits faded behind
+     the list, and every extra pixel is battery */
+  renderer.setPixelRatio(1);
   renderer.setSize(canvasW,canvasH,false);
   camera.aspect=canvasW/canvasH;
   placeCamera(1);
   paintRings();
   placePlaque();
+  if(!running)renderer.render(scene,camera); /* resizing clears the canvas */
 }
 
 function placeCamera(k){
@@ -3219,8 +3231,15 @@ window.__landscapeState={variant:requestedLandscape,time:THEMES[themeIdx].id,wea
 layout();
 applyTime(0);
 
-let prev=performance.now();
-(function frame(now){
+/* Battery: about 30 frames a second is plenty for a soft scene, and the page
+   around us tells us to stop drawing while nobody is scrolling. */
+const FRAME_MS=1000/30;
+let prev=performance.now(),paintedAt=0,looping=true;
+function frame(now){
+  if(!running){looping=false;return;}
+  requestAnimationFrame(frame);
+  if(now-paintedAt<FRAME_MS-2)return;
+  paintedAt=now;
   const dt=Math.min(0.05,(now-prev)/1000);prev=now;
   if(playing){
     let nt=t+dt;
@@ -3234,8 +3253,19 @@ let prev=performance.now();
   placeCamera(1-Math.pow(0.0012,dt));
   placePlaque();
   renderer.render(scene,camera);
-  requestAnimationFrame(frame);
-})(performance.now());
+}
+requestAnimationFrame(frame);
+/* start and stop drawing when the page around us says so (only it is listened to) */
+function setRunning(on){
+  if(on===running)return;
+  running=on;
+  if(on&&!looping){looping=true;prev=performance.now();requestAnimationFrame(frame);}
+}
+window.addEventListener('message',e=>{
+  if(e.source!==window.parent)return;
+  const d=e.data;
+  if(d&&d.hf==='landscape'&&typeof d.run==='boolean')setRunning(d.run);
+});
 
 window.__seek=v=>{lastStage=-1;playing=false;applyTime(Math.max(0,Math.min(DUR,v)));placeCamera(1);placePlaque();renderer.render(scene,camera);};
 window.__theme=i=>{applyTheme(i,true);placeCamera(1);renderer.render(scene,camera);};
