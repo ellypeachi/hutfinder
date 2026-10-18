@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "./i18n";
+import { presetFromClock } from "./landscapeSky";
 import "./night-landscape.css";
 
 /* A landscape behind the foot of the list column: a live 3D scene, the
@@ -17,8 +18,10 @@ import "./night-landscape.css";
    the two-text-colour rule: the scene is photographic, so the usual greys
    can't reach 4.5:1 on it.
 
-   The scene follows the visitor's own clock: sunrise, noon, sunset or night.
-   Nothing is looked up and nothing leaves the browser. */
+   The scene follows the visitor's own clock and calendar: sunrise, day,
+   sunset or night, with snow by day in winter and the odd rainy or stormy
+   day. It is decoration, not a forecast. Nothing is looked up and nothing
+   leaves the browser. */
 
 const PRESETS = ["sunrise", "noon", "sunset", "night", "rain", "storm", "snow"];
 
@@ -41,17 +44,10 @@ const LOOK = {
   snow: { haze: "#F4F0E8", text: "dark" },
 };
 
-function presetFromClock(d = new Date()) {
-  const h = d.getHours();
-  if (h >= 5 && h < 9) return "sunrise";
-  if (h >= 9 && h < 17) return "noon";
-  if (h >= 17 && h < 21) return "sunset";
-  return "night";
-}
-
-/* Visitors always get the scene that matches their clock. Only in development
-   (npm run dev) does ?sky=<name> force a preset, e.g. ?sky=storm, so the
-   others can be tried; a production build ignores it. */
+/* Visitors always get the scene that comes from their clock and calendar
+   (see landscapeSky.js). Only in development (npm run dev) does ?sky=<name>
+   force a preset, e.g. ?sky=storm, so the others can be tried; a production
+   build ignores it. */
 function pickPreset() {
   const asked = import.meta.env.DEV
     ? new URLSearchParams(window.location.search).get("sky")
