@@ -48,8 +48,13 @@ function presetFromClock(d = new Date()) {
   return "night";
 }
 
+/* Visitors always get the scene that matches their clock. Only in development
+   (npm run dev) does ?sky=<name> force a preset, e.g. ?sky=storm, so the
+   others can be tried; a production build ignores it. */
 function pickPreset() {
-  const asked = new URLSearchParams(window.location.search).get("sky");
+  const asked = import.meta.env.DEV
+    ? new URLSearchParams(window.location.search).get("sky")
+    : null;
   return PRESETS.includes(asked) ? asked : presetFromClock();
 }
 
