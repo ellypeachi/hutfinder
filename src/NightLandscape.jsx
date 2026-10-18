@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import { useI18n } from "./i18n";
 import "./night-landscape.css";
 
-/* A live ThreeUI landscape at the foot of the list column (mockup C). It
-   appears once the list starts scrolling and clears from a soft haze to the
-   full scene the further down you go: after about a screenful of scrolling,
-   or at the foot of the page on a list that is shorter than that. With the
+/* A landscape behind the foot of the list column: a live 3D scene, the
+   self-contained page public/landscape.html drawn in an iframe. It appears
+   once the list starts scrolling and clears from a soft haze to the full
+   scene the further down you go: after about a screenful of scrolling, or at
+   the foot of the page on a list that is shorter than that. With the
    system's reduce-motion setting on, it is a still picture instead.
 
    Text that can end up on top of it carries the class hf-on-scene. When the
    scene is behind such text, the text switches to a colour that reads on
-   that preset (see night-landscape.css).
+   that preset (see night-landscape.css). Those cream and deep-brown text
+   colours, and the soft fades behind the text, are a deliberate exception to
+   the two-text-colour rule: the scene is photographic, so the usual greys
+   can't reach 4.5:1 on it.
 
    The scene follows the visitor's own clock: sunrise, noon, sunset or night.
-   Nothing is looked up and nothing leaves the browser. For trying the other
-   presets, add ?sky=<name> to the address, e.g. ?sky=storm.
-
-   Experiment only (threeui-play branch). */
+   Nothing is looked up and nothing leaves the browser. */
 
 const PRESETS = ["sunrise", "noon", "sunset", "night", "rain", "storm", "snow"];
 
@@ -116,6 +118,7 @@ const FRAME_STYLE = {
 };
 
 export default function NightLandscape({ wide, hidden }) {
+  const { t } = useI18n();
   const reduced = useReducedMotion();
   const [preset] = useState(pickPreset);
   const [y, setY] = useState(0);
@@ -217,7 +220,7 @@ export default function NightLandscape({ wide, hidden }) {
         <iframe
           key={preset}
           src={src}
-          title="Landscape"
+          title={t("landscape.title")}
           tabIndex={-1}
           sandbox="allow-scripts"
           style={FRAME_STYLE}

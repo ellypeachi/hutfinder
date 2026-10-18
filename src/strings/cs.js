@@ -23,6 +23,7 @@ export const cs = {
   "status.errorAfter": "?",
   "skip.results": "Přejít na seznam chat",
   "skip.map": "Přejít na mapu",
+  "landscape.title": "Dekorativní krajina",
 
   // ---------- slovník ----------
   "type.schutzhuette": "Schutzhütte",

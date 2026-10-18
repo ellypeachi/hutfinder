@@ -19,6 +19,7 @@ export const nl = {
   "status.errorAfter": "?",
   "skip.results": "Naar de hutten",
   "skip.map": "Naar de kaart",
+  "landscape.title": "Decoratief landschap",
 
   // ---------- huttenwoorden ----------
   "type.schutzhuette": "Schutzhütte",

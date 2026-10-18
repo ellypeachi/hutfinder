@@ -20,6 +20,7 @@ export const de = {
   "status.errorAfter": "?",
   "skip.results": "Zu den Hütten springen",
   "skip.map": "Zur Karte springen",
+  "landscape.title": "Dekorative Landschaft",
 
   // ---------- Hütten-Vokabular ----------
   "type.schutzhuette": "Schutzhütte",

@@ -20,6 +20,7 @@ export const fr = {
   "status.errorAfter": ".",
   "skip.results": "Aller aux refuges",
   "skip.map": "Aller à la carte",
+  "landscape.title": "Paysage décoratif",
 
   // ---------- vocabulaire des refuges ----------
   "type.schutzhuette": "Schutzhütte",

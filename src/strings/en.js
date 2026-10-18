@@ -23,6 +23,7 @@ export const en = {
   "status.errorAfter": " folder.",
   "skip.results": "Skip to hut results",
   "skip.map": "Skip to the map",
+  "landscape.title": "Decorative landscape",
 
   // ---------- hut vocabulary ----------
   "type.schutzhuette": "Schutzhütte",
