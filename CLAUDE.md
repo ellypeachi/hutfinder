@@ -41,6 +41,9 @@ basemap.at inside Austria and OpenStreetMap outside it.
 | `data/hut_pages.json` | Optional, and not there now: a list of hut ids that limits which huts get a page (it held the ten test huts). |
 | `public/hut_slugs.json` | Every hut page's address, so it never changes once it's out. The app loads it to link cards and pop-ups to the pages. `build_hut_pages.mjs --write-slugs` adds new huts; commit the file. |
 | `scripts/make_collages.py` | The photo collage on a hut page, made once on a laptop (needs rembg): writes `public/collages/` and `data/collages.json`. Keeps existing collages unless `--force`. Main photos taller than 5:4 (tall or square) are cropped to 4:3, so every collage has the same shape. `data/collage_choices.json` lists the huts Elly wants a close-up for instead of the cut-out. |
+| `src/NightLandscape.jsx` + `src/night-landscape.css` | The landscape behind the foot of the list: a live 3D scene in an iframe, or a still picture for reduce-motion, save-data and browsers that can't draw it. It fades in as you scroll and is fully clear by the foot of the page. Text on it (`.hf-on-scene`) switches colour and gets soft fades behind it, so it keeps 4.5:1 on every scene. Which scene a visitor gets is decided in `src/landscapeSky.js`; `?sky=<name>` previews one in `npm run dev` only. |
+| `public/landscape.html` | The scene itself: one self-contained page (its own 3D engine, no network, no sound). `noindex` and not in the sitemap. Draws about 30 frames a second at one pixel per CSS pixel, and stops when its parent tells it to (the app does, 4 seconds after the last scroll). Ignores messages from anything but its parent. |
+| `public/landscape-stills/` + `scripts/make_landscape_stills.mjs` | One 1200×1000 WebP per scene, the stills above. Run `node scripts/make_landscape_stills.mjs` whenever a scene's look changes, then commit the images. Needs Node 22 and a Chrome-type browser, installs nothing, takes a few minutes. |
 
 ## Deploying and git
 
@@ -122,6 +125,7 @@ language, remembers a change, and sets `<html lang>`.
   is `<main>`; in Map view the map takes that role.
 - Text contrast is at least 4.5:1. Use `--ink-soft` for quiet text, not opacity.
 - Screen-reader-only text: `.hf-vh`.
+- The landscape is decoration: `aria-hidden`, no focus. With reduce-motion on it is a still picture, not the animation.
 
 ## Gotchas already paid for
 
@@ -166,3 +170,6 @@ language, remembers a change, and sets `<html lang>`.
   the list. The draggable bottom sheet was removed.
 - Unknown isn't no. Huts that don't publish room types or free beds (not bookable online) are "Unlisted": they stay in the results when a room
   type or dates are picked, in a section after the known matches. Only huts known not to match drop out. Attended huts filter with Serviced.
+- The landscape's cream and deep-brown text colours, its text shadows and the soft fades behind the notes and footer are a deliberate exception to the two-text-colour rule: the scene is photographic, so the usual greys can't reach 4.5:1 on it.
+- Visitors can't choose a landscape scene. It comes from their own clock and calendar (`src/landscapeSky.js`, the rule is written at the top of it): sunrise 05:00 to 08:59, day to 16:59, sunset to 20:59, night after. Snow replaces the day scene from December to March. On about one day in five (picked from the date, so everyone sees the same) rain replaces it, and from June to August a storm from 14:00 to 21:00. It is decoration, not a forecast, and nothing is looked up. `?sky=<name>` previews any scene in `npm run dev` only.
+- Battery comes first for the landscape: it draws only while someone is scrolling, at about 30 frames a second. No sound, ever, and nothing loads from another server.

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useId, useRef, useState } from "react";
 import MapPanel from "./MapPanel";
 import DateRange from "./DateRange";
 import { useI18n } from "./i18n";
+import NightLandscape from "./NightLandscape";
 import LanguageMenu from "./LanguageMenu";
 /* The data's own values on the left, a strings key on the right. Anything
    the strings file doesn't cover falls back to the raw value rather than
@@ -1657,7 +1658,8 @@ export default function App() {
       <a className="hf-skip" href={showList ? "#results" : "#hut-map"}>
         {showList ? t("skip.results") : t("skip.map")}
       </a>
-      <div style={shellStyle}>
+      <NightLandscape wide={wide} hidden={!showList} />
+      <div style={{ ...shellStyle, position: "relative", zIndex: 1 }}>
         <header style={leftCol(1)}>
         {/* The wordmark, with the language control at the other end of the
             row. On a 360px phone the wordmark is about 187px and the control
@@ -2257,6 +2259,7 @@ export default function App() {
                     /* Where the huts known to match end and the unlisted
                        ones (no room types or availability online) begin. */
                     <li
+                      className="hf-on-scene"
                       style={{
                         gridColumn: "1 / -1",
                         padding: "1.1rem 0.1rem 0.2rem",
@@ -2304,16 +2307,17 @@ export default function App() {
             )}
 
             {hiddenCount > 0 && (
-              <p style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+              <p className="hf-on-scene" style={{ color: "var(--ink-soft)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
                 {t("list.showingFirst", { limit: RESULT_LIMIT, n: fmtN(hiddenCount) })}
               </p>
             )}
 
-            <p style={{ color: "var(--ink-soft)", fontSize: "0.75rem", marginTop: "1.5rem" }}>
+            <p className="hf-on-scene" style={{ color: "var(--ink-soft)", fontSize: "0.75rem", marginTop: "1.5rem" }}>
               {t("list.elevationNote")}
             </p>
             {isNarrow && (
               <button
+                className="hf-on-scene"
                 onClick={() =>
                   window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" })
                 }
@@ -2344,6 +2348,7 @@ export default function App() {
             shows OSM data even when no map (and so no map attribution) is on
             screen. The legal pages are plain HTML: imprint/ and privacy/. */}
         <footer
+          className="hf-on-scene"
           style={
             wide
               ? leftCol(3)

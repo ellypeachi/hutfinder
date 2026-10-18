@@ -22,3 +22,6 @@ venv/
 data/photo-picker.html
 # written by scripts/make_second_photo_picker.py
 data/second-photo-picker.html
+
+# local preview config for the Claude app
+.claude/

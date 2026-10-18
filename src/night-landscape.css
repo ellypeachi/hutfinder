@@ -1,0 +1,26 @@
+/* Text that can sit on the landscape (the notes between and under the
+   cards, the footer). NightLandscape sets data-contrast when enough of the
+   scene is behind it: "light" on dark and warm scenes, "dark" on bright
+   ones. The inline styles use var(--ink) and friends, so redefining the
+   tokens here is enough to recolour them. */
+.hf-on-scene {
+  transition: color var(--dur) var(--ease);
+}
+.hf-on-scene[data-contrast="light"] {
+  --ink: #FBF9F4;
+  --ink-soft: #F1EBE0;
+  --hair: rgba(251, 249, 244, 0.4);
+  --line-control: rgba(251, 249, 244, 0.75);
+  --powder: rgba(251, 249, 244, 0.6);
+  color: var(--ink);
+  text-shadow: 0 1px 3px rgba(12, 21, 36, 0.65);
+}
+.hf-on-scene[data-contrast="dark"] {
+  --ink: #1E140D;
+  --ink-soft: #2A1D14;
+  --hair: rgba(30, 20, 13, 0.35);
+  --line-control: rgba(30, 20, 13, 0.75);
+  --powder: rgba(30, 20, 13, 0.5);
+  color: var(--ink);
+  text-shadow: 0 0 6px rgba(251, 249, 244, 0.75);
+}
