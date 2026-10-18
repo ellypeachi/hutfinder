@@ -4,7 +4,8 @@ import "./night-landscape.css";
 /* A live ThreeUI landscape at the foot of the list column (mockup C). It
    appears once the list starts scrolling and clears from a soft haze to the
    full scene the further down you go: after about a screenful of scrolling,
-   or at the foot of the page on a list that is shorter than that.
+   or at the foot of the page on a list that is shorter than that. With the
+   system's reduce-motion setting on, it is a still picture instead.
 
    Text that can end up on top of it carries the class hf-on-scene. When the
    scene is behind such text, the text switches to a colour that reads on
@@ -86,7 +87,36 @@ const strengthAt = (y, clearAt = CLEAR_AT) => clamp((y - 20) / 180) * (0.55 + 0.
 const clearAtNow = () =>
   Math.max(60, Math.min(CLEAR_AT, document.documentElement.scrollHeight - window.innerHeight));
 
+/* For people who have asked their system for less motion: the live scene is
+   replaced by a still picture of the same preset (public/landscape-stills),
+   so nothing moves and the 3D page is never downloaded. The fade that
+   follows the scroll stays, and tokens.css already switches transitions off. */
+const REDUCED = "(prefers-reduced-motion: reduce)";
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(() => window.matchMedia(REDUCED).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(REDUCED);
+    const on = () => setReduced(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return reduced;
+}
+
+/* The scene is drawn at this size inside the band, live or still. */
+const FRAME_STYLE = {
+  position: "absolute",
+  left: 0,
+  top: 0,
+  width: "100%",
+  height: `${FRAME_SCALE * 100}%`,
+  border: 0,
+  pointerEvents: "none",
+  background: "var(--cream)",
+};
+
 export default function NightLandscape({ wide, hidden }) {
+  const reduced = useReducedMotion();
   const [preset] = useState(pickPreset);
   const [y, setY] = useState(0);
   const [mounted, setMounted] = useState(false);
@@ -156,6 +186,7 @@ export default function NightLandscape({ wide, hidden }) {
   }
   const fade = `linear-gradient(to bottom, transparent 0%, #000 ${SOLID_FROM * 100}%)`;
   const src = `${import.meta.env.BASE_URL}landscape.html?variant=${preset}`;
+  const still = `${import.meta.env.BASE_URL}landscape-stills/${preset}.webp`;
 
   return (
     <div
@@ -175,23 +206,23 @@ export default function NightLandscape({ wide, hidden }) {
         transition: "opacity 120ms linear",
       }}
     >
-      <iframe
-        key={preset}
-        src={src}
-        title="Landscape"
-        tabIndex={-1}
-        sandbox="allow-scripts"
-        style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          width: "100%",
-          height: `${FRAME_SCALE * 100}%`,
-          border: 0,
-          pointerEvents: "none",
-          background: "var(--cream)",
-        }}
-      />
+      {reduced ? (
+        <img
+          src={still}
+          alt=""
+          decoding="async"
+          style={{ ...FRAME_STYLE, objectFit: "cover", objectPosition: "50% 0" }}
+        />
+      ) : (
+        <iframe
+          key={preset}
+          src={src}
+          title="Landscape"
+          tabIndex={-1}
+          sandbox="allow-scripts"
+          style={FRAME_STYLE}
+        />
+      )}
       {/* The haze the scene clears from as you scroll. */}
       <div
         style={{
