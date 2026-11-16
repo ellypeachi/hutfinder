@@ -12,6 +12,7 @@ jobs:
         with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: refetch huts, check unserviced nights
+      - name: huts mapped as relations
         working-directory: site
-        run: python ../diag-branch/diag/refetch.py
+        timeout-minutes: 8
+        run: python ../diag-branch/diag/relations.py
