@@ -320,7 +320,7 @@ function hutTags(L, h) {
   else if (h.warden === 'bewartet') tags.push({ label: t('warden.bewartet') })
   else if (h.warden === 'selbstversorger') tags.push({ label: t('warden.selbstversorger') })
   if (h.shower === true) tags.push({ label: t('tag.shower') })
-  if (h.winterraum === true) tags.push({ label: t('tag.winterRoom') })
+  if (h.winterraum === true || h.winterraum_beds > 0) tags.push({ label: t('tag.winterRoom') })
   // Private rooms, from the hut's booking page; it opens the huts with private rooms.
   if (isBookable(h) && recOf(h)?.caps?.[PRIV] > 0) tags.push({ label: t('tag.privateRooms'), href: privPath(L.lang) })
   if (h.hr_dogs === true) tags.push({ label: t('tag.dogsWelcome'), href: dogsPath(L.lang) })

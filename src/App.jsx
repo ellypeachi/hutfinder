@@ -181,7 +181,8 @@ function hutTags(hut, t, { dogsPage = null, privPage = null, weekendPage = null 
   } else if (hut.warden === "bewartet") tags.push({ label: t("warden.bewartet") });
   else if (hut.warden === "selbstversorger") tags.push({ label: t("warden.selbstversorger") });
   if (hut.shower === true) tags.push({ label: t("tag.shower") });
-  if (hut.winterraum === true) tags.push({ label: t("tag.winterRoom") });
+  // A winter room per OSM, or winter-room beds in the ÖAV register (the operator's own list).
+  if (hut.winterraum === true || hut.winterraum_beds > 0) tags.push({ label: t("tag.winterRoom") });
   if (privPage) tags.push({ label: t("tag.privateRooms"), href: privPage });
   if (hut.hr_dogs === true) tags.push({ label: t("tag.dogsWelcome"), href: dogsPage });
   if (weekendPage) tags.push({ label: t("tag.freeWeekend"), href: weekendPage });
