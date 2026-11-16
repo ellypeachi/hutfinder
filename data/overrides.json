@@ -185,5 +185,15 @@
       {"season": "summer", "from": "2026-05-07", "to": "2026-10-30"}
     ],
     "seasons_source": "verified"
+  },
+
+  "r14435621": {
+    "_name": "Oberwalderhütte",
+    "_source": "https://www.alpenverein.at/oberwalderhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-31", "to": "2026-09-06"}
+    ],
+    "seasons_source": "verified"
   }
 }

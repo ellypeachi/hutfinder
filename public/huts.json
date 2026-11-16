@@ -2649,12 +2649,17 @@
       {
         "id": 1248,
         "label": "Shared bedroom",
-        "places": 17
+        "places": 14
       },
       {
         "id": 1247,
         "label": "Double room",
         "places": 12
+      },
+      {
+        "id": 4860,
+        "label": "Dog room",
+        "places": 3
       },
       {
         "id": 1489,
@@ -14064,32 +14069,22 @@
     "shower": true,
     "pets": null,
     "club": "DAV",
-    "hr_capacity": 50,
+    "hr_capacity": 63,
     "hr_bed_categories": [
       {
         "id": 173,
         "label": "Shared bedroom",
-        "places": 35
+        "places": 59
       },
       {
         "id": 172,
         "label": "Double room",
-        "places": 4
+        "places": 2
       },
       {
-        "id": 1668,
-        "label": "Dog room",
-        "places": 1
-      },
-      {
-        "id": 5810,
-        "label": "Special category 1",
-        "places": 0
-      },
-      {
-        "id": 6261,
-        "label": "Special category 2",
-        "places": 0
+        "id": 4572,
+        "label": "Unserviced mode",
+        "places": 2
       }
     ],
     "hr_dogs": true,
@@ -14097,7 +14092,7 @@
     "hr_booking_url": "https://www.hut-reservation.org/reservation/book-hut/121/wizard",
     "hr_price_pdf": "https://www.hut-reservation.org/data/files/57ef35eb-2828-41d9-836a-2347f642fd71_Prices_sum_win_compressed.pdf",
     "hr_half_board_eur": null,
-    "hr_photo": "https://www.hut-reservation.org/data/files/hut_picture_121.jpg",
+    "hr_photo": "https://www.hut-reservation.org/data/files/hut_picture_121.jpeg",
     "winterraum_beds": 3,
     "av_nr": 558,
     "sleeping_source": "alpenverein",
@@ -21458,12 +21453,12 @@
     "shower": true,
     "pets": null,
     "club": "DAV",
-    "hr_capacity": 65,
+    "hr_capacity": 52,
     "hr_bed_categories": [
       {
         "id": 1736,
         "label": "Dormitory",
-        "places": 22
+        "places": 12
       },
       {
         "id": 1737,
@@ -21474,12 +21469,17 @@
         "id": 1738,
         "label": "Double room",
         "places": 2
+      },
+      {
+        "id": 5906,
+        "label": "Special category 1",
+        "places": 16
       }
     ],
     "hr_dogs": null,
     "hr_payment": "HOBEX",
     "hr_booking_url": "https://www.hut-reservation.org/reservation/book-hut/365/wizard",
-    "hr_price_pdf": "https://www.hut-reservation.org/data/files/d3eb3b38-f8a1-4e7b-8e6d-76f3781adb0c_Beide_EN.pdf",
+    "hr_price_pdf": "https://www.hut-reservation.org/data/files/4f9aa0e6-364b-4201-b9cd-f241e2638866_Beide_EN.pdf",
     "hr_half_board_eur": null,
     "hr_photo": "https://www.hut-reservation.org/data/files/hut_picture_365.jpg",
     "winterraum_beds": 10,
@@ -27071,6 +27071,75 @@
     "warden_source": "alpenverein"
   },
   {
+    "id": "r14435621",
+    "name": "Oberwalderhütte",
+    "type": "schutzhuette",
+    "region": "Kärnten",
+    "elevation": 2973.0,
+    "lat": 47.1053299,
+    "lng": 12.7155902,
+    "open_from": null,
+    "open_to": null,
+    "warden": "bewirtschaftet",
+    "sleeping": 105,
+    "winterraum": false,
+    "phone": "+43 4824 2546",
+    "website": "https://www.alpenverein.at/oberwalderhuette/",
+    "hr_hut_id": 300,
+    "elevation_estimated": false,
+    "association": "alpine_club",
+    "shower": true,
+    "pets": null,
+    "winterraum_beds": 10,
+    "warden_source": "alpenverein",
+    "av_nr": 164,
+    "sleeping_source": "alpenverein",
+    "beds_rooms": 35,
+    "beds_dorm": 70,
+    "beds_emergency": 0,
+    "winterraum_heated": true,
+    "email": "oberwalderhuette@gmx.at",
+    "email_source": "osm",
+    "club": "OEAV",
+    "hr_capacity": 110,
+    "hr_bed_categories": [
+      {
+        "id": 718,
+        "label": "Dormitory",
+        "places": 65
+      },
+      {
+        "id": 719,
+        "label": "Shared bedroom",
+        "places": 20
+      },
+      {
+        "id": 720,
+        "label": "Double room",
+        "places": 10
+      },
+      {
+        "id": 6023,
+        "label": "Special category",
+        "places": 0
+      }
+    ],
+    "hr_dogs": true,
+    "hr_payment": "HOBEX",
+    "hr_booking_url": "https://www.hut-reservation.org/reservation/book-hut/300/wizard",
+    "hr_price_pdf": "https://www.hut-reservation.org/data/files/57da5d14-28d2-463b-a695-b47cded7ca22_Hüttentarife Oberwalderhütte ab 01.01.2023 .pdf",
+    "hr_half_board_eur": null,
+    "hr_photo": "https://www.hut-reservation.org/data/files/hut_picture_300.jpg",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-31",
+        "to": "2026-09-06"
+      }
+    ],
+    "seasons_source": "verified"
+  },
+  {
     "id": "w132073459",
     "name": "Oberzalimhütte",
     "type": "schutzhuette",
@@ -29724,7 +29793,7 @@
     "shower": true,
     "pets": null,
     "club": "DAV",
-    "hr_capacity": 58,
+    "hr_capacity": 60,
     "hr_bed_categories": [
       {
         "id": 483,
@@ -29740,6 +29809,11 @@
         "id": 481,
         "label": "Double room",
         "places": 6
+      },
+      {
+        "id": 5858,
+        "label": "Special category 1",
+        "places": 8
       }
     ],
     "hr_dogs": null,
@@ -31548,17 +31622,22 @@
     "shower": true,
     "pets": null,
     "club": "DAV",
-    "hr_capacity": 74,
+    "hr_capacity": 75,
     "hr_bed_categories": [
       {
         "id": 751,
         "label": "Dormitory",
-        "places": 30
+        "places": 40
       },
       {
         "id": 752,
         "label": "Shared bedroom",
-        "places": 34
+        "places": 33
+      },
+      {
+        "id": 4828,
+        "label": "Dog room",
+        "places": 2
       }
     ],
     "hr_dogs": true,

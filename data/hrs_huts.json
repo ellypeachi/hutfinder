@@ -847,12 +847,17 @@
       {
         "id": 1248,
         "label": "Shared bedroom",
-        "places": 17
+        "places": 14
       },
       {
         "id": 1247,
         "label": "Double room",
         "places": 12
+      },
+      {
+        "id": 4860,
+        "label": "Dog room",
+        "places": 3
       },
       {
         "id": 1489,
@@ -3573,45 +3578,35 @@
     "altitude": 2,
     "association": "DAV",
     "country": "DE",
-    "capacity": 50,
-    "warden": "Niklas Meibert",
+    "capacity": 63,
+    "warden": "Julia Tamborini und Sebastian Archut",
     "phone": "+43 478 421 345",
     "website": "www.alpenverein.de/hannoverhaus",
-    "photo": "https://www.hut-reservation.org/data/files/hut_picture_121.jpg",
+    "photo": "https://www.hut-reservation.org/data/files/hut_picture_121.jpeg",
     "payment": "HOBEX",
     "max_nights": 20,
     "bed_categories": [
       {
         "id": 173,
         "label": "Shared bedroom",
-        "places": 35
+        "places": 59
       },
       {
         "id": 172,
         "label": "Double room",
-        "places": 4
+        "places": 2
       },
       {
-        "id": 1668,
-        "label": "Dog room",
-        "places": 1
-      },
-      {
-        "id": 5810,
-        "label": "Special category 1",
-        "places": 0
-      },
-      {
-        "id": 6261,
-        "label": "Special category 2",
-        "places": 0
+        "id": 4572,
+        "label": "Unserviced mode",
+        "places": 2
       }
     ],
     "notes": {
       "fr": "Le Hannoverhaus est ouvert à partir du 22.12.2023. Les nuitées sont possibles du 27.12.2023 au 31.3.2024. \nNous nous réjouissons de votre visite! \nNiklas et son équipe.",
       "it": "Hannoverhaus è aperto dal 22.12.2023. I pernottamenti sono possibili dal 27.12.2023 al 31.3.2024. \nNon vediamo l&#39;ora di visitarla! \nNiklas con il suo team.",
-      "en": "Hannoverhaus is open from 22.12.2023. Overnight stays are possible from 27.12.2023 to 31.3.2024. \nWe are looking forward to your visit! \nNiklas with team.",
-      "de": "<p>Das Hannoverhaus ist ab dem 14.06.2025 für Übernachtungen geöffnet. Wir freuen uns auf euren Besuch! Niklas &amp; Team</p>"
+      "en": "<p>&#x1f3d4;️ Hannoverhaus is open for overnight stays from December 27, 2026, through Easter!</p><p></p><p>⛷️ The ski slope is groomed all the way to the mountain hut. A drying room is available.</p><p></p><p>&#x1f6cf;️ A hut sleeping bag (liner) is mandatory.</p><p></p><p>&#x1f6bf; Showers are available (coin-operated); some rooms also include private shower facilities.</p><p></p><p>&#x1f37d;️ À la carte meals are served until 5:00 PM.</p><p>Dinner in summer: 6:30 PM</p><p>Dinner in winter: 6:00 PM</p><p></p><p>Please vacate your rooms by 9:00 AM.</p><p></p><p>Cancellation policy:</p><p>3–5 days before arrival: €10 per person, per night</p><p>1–2 days before arrival: €25 per person, per night</p><p>No-show: €40 per person, per night</p><p></p><p>We look forward to your visit!</p><p>Julia &amp; Sebastian</p><p></p>",
+      "de": "<p>&#x1f3d4;️ <strong>Das Hannoverhaus ist ab dem 27.12.2026 bis Ostern für Übernachtungen geöffnet!</strong></p><p></p><p>⛷️ Die Piste ist bis zur Hütte präpariert. Ein Trockenraum ist vorhanden.</p><p></p><p>&#x1f6cf;️ Hüttenschlafsack ist verpflichtend (Mikrowellengeeignet).</p><p></p><p>&#x1f6bf; Duschen sind vorhanden (Münzautomat), teilweise auch in den Zimmern.</p><p></p><p>&#x1f37d;️ À-la-carte-Essen gibt es bis 17:00 Uhr.</p><p>Abendessen im Sommer: 18:30 Uhr</p><p>Abendessen im Winter: 18:00 Uhr</p><p></p><p></p><p>Die Zimmer bitte bis 09:00 Uhr verlassen</p><p></p><p><strong>Stornierungsbedingungen:</strong></p><ul><li>3–5 Tage vor Anreise: 10 € pro Person und Nacht</li><li>1–2 Tage vor Anreise: 25 € pro Person und Nacht</li><li>Bei No-Show: 40 € pro Person und Nacht</li></ul><p></p><p>Wir freuen uns auf euren Besuch!</p><p>Julia &amp; Sebastian &amp; Team</p>"
     },
     "booking_url": "https://www.hut-reservation.org/reservation/book-hut/121/wizard",
     "half_board_eur": null,
@@ -5161,7 +5156,7 @@
     "altitude": 2480,
     "association": "DAV",
     "country": "DE",
-    "capacity": 65,
+    "capacity": 52,
     "warden": "Georg Gufler",
     "phone": "+43 664 5268655",
     "website": "https://alpenverein-karlsruhe.de/huetten/langtalereckhuette",
@@ -5172,7 +5167,7 @@
       {
         "id": 1736,
         "label": "Dormitory",
-        "places": 22
+        "places": 12
       },
       {
         "id": 1737,
@@ -5183,6 +5178,11 @@
         "id": 1738,
         "label": "Double room",
         "places": 2
+      },
+      {
+        "id": 5906,
+        "label": "Special category 1",
+        "places": 16
       }
     ],
     "notes": {
@@ -5193,8 +5193,8 @@
     },
     "booking_url": "https://www.hut-reservation.org/reservation/book-hut/365/wizard",
     "half_board_eur": null,
-    "price_pdf": "https://www.hut-reservation.org/data/files/d3eb3b38-f8a1-4e7b-8e6d-76f3781adb0c_Beide_EN.pdf",
-    "cancellation_pdf": "https://www.hut-reservation.org/data/files/4805d117-a8ff-48eb-9695-6e8a2097fdbf_AGB EN.pdf",
+    "price_pdf": "https://www.hut-reservation.org/data/files/4f9aa0e6-364b-4201-b9cd-f241e2638866_Beide_EN.pdf",
+    "cancellation_pdf": "https://www.hut-reservation.org/data/files/c4bada9b-dc9d-4977-a14f-94004783fa5f_AGB EN.pdf",
     "dogs": null
   },
   {
@@ -7135,7 +7135,7 @@
     "altitude": 2,
     "association": "DAV",
     "country": "DE",
-    "capacity": 58,
+    "capacity": 60,
     "warden": "Kathleen Dammann",
     "phone": "+43 680 22 57 124",
     "website": "www.rastkogelhuette.de",
@@ -7157,6 +7157,11 @@
         "id": 481,
         "label": "Double room",
         "places": 6
+      },
+      {
+        "id": 5858,
+        "label": "Special category 1",
+        "places": 8
       }
     ],
     "notes": {
@@ -7440,10 +7445,10 @@
     "altitude": 2538,
     "association": "DAV",
     "country": "DE",
-    "capacity": 74,
-    "warden": "Stefan Schöpf",
-    "phone": "+43 6648925587",
-    "website": "www.saarbrueckerhuette.com",
+    "capacity": 75,
+    "warden": "Markus Greußing",
+    "phone": "+43555894150",
+    "website": "www.saarbruecker-huette.at",
     "photo": "https://www.hut-reservation.org/data/files/hut_picture_309.jpg",
     "payment": "HOBEX",
     "max_nights": 20,
@@ -7451,19 +7456,24 @@
       {
         "id": 751,
         "label": "Dormitory",
-        "places": 30
+        "places": 40
       },
       {
         "id": 752,
         "label": "Shared bedroom",
-        "places": 34
+        "places": 33
+      },
+      {
+        "id": 4828,
+        "label": "Dog room",
+        "places": 2
       }
     ],
     "notes": {
       "fr": "Les réservations en ligne peuvent être faites jusqu&#39;au plus tard 18h le jour avant votre arrivée. Passé ce délai, merci de contacter directement la cabane par téléphone.",
       "it": "Le prenotazioni online possono essere inoltrate al più tardi fino alle ore 18.00 del giorno precedente l&#39;arrivo. Oltre tale termine, contatta telefonicamente il rifugio.",
-      "en": "<p> Dear guests,</p><p>please note the following when booking: </p><p>!!! IMPORTANT!! Dinner is served at 6:00 PM. </p><p>Allergies, intolerances, vegan food, or similar requests must be requested in advance!</p><p> Reservations with dogs are ONLY possible in the room. A cleaning fee of €10.00 will be charged. </p><p>Your email inquiries will be answered in the evening. </p><p>The credit card will only be charged if you cancel outside the free cancellation period 5 days before arrival. </p><p>(€10 per person/day or, in the event of a no-show on the day of arrival, for the booked package of meals &#43; accommodation) There is NO card reader. Please bring sufficient cash! PLEASE NOTE: The reservation is only activated and confirmed after the link has been confirmed (within 12 hours). </p><p>Online reservations can be made no later than 6:00 PM the day before your arrival date. </p><p>No deposit is required. For later reservations, please contact the hut team. Hut sleeping bags are mandatory in ALL rooms. T</p><p>hese can be rented from us for a fee of €6.00. </p>",
-      "de": "<p>Liebe Gäste, bitte beachten Sie folgendes bei der Buchung:</p><p></p><p><strong>!!! WICHTIG!! </strong></p><p><strong> </strong></p><p><strong> Es gibt um 18.00 Uhr Abendessen. </strong></p><p><strong> </strong></p><p><strong> Allergien, Unverträglichkeiten, veganes Essen oder ähnliches NUR mit Voranmeldung! </strong></p><p><strong> </strong></p><p><strong> Die Zimmereinteilung erfolgt durch das Hüttenpersonal. </strong></p><p><strong>Wünsche können über das &#34;Bemerkung&#34;-Feld angegeben. </strong></p><p><strong>Dieses wird erst am Tag der Ankunft gecheckt! </strong></p><p><strong> </strong></p><p><strong> Reservierung mit HUND ist NUR im Zimmer möglich. </strong></p><p><strong> Es wird eine Reinigungsgebühr von € 10,00 in Rechnung gestellt. </strong></p><p><strong> </strong></p><p><strong> Ihre Anliegen per E-Mail werden abends beantwortet. </strong></p><p><strong> </strong></p><p><strong> Die Kreditkarte wird nur im Falle einer Stornierung belastet:</strong></p><p><strong> 6 Tage vor der geplanten Anreise kostenfrei ab dem 5 Tag vor Anreise.</strong></p><p><strong>10 € pro Person/Tag bzw. bei NO Show am Anreisetag gebuchtes Arrangement Verpflegung &#43; </strong>Übernachtung .</p><p></p><p><strong> Es gibt KEIN Kartenlesegerät. Bitte nehmen Sie genügend Bargeld mit! </strong></p><p><strong> </strong></p><p><strong> ACHTUNG: Die Reservierung ist erst nach Bestätigung des Linkes (binnen 12 Stunden) aktiviert und somit bestätigt. </strong></p><p><strong> </strong></p><p><strong> </strong></p><p><strong> Online-Reservierungen können längstens bis 18:00 Uhr am Vortag des Ankunftsdatums getätigt werden. </strong></p><p><strong> Es ist keine Anzahlung zu leisten. </strong></p><p><strong> </strong></p><p><strong> Für spätere Reservierungen nehmen Sie bitte Kontakt mit dem Hüttenteam auf. </strong></p><p><strong> </strong></p><p><strong> In ALLEN Räumen sind Hüttenschlafsäcke verpflichtend zu verwenden. </strong></p><p><strong> Diese können gegen eine Gebühr von € 6,00 bei uns ausgeliehen werden. </strong></p><p><strong> </strong></p><p><strong> </strong></p><p><strong> Es gelten unsere AGB´s und Stornobedingungen. Diese finden Sie im Anhang und auf unserer Homepage.</strong></p>"
+      "de": "<p>Liebe Gäste, bitte beachten Sie folgendes bei der Buchung:</p><p></p><p>!!! WICHTIG!! Abendessen ist um 18.00 Uhr.  Allergien, Unverträglichkeiten, veganes Essen oder ähnliches NUR mit Voranmeldung! </p><p> </p><p>Die Zimmereinteilung erfolgt durch das Hüttenpersonal. Wünsche können über das &#34;Bemerkung&#34;-Feld angegeben. </p><p>Dieses wird erst am Tag der Ankunft gecheckt! </p><p> </p><p>Reservierung mit HUND ist NUR im Zimmer möglich. Es wird eine Reinigungsgebühr von € 10,00 in Rechnung gestellt. </p><p> </p><p>Ihre Anliegen per E-Mail werden abends beantwortet. </p><p> </p><p>Die Kreditkarte wird nur im Falle einer Stornierung belastet:</p><p>6 Tage vor der geplanten Anreise: keine Gebühren; </p><p>ab dem 5 Tag vor Anreise: 10 € pro Person/Tag</p><p>bei NO SHOW am Anreisetag: gebuchtes Arrangement (Verpflegung &#43; Übernachtung).</p><p></p><p>Es gibt KEIN Kartenlesegerät. Bitte nehmen Sie genügend Bargeld mit! </p><p> </p><p>ACHTUNG: Die Reservierung ist erst nach Bestätigung des Linkes (binnen 12 Stunden) aktiviert und somit bestätigt. </p><p> </p><p>Online-Reservierungen können längstens bis 18:00 Uhr am Vortag des Ankunftsdatums getätigt werden. Für spätere Reservierungen nehmen Sie bitte telefonisch Kontakt mit dem Hüttenteam auf. </p><p></p><p>In ALLEN Räumen sind Hüttenschlafsäcke verpflichtend zu verwenden. Diese können gegen eine Gebühr von € 6,00 bei uns ausgeliehen werden. </p><p> </p><p>Es gelten unsere AGB´s und Stornobedingungen. Diese finden Sie im Anhang und auf unserer Homepage.</p>",
+      "en": "<p>Dear guests, please note the following when making your booking:</p><p></p><p>!!! IMPORTANT !!! Dinner is served at 6:00 PM. Please notify us in advance of any allergies, dietary intolerances, requests for vegan meals, or similar requirements!</p><p></p><p>Room assignments are managed by the hut staff. You may submit requests via the &#34;Comments&#34; field; please note that this field is only checked on the day of your arrival.</p><p></p><p>Reservations involving a DOG are only possible for private rooms. A cleaning fee of €10.00 will be charged.</p><p></p><p>Inquiries sent via email will be answered in the evening.</p><p></p><p>Your credit card will only be charged in the event of a cancellation:</p><p>6 days or more before the scheduled arrival date: no charge;</p><p>5 days or fewer before the arrival date: €10.00 per person/day;</p><p>In the event of a &#34;no-show&#34; on the day of arrival: the full cost of the booked arrangement (meals &#43; overnight stay) will be charged.</p><p></p><p>There is NO card payment terminal on-site. Please ensure you bring sufficient cash!</p><p></p><p>PLEASE NOTE: Your reservation is only activated—and thus confirmed—once you have clicked the link provided (within 12 hours).</p><p></p><p>Online reservations can be made up until 6:00 PM on the day before your arrival. For bookings made after this time, please contact the hut team by phone.</p><p></p><p>The use of a hut sleeping bag (liner) is mandatory in ALL rooms. These can be rented from us for a fee of €6.00.</p><p></p><p>Our General Terms and Conditions and cancellation policy apply. You can find these in the attachment and on our website.</p>"
     },
     "booking_url": "https://www.hut-reservation.org/reservation/book-hut/309/wizard",
     "half_board_eur": null,

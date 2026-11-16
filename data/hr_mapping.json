@@ -1778,13 +1778,13 @@
   {
     "hr_hut_id": 300,
     "hr_name": "Oberwalder-Hütte",
-    "osm_id": "n4687022700",
-    "osm_name": "Ederhütte",
+    "osm_id": "r14435621",
+    "osm_name": "Oberwalderhütte",
     "name_score": 84.7,
     "distance_km": null,
     "method": "name-only",
     "band": "review",
-    "verified": false,
+    "verified": true,
     "ambiguous": false
   },
   {
