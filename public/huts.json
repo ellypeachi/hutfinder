@@ -149,7 +149,15 @@
     "beds_dorm": 63,
     "beds_emergency": 6,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-13",
+        "to": "2026-09-26"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w81628876",
@@ -2210,7 +2218,19 @@
     "beds_dorm": 16,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-22",
+        "to": "2026-10-11",
+        "nights_to": "2026-10-03",
+        "closed_days": [
+          "tue"
+        ]
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w89531761",
@@ -6524,7 +6544,15 @@
     "beds_dorm": 14,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-31",
+        "to": "2026-09-20"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w181087812",
@@ -6728,7 +6756,15 @@
     "beds_dorm": 36,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "winter",
+        "from": "2026-12-26",
+        "to": "2027-03-15"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w101754999",
@@ -8492,7 +8528,15 @@
     "beds_dorm": 14,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-20",
+        "to": "2026-09-30"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "n801934572",
@@ -13055,7 +13099,15 @@
     "beds_dorm": 25,
     "beds_emergency": 4,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-06",
+        "to": "2026-10-04"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w495957010",
@@ -13561,7 +13613,15 @@
     "beds_dorm": 34,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-01",
+        "to": "2026-09-13"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w85042838",
@@ -15019,7 +15079,15 @@
     "beds_dorm": 60,
     "beds_emergency": 0,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-23",
+        "to": "2026-10-11"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w230032449",
@@ -16127,7 +16195,15 @@
     "beds_dorm": 42,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-15",
+        "to": "2026-10-01"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w102413629",
@@ -27123,7 +27199,15 @@
     "beds_dorm": 42,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-20",
+        "to": "2026-09-30"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w229925990",
@@ -28845,7 +28929,15 @@
     "beds_dorm": 28,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-20",
+        "to": "2026-10-01"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w244540244",
@@ -33944,7 +34036,19 @@
     "beds_dorm": 17,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "winter",
+        "from": "2027-01-12",
+        "to": "2027-03-29",
+        "closed_days": [
+          "mon",
+          "tue"
+        ]
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w119834441",
@@ -34377,7 +34481,15 @@
     "beds_dorm": 59,
     "beds_emergency": 20,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "winter",
+        "from": "2027-01-28",
+        "to": "2027-03-31"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "n1839842096",
@@ -34842,7 +34954,28 @@
     "beds_dorm": 36,
     "beds_emergency": 0,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "winter",
+        "from": "2026-10-16",
+        "to": "2027-03-31",
+        "closed_days": [
+          "mon",
+          "tue",
+          "wed",
+          "thu",
+          "fri"
+        ],
+        "closed": [
+          [
+            "2026-12-01",
+            "2026-12-31"
+          ]
+        ]
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w191407702",
@@ -39114,7 +39247,15 @@
     "beds_dorm": 11,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-01",
+        "to": "2026-10-26"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w133162983",
@@ -41669,7 +41810,17 @@
     "beds_dorm": 40,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-06-04",
+        "to": "2026-10-11",
+        "nights_from": "2026-06-12",
+        "nights_to": "2026-10-04"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w125026512",
@@ -42052,7 +42203,15 @@
     "beds_dorm": 28,
     "beds_emergency": 0,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "seasons": [
+      {
+        "season": "summer",
+        "from": "2026-05-07",
+        "to": "2026-10-30"
+      }
+    ],
+    "seasons_source": "verified"
   },
   {
     "id": "w124441598",

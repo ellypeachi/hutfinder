@@ -15,5 +15,175 @@
     "sleeping_source": "verified",
     "association": "naturfreunde",
     "website": "https://seehuette.naturfreunde.at/"
+  },
+
+  "w84131545": {
+    "_name": "Adamekhütte",
+    "_source": "https://www.alpenverein.at/adamekhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-13", "to": "2026-09-26"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w143577673": {
+    "_name": "Austriahütte",
+    "_source": "https://www.alpenverein.at/austriahuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-22", "to": "2026-10-11", "nights_to": "2026-10-03", "closed_days": ["tue"]}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "n389785804": {
+    "_name": "Edelrautehütte",
+    "_source": "https://www.alpenverein.at/edelrautehuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "winter", "from": "2026-12-26", "to": "2027-03-15"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "n389785790": {
+    "_name": "E.T.-Compton-Hütte",
+    "_source": "https://www.alpenverein.at/etcomptonhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-31", "to": "2026-09-20"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w205397267": {
+    "_name": "Filmoor-Standschützenhütte",
+    "_source": "https://www.alpenverein.at/filmoorstandschuetzenhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-20", "to": "2026-09-30"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w179362547": {
+    "_name": "Guttenberghaus",
+    "_source": "https://www.alpenverein.at/guttenberghaus/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-06", "to": "2026-10-04"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w126017358": {
+    "_name": "Haindlkarhütte",
+    "_source": "https://www.alpenverein.at/haindlkarhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-01", "to": "2026-09-13"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w144785838": {
+    "_name": "Hesshütte",
+    "_source": "https://www.alpenverein.at/hesshuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-23", "to": "2026-10-11"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w233647338": {
+    "_name": "Hochweißsteinhaus",
+    "_source": "https://www.alpenverein.at/hochweisssteinhaus/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-15", "to": "2026-10-01"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w136869246": {
+    "_name": "Obstansersee-Hütte",
+    "_source": "https://www.alpenverein.at/obstanserseehuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-20", "to": "2026-09-30"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w205397977": {
+    "_name": "Porzehütte",
+    "_source": "https://www.alpenverein.at/porzehuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-20", "to": "2026-10-01"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w827811452": {
+    "_name": "Seethalerhütte",
+    "_source": "https://www.alpenverein.at/seethalerhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "winter", "from": "2027-01-12", "to": "2027-03-29", "closed_days": ["mon", "tue"]}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w122404162": {
+    "_name": "Simonyhütte",
+    "_source": "https://www.alpenverein.at/simonyhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "winter", "from": "2027-01-28", "to": "2027-03-31"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w86141335": {
+    "_name": "Sonnschienhütte",
+    "_source": "https://www.alpenverein.at/sonnschienhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "winter", "from": "2026-10-16", "to": "2027-03-31", "closed_days": ["mon", "tue", "wed", "thu", "fri"], "closed": [["2026-12-01", "2026-12-31"]]}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w108831856": {
+    "_name": "Voisthaler Hütte",
+    "_source": "https://www.alpenverein.at/voisthalerhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-01", "to": "2026-10-26"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w86101191": {
+    "_name": "Wolayerseehütte",
+    "_source": "https://www.alpenverein.at/wolayerseehuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-06-04", "to": "2026-10-11", "nights_from": "2026-06-12", "nights_to": "2026-10-04"}
+    ],
+    "seasons_source": "verified"
+  },
+
+  "w129263669": {
+    "_name": "Ybbstaler Hütte",
+    "_source": "https://www.alpenverein.at/ybbstalerhuette/",
+    "_checked": "2026-11-16",
+    "seasons": [
+      {"season": "summer", "from": "2026-05-07", "to": "2026-10-30"}
+    ],
+    "seasons_source": "verified"
   }
 }
