@@ -15,5 +15,3 @@ jobs:
       - name: refetch huts, check unserviced nights
         working-directory: site
         run: python ../diag-branch/diag/refetch.py
-      - uses: actions/upload-artifact@v4
-        with: { name: refetched, path: /tmp/out/refetched.json }
