@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - name: OSM lookup
+        continue-on-error: true
         run: python diag-branch/diag/osm_lookup.py
       - name: verify availability against hut-reservation.org
         working-directory: site

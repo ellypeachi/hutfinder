@@ -4,11 +4,13 @@ Q = """[out:json][timeout:60];
  nwr["name"~"Kampthaler|Kampthal",i](46.4,9.5,49.0,17.2);
  nwr["name"~"Valentinalm",i](46.4,9.5,49.0,17.2););
 out center tags;"""
-for ep in ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]:
+import time
+d=None
+for ep in ["https://overpass.private.coffee/api/interpreter", "https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass-api.de/api/interpreter"]:
     try:
         req = urllib.request.Request(ep, data=urllib.parse.urlencode({"data": Q}).encode(), headers={"User-Agent": "hutfinder/0.1 (mountain-hut finder)"})
         d = json.load(urllib.request.urlopen(req, timeout=90)); break
-    except Exception as e: print(ep, e)
-for e in d["elements"]:
+    except Exception as e: print(ep, e); time.sleep(10)
+for e in (d or {}).get("elements", []):
     c = e.get("center") or {"lat": e.get("lat"), "lon": e.get("lon")}
     print(e["type"][0] + str(e["id"]), c, json.dumps(e.get("tags"), ensure_ascii=False))
