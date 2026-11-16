@@ -12,7 +12,6 @@ jobs:
         with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: huts mapped as relations
+      - name: live site check
         working-directory: site
-        timeout-minutes: 8
-        run: python ../diag-branch/diag/relations.py
+        run: python ../diag-branch/diag/live.py
