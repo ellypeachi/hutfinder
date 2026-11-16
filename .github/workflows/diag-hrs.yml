@@ -1,0 +1,36 @@
+name: diag hrs cert
+on:
+  push:
+    branches: [diag/hrs-cert]
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: chain as served
+        run: |
+          echo | openssl s_client -connect www.hut-reservation.org:443 -servername www.hut-reservation.org -showcerts 2>&1 > chain.txt || true
+          grep -E "^ *[0-9] s:|^ *i:|v:NotBefore|Verify return code|verify error" chain.txt || true
+          awk '/BEGIN CERT/{n++} n{print > ("c" n ".pem")} /END CERT/{}' chain.txt
+          for f in c*.pem; do echo "== $f"; openssl x509 -in $f -noout -subject -issuer -dates -fingerprint -sha256; done
+      - name: curl
+        run: curl -sS -o /dev/null -w "curl http %{http_code} ssl_verify %{ssl_verify_result}\n" "https://www.hut-reservation.org/api/v1/reservation/getHutAvailability?hutId=219&step=WIZARD" || true
+      - name: python default vs certifi
+        run: |
+          pip install -q certifi
+          python - <<'PY'
+          import ssl, urllib.request, certifi
+          U="https://www.hut-reservation.org/api/v1/reservation/getHutAvailability?hutId=219&step=WIZARD"
+          H={"User-Agent":"hutfinder/0.1 (mountain-hut finder)","Accept":"application/json"}
+          for name, ctx in [("default", ssl.create_default_context()), ("certifi", ssl.create_default_context(cafile=certifi.where()))]:
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(U, headers=H), timeout=30, context=ctx) as r:
+                      b=r.read(); print(name, "OK", r.status, len(b), b[:200])
+              except Exception as e:
+                  print(name, "FAIL", e)
+          PY
+      - name: other hosts on same server
+        run: |
+          for h in hut-reservation.org www.alpenverein.at; do echo | openssl s_client -connect $h:443 -servername $h 2>/dev/null | openssl x509 -noout -subject -enddate || true; done
