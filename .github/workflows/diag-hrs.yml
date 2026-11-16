@@ -12,10 +12,8 @@ jobs:
         with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: OSM lookup
-        continue-on-error: true
-        timeout-minutes: 6
-        run: python diag-branch/diag/osm_lookup.py
-      - name: verify availability against hut-reservation.org
+      - name: refetch huts, check unserviced nights
         working-directory: site
-        run: python ../diag-branch/diag/verify_avail.py
+        run: python ../diag-branch/diag/refetch.py
+      - uses: actions/upload-artifact@v4
+        with: { name: refetched, path: /tmp/out/refetched.json }
