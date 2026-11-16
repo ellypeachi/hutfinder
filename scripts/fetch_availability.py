@@ -36,6 +36,11 @@ BASE = "https://www.hut-reservation.org/api/v1/reservation/getHutAvailability"
 HEADERS = {"User-Agent": "hutfinder/0.1 (mountain-hut finder)", "Accept": "application/json"}
 WINDOW_DAYS = 120
 PAUSE = 0.4
+# If more than this share of huts fail, the run is broken (hut-reservation.org
+# down, its certificate expired, the API changed): keep the last good file and
+# fail the job so GitHub sends an email. A few single failures are normal and
+# those huts just show no availability until the next run.
+MAX_FAIL_SHARE = 0.10
 
 DORM, SHARED, PRIV = 0, 1, 2
 
@@ -119,6 +124,12 @@ def main():
         ok += 1
         print(f"  ✓ {hid}: {len(days)} open days")
         time.sleep(PAUSE)
+
+    if fail > len(ids) * MAX_FAIL_SHARE:
+        sys.exit(
+            f"\n{fail} of {len(ids)} huts failed. Keeping the existing {OUT.name} "
+            "and stopping, so the site keeps its last good data."
+        )
 
     snap = {
         "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"),
