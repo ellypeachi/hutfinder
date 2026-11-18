@@ -16,9 +16,3 @@ jobs:
         continue-on-error: true
         timeout-minutes: 5
         run: python diag-branch/diag/osm2.py
-      - name: fetch availability with winter rooms
-        working-directory: site
-        run: |
-          cp ../diag-branch/diag/fetch_new.py scripts/fetch_new.py
-          python scripts/fetch_new.py | grep -E "winter-room|fetched|bookable"
-          echo AVAIL_B64_START; gzip -9c public/availability.json | base64 -w0; echo; echo AVAIL_B64_END
