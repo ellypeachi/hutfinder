@@ -38891,6 +38891,54 @@
     "warden_source": "inferred"
   },
   {
+    "open_from": null,
+    "open_to": null,
+    "winterraum": false,
+    "hr_hut_id": 396,
+    "elevation_estimated": false,
+    "pets": null,
+    "email": null,
+    "id": "n445042938",
+    "name": "Valentinalm",
+    "type": "alm",
+    "region": "Kärnten",
+    "elevation": 1220,
+    "lat": 46.6227176,
+    "lng": 12.9298558,
+    "warden": "bewirtschaftet",
+    "warden_source": "osm_type",
+    "sleeping": null,
+    "shower": null,
+    "association": "alpine_club",
+    "phone": "+43 660 6799784",
+    "website": "https://www.valentinalm.at/",
+    "club": "OEAV",
+    "hr_capacity": 39,
+    "hr_bed_categories": [
+      {
+        "id": 986,
+        "label": "Dormitory",
+        "places": 15
+      },
+      {
+        "id": 988,
+        "label": "Shared bedroom",
+        "places": 4
+      },
+      {
+        "id": 987,
+        "label": "Double room",
+        "places": 18
+      }
+    ],
+    "hr_dogs": false,
+    "hr_payment": "HOBEX",
+    "hr_booking_url": "https://www.hut-reservation.org/reservation/book-hut/396/wizard",
+    "hr_price_pdf": "https://www.hut-reservation.org/data/files/17a57ad3-19b2-4573-85a0-427e22d4c5b9_Preisliste_2026-27.pdf",
+    "hr_half_board_eur": null,
+    "hr_photo": "https://www.hut-reservation.org/data/files/hut_picture_396.jpg"
+  },
+  {
     "id": "w298355600",
     "name": "Vallmeritzalm",
     "type": "alm",

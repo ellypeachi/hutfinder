@@ -2438,13 +2438,13 @@
   {
     "hr_hut_id": 396,
     "hr_name": "Valentinalm",
-    "osm_id": "w325017263",
-    "osm_name": "K-Alm",
+    "osm_id": "n445042938",
+    "osm_name": "Valentinalm",
     "name_score": 77.1,
     "distance_km": null,
     "method": null,
     "band": "none",
-    "verified": false,
+    "verified": true,
     "ambiguous": false
   },
   {
