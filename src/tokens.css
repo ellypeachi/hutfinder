@@ -370,6 +370,11 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
   color: var(--ink-soft);
 }
 .hf-card-band-row { flex-direction: row; flex-wrap: wrap; align-items: center; column-gap: 0.6rem; row-gap: 0.4rem; }
+/* The opening season (src/seasons.js): a line under the card's availability,
+   a block in the pop-up. */
+.hf-season-line { margin-top: 0.2rem; }
+.hf-season-title { font-size: 0.9rem; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.hf-season-details { font-size: 0.875rem; color: var(--ink-soft); line-height: 1.45; }
 .hf-call {
   display: inline-flex;
   align-items: center;

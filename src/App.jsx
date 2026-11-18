@@ -4,6 +4,8 @@ import DateRange from "./DateRange";
 import { useI18n } from "./i18n";
 import NightLandscape from "./NightLandscape";
 import LanguageMenu from "./LanguageMenu";
+import { bedsOn, fewestOn, freeEvery, nextFreeOf, WINTER } from "./avail";
+import { seasonText } from "./seasons";
 /* The data's own values on the left, a strings key on the right. Anything
    the strings file doesn't cover falls back to the raw value rather than
    vanishing. */
@@ -712,40 +714,19 @@ export default function App() {
   const nights = nightsBetween(from, to);
 
   const recOf = (h) => (h.hr_hut_id && avail && avail.huts ? avail.huts[h.hr_hut_id] : null);
-  const nightArr = (rec, d) => (rec && rec.days && d in rec.days ? rec.days[d] : null);
+  // A night's free beds as [dorm, shared, private, winter room], or null when
+  // closed. Winter-room nights are bookable nights without a host (src/avail.js).
+  const nightArr = bedsOn;
 
-  // minimum free beds per bucket across all requested nights; null if any night is closed
-  const minBuckets = (h) => {
-    const rec = recOf(h);
-    if (!rec) return null;
-    const mins = [Infinity, Infinity, Infinity];
-    for (const d of nights) {
-      const a = nightArr(rec, d);
-      if (!a) return null;
-      for (let i = 0; i < 3; i++) mins[i] = Math.min(mins[i], a[i] || 0);
-    }
-    return mins.map((m) => (m === Infinity ? 0 : m));
-  };
-
-  const nextFree = (h) => {
-    const rec = recOf(h);
-    if (!rec || !rec.days) return null;
-    const t = todayISO();
-    for (const d of Object.keys(rec.days).sort()) {
-      const a = rec.days[d];
-      const total = (a[0] || 0) + (a[1] || 0) + (a[2] || 0);
-      if (d >= t && total > 0) return { date: d, free: total };
-    }
-    return null;
-  };
   /* Availability, shown the same way on a card and in the pop-up: the free
-     beds per room type once dates are picked, otherwise the next free date. */
+     beds per room type once dates are picked, otherwise the next free date.
+     The winter room is a row of its own, with a line on what it means. */
   const availBlock = (hut) => {
     if (!avail || !hut.hr_hut_id) return null;
     const rec = recOf(hut);
-    const nf = !nights.length ? nextFree(hut) : null;
-    const mins = nights.length ? minBuckets(hut) : null;
-    if (nights.length && mins && rec && rec.caps) {
+    const nf = !nights.length && rec ? nextFreeOf(rec, todayISO()) : null;
+    const few = nights.length ? fewestOn(rec, nights) : null;
+    if (few && few.rows.length) {
       return (
         <div>
           <div style={{ fontSize: "0.8rem", marginBottom: "0.45rem" }}>
@@ -754,10 +735,8 @@ export default function App() {
               <span style={{ color: "var(--ink-soft)" }}>{t("avail.fewest")}</span>
             ) : null}
           </div>
-          {BUCKET_ORDER.map((k) => {
-            const idx = BUCKET_IDX[k];
-            if (!(rec.caps[idx] > 0)) return null;
-            const n = mins[idx];
+          {few.rows.map(({ i: idx, n }) => {
+            const k = idx === WINTER ? "winter" : BUCKET_ORDER[idx];
             return (
               <div
                 key={k}
@@ -778,6 +757,11 @@ export default function App() {
               </div>
             );
           })}
+          {few.winter !== "none" ? (
+            <div style={{ color: "var(--ink-soft)", marginTop: "0.3rem", maxWidth: 320 }}>
+              {t(few.winter === "all" ? "avail.winterNote" : "avail.winterSome")}
+            </div>
+          ) : null}
         </div>
       );
     }
@@ -785,13 +769,18 @@ export default function App() {
       return (
         <span style={{ color: "var(--ink-soft)" }}>
           <Dot n={nf.free} />
-          {t("avail.nextFree", { date: fmtISO(nf.date), n: nf.free })}
+          {t(nf.winter ? "avail.nextFreeWinter" : "avail.nextFree", { date: fmtISO(nf.date), n: nf.free })}
         </span>
       );
     }
     if (rec) return <span style={{ color: "var(--ink-soft)" }}>{t("avail.none")}</span>;
     return null;
   };
+
+  /* The opening season, where we have one (data/overrides.json): a line on
+     the card, a title and details in the pop-up. src/seasons.js picks which
+     season and writes the words; the hut pages use the same. */
+  const seasonOf = (hut) => (hut.seasons ? seasonText(hut.seasons, { t, locale, today: todayISO() }) : null);
 
   const bookButton = (hut) => (
     <a
@@ -883,6 +872,7 @@ export default function App() {
   const hutCard = (hut, open) => {
     const photo = photos[hut.id];
     const tags = hutTags(hut, t).slice(0, 3);
+    const season = seasonOf(hut);
     return (
       <>
         <div className="hf-card-head">
@@ -926,9 +916,17 @@ export default function App() {
           <ChevronIcon />
         </div>
         {tags.length ? <Tags tags={tags} /> : null}
+        {season && !hut.hr_hut_id ? <div className="hf-card-meta">{season.card}</div> : null}
         {hut.hr_hut_id ? (
           <div className="hf-card-band">
-            {availBlock(hut)}
+            {season ? (
+              <div>
+                {availBlock(hut)}
+                <div className="hf-season-line">{season.card}</div>
+              </div>
+            ) : (
+              availBlock(hut)
+            )}
             <div>{bookButton(hut)}</div>
           </div>
         ) : (
@@ -948,14 +946,12 @@ export default function App() {
     // The list pages exist in German and English.
     const list = `${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}`;
     const rec = recOf(hut);
+    const season = seasonOf(hut);
     const tags = hutTags(hut, t, {
       dogsPage: `${list}/huts-with-dogs/`,
       privPage: hut.hr_booking_url && rec && rec.caps && rec.caps[BUCKET_IDX.priv] > 0 ? `${list}/huts-with-private-rooms/` : null,
       weekendPage:
-        hut.hr_booking_url && rec && weekendNights().every((d) => {
-          const a = nightArr(rec, d);
-          return a && (a[0] || 0) + (a[1] || 0) + (a[2] || 0) > 0;
-        })
+        hut.hr_booking_url && rec && freeEvery(rec, weekendNights())
           ? `${list}/free-beds-this-weekend/`
           : null,
     });
@@ -1042,6 +1038,13 @@ export default function App() {
             </div>
           ) : null}
           {tags.length ? <Tags tags={tags} /> : null}
+          {season ? (
+            <div>
+              <div className="hf-label">{t("season.heading")}</div>
+              <div className="hf-season-title">{season.title}</div>
+              {season.details ? <div className="hf-season-details">{season.details}</div> : null}
+            </div>
+          ) : null}
           {notes ? (
             <div>
               <div className="hf-label">{t("detail.description")}</div>
@@ -1128,10 +1131,7 @@ export default function App() {
       const rec = recOf(h);
       if (!rec) {
         if (!avail || noBeds(h)) return false;
-      } else for (const d of nights) {
-        const a = nightArr(rec, d);
-        if (!a || (a[0] || 0) + (a[1] || 0) + (a[2] || 0) <= 0) return false;
-      }
+      } else if (!freeEvery(rec, nights)) return false;
     }
 
     // room-type filter: only huts known NOT to have the room type drop out.

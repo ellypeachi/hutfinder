@@ -20,6 +20,13 @@ Format:
                        "days": { "2026-09-01": [15,4,2], ... } } } }
   days value is [dorm, shared, private] free beds on that (open) night.
   caps is the same three buckets' total capacity. A date absent = closed.
+
+Some huts also take online bookings on nights without a host, when only the
+winter room is open (hut-reservation.org: hutStatus "UNSERVICED"). Those
+nights go in "wr": { "2026-11-21": 28, ... }, the free beds that night, and
+"wrcap" is the most beds the winter room has shown. A hut whose winter room
+never has a bed free gets neither: it can't be booked that way.
+src/avail.js reads both for the app and the pages.
 """
 
 import json
@@ -102,14 +109,22 @@ def main():
             continue
 
         cm = catmap.get(hid, {})
-        days, cap = {}, None
+        days, cap, wr, wrcap = {}, None, {}, 0
         for d in data if isinstance(data, list) else []:
-            if d.get("hutStatus") != "SERVICED":
+            status = d.get("hutStatus")
+            if status not in ("SERVICED", "UNSERVICED"):
                 continue
             ds = (d.get("date") or "")[:10]
             try:
                 dd = date.fromisoformat(ds)
             except ValueError:
+                continue
+            if status == "UNSERVICED":
+                # The winter room: one number, whatever category the hut files it under.
+                free = sum(v or 0 for v in (d.get("freeBedsPerCategory") or {}).values())
+                wrcap = max(wrcap, free)
+                if today <= dd and dd.toordinal() <= cutoff:
+                    wr[ds] = free
                 continue
             if dd < today or dd.toordinal() > cutoff:
                 continue
@@ -121,8 +136,10 @@ def main():
             cap = cap or d.get("totalSleepingPlaces")
 
         out[str(hid)] = {"cap": cap, "caps": capmap.get(hid, [0, 0, 0]), "days": days}
+        if wrcap > 0 and wr:
+            out[str(hid)].update(wr=wr, wrcap=wrcap)
         ok += 1
-        print(f"  ✓ {hid}: {len(days)} open days")
+        print(f"  ✓ {hid}: {len(days)} open days" + (f", {len(wr)} winter-room nights" if wrcap > 0 and wr else ""))
         time.sleep(PAUSE)
 
     if fail > len(ids) * MAX_FAIL_SHARE:

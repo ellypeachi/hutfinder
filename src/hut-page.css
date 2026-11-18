@@ -253,6 +253,10 @@ svg.hp-tape { clip-path: none; }
   font-variation-settings: normal;
 }
 .hp-note { margin: 0; font-size: var(--t-label); color: var(--ink-soft); }
+/* The opening season (src/seasons.js), under "Free beds" or in place of the
+   bare "no open dates": the season itself in ink, the details quiet. */
+.hp-season { margin: 0; color: var(--ink-soft); }
+.hp-season b { font-weight: 600; color: var(--ink); }
 .hp-section-head {
   display: flex;
   flex-wrap: wrap;
@@ -747,6 +751,7 @@ html.hp-locked { overflow: hidden; }
 .hp-avail .hp-free b { color: var(--ink); }
 .hp-avail .hp-free-row { display: flex; justify-content: space-between; max-width: 240px; padding: 1px 0; }
 .hp-avail .hp-free-row > span { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); }
+.hp-avail .hp-free-note { display: block; margin-top: 4px; max-width: 320px; color: var(--ink-soft); }
 
 
 /* ---- huts nearby ---------------------------------------------------------- */

@@ -8,6 +8,7 @@
    or a room type are picked, and those huts are the "Ask the hut directly"
    section. Only huts known not to match drop out. */
 import { bedColor, gauge } from './gauge.js'
+import { bedsOn, fewestOn, freeEvery, nextFreeOf, WINTER } from './avail.js'
 
 const BUCKETS = ['dorm', 'shared', 'priv']
 const MULTI = ['region', 'type', 'band'] // any mix can be picked; the other groups take one
@@ -82,7 +83,8 @@ export function init(root) {
     return list
   }
   const recOf = (h) => (h.hr && avail && avail.huts ? avail.huts[h.hr] || null : null)
-  const night = (rec, d) => (rec && rec.days && d in rec.days ? rec.days[d] : null)
+  // [dorm, shared, private, winter room] free that night, or null when closed (src/avail.js).
+  const night = bedsOn
   const roomOk = (rec, i, nights) => {
     if (!nights.length) return !!(rec.caps && rec.caps[i] > 0)
     return nights.every((d) => {
@@ -103,10 +105,7 @@ export function init(root) {
       if (!rec) {
         // Unknown stays, unless the hut is known to have no beds at all.
         if (h.beds === 0) return false
-      } else if (!nights.every((d) => {
-        const a = night(rec, d)
-        return a && (a[0] || 0) + (a[1] || 0) + (a[2] || 0) > 0
-      })) return false
+      } else if (!freeEvery(rec, nights)) return false
     }
     if (skip !== 'room' && st.room) {
       const rec = recOf(h)
@@ -135,20 +134,16 @@ export function init(root) {
      across them, as the app's cards and pop-up show them. Null without dates
      or without the hut's free beds. */
   const bedsHTML = (rec, nights) => {
-    if (!nights.length || !rec || !rec.caps) return null
-    const mins = [Infinity, Infinity, Infinity]
-    for (const d of nights) {
-      const a = night(rec, d)
-      if (!a) return null
-      for (let i = 0; i < 3; i++) mins[i] = Math.min(mins[i], a[i] || 0)
-    }
+    const few = fewestOn(rec, nights)
+    if (!few || !few.rows.length) return null
     const range = st.to ? `${fmt(st.from)}–${fmt(st.to)}` : fmt(st.from)
-    const rows = BUCKETS.map((k, i) => {
-      if (!(rec.caps[i] > 0)) return ''
-      const n = mins[i]
+    const rows = few.rows.map(({ i, n }) => {
+      const k = i === WINTER ? 'winter' : BUCKETS[i]
       return `<span class="hp-free-row"><span>${gauge(n)}${t(`bucket.${k}`)}</span><b style="color:${bedColor(n)}">${n > 0 ? t('avail.beds', { count: n, n: nf(n) }) : t('avail.full')}</b></span>`
     }).join('')
-    return `<span class="hp-free"><b>${t('avail.free', { range })}</b>${nights.length > 1 ? `<span>${t('avail.fewest')}</span>` : ''}</span>${rows}`
+    // The winter room has no host: one line on what that means.
+    const note = few.winter === 'none' ? '' : `<span class="hp-free-note">${escHTML(t(few.winter === 'all' ? 'avail.winterNote' : 'avail.winterSome'))}</span>`
+    return `<span class="hp-free"><b>${t('avail.free', { range })}</b>${nights.length > 1 ? `<span>${t('avail.fewest')}</span>` : ''}</span>${rows}${note}`
   }
   // A card keeps the line the page was built with (the next free date) until dates are picked.
   const drawLine = (h, nights) => {
@@ -502,14 +497,11 @@ export function init(root) {
   // The next free date, of the page's own room type where it has one, as on its cards.
   const nextFreeHTML = (rec) => {
     if (!rec) return ''
-    const today = toISO(new Date())
     const i = BUCKETS.indexOf(fixedRoom)
-    for (const d of Object.keys(rec.days || {}).sort()) {
-      const a = rec.days[d]
-      const n = i >= 0 ? a[i] || 0 : (a[0] || 0) + (a[1] || 0) + (a[2] || 0)
-      if (d >= today && n > 0) return `<span>${gauge(n, 11)} ${escHTML(t(i >= 0 ? `page.nextFree.${fixedRoom}` : 'avail.nextFree', { date: fmt(d), n: nf(n) }))}</span>`
-    }
-    return `<span>${escHTML(t('avail.none'))}</span>`
+    const f = nextFreeOf(rec, toISO(new Date()), i >= 0 ? i : undefined)
+    if (!f) return `<span>${escHTML(t('avail.none'))}</span>`
+    const key = i >= 0 ? `page.nextFree.${fixedRoom}` : f.winter ? 'avail.nextFreeWinter' : 'avail.nextFree'
+    return `<span>${gauge(f.free, 11)} ${escHTML(t(key, { date: fmt(f.date), n: nf(f.free) }))}</span>`
   }
   // Two lines of the hut's own text, then Read more, as in the app.
   const descHTML = (o) => {
@@ -554,6 +546,9 @@ export function init(root) {
             ? `<li class="hf-tag hf-tag-link"><a href="${escAttr(href)}">${escHTML(l)}</a></li>`
             : `<li class="hf-tag${club ? ' hf-tag-club' : ''}">${escHTML(l)}</li>`)
         .join('')}</ul>`
+    // The opening season, worded by build_hut_pages.mjs: [title, details].
+    if (o.s)
+      body += `<div><div class="hf-label">${escHTML(t('season.heading'))}</div><div class="hf-season-title">${escHTML(o.s[0])}</div>${o.s[1] ? `<div class="hf-season-details">${escHTML(o.s[1])}</div>` : ''}</div>`
     body += descHTML(o)
     if (o.book) {
       // The free beds of the picked nights, or else the next free date.

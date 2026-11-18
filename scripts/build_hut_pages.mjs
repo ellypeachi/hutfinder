@@ -42,6 +42,8 @@ import { de } from '../src/strings/de.js'
 import { nl } from '../src/strings/nl.js'
 import { fr } from '../src/strings/fr.js'
 import { cs } from '../src/strings/cs.js'
+import { bedsOn, capsOf, isWinterNight, nextFreeOf, openNights, totalOf, WINTER } from '../src/avail.js'
+import { seasonText } from '../src/seasons.js'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
@@ -448,25 +450,18 @@ function nearby(h) {
 
 // ---------------------------------------------------------------- availability
 
-function nextFree(h) {
-  const rec = recOf(h)
-  if (!rec || !rec.days) return null
-  for (const d of Object.keys(rec.days).sort()) {
-    const a = rec.days[d]
-    const total = (a[0] || 0) + (a[1] || 0) + (a[2] || 0)
-    if (d >= TODAY && total > 0) return { date: d, free: total }
-  }
-  return null
-}
+// The next night with a free bed, serviced or in the winter room (src/avail.js).
+const nextFree = (h) => nextFreeOf(recOf(h), TODAY)
 // The same for one room type (0 dorm, 1 shared, 2 private), for a page about it.
-function nextFreeIn(h, i) {
-  const rec = recOf(h)
-  if (!rec || !rec.days) return null
-  for (const d of Object.keys(rec.days).sort()) {
-    if (d >= TODAY && rec.days[d][i] > 0) return { date: d, free: rec.days[d][i] }
-  }
-  return null
-}
+const nextFreeIn = (h, i) => nextFreeOf(recOf(h), TODAY, i)
+// "Next free: 21.11.2026 (28 beds)", saying so when they are in the winter room.
+const nextFreeText = (L, nf) => L.t(nf.winter ? 'avail.nextFreeWinter' : 'avail.nextFree', { date: fmtISO(nf.date), n: L.nf(nf.free) })
+
+/* The hut's opening season as words (src/seasons.js), or null. As a sentence
+   for the hut page and the pop-up: "Winter: 12 Jan – 29 Mar 2027. Rest days:
+   Monday and Tuesday." */
+const seasonOf = (L, h) => (h.seasons ? seasonText(h.seasons, { t: L.t, locale: L.locale, today: TODAY }) : null)
+const seasonHTML = (s) => `<b>${esc(`${s.title}.`.replace(/\.\.$/, '.'))}</b>${s.details ? ` ${esc(s.details)}` : ''}`
 const fmtISO = (s) => s.split('-').reverse().join('.')
 
 function generatedLabel(L) {
@@ -480,24 +475,27 @@ function generatedLabel(L) {
 }
 
 function openDays(rec) {
-  return rec && rec.days ? Object.keys(rec.days).filter((d) => d >= TODAY && d < WINDOW_END).sort() : []
+  return openNights(rec).filter((d) => d >= TODAY && d < WINDOW_END)
 }
 
-// The room types a hut has, as [key, index into the availability arrays].
-const typesOf = (rec) => BUCKETS.map((k, j) => [k, j]).filter(([, j]) => rec.caps && rec.caps[j] > 0)
+/* The kinds of bed a hut has, as [key, index into a night's beds]: its room
+   types, and the winter room where it can be booked on nights without a host. */
+const typesOf = (rec) => [...BUCKETS, 'winter'].map((k, j) => [k, j]).filter(([, j]) => capsOf(rec)[j] > 0)
 
 function cellRows(L, rec, iso, phone) {
-  const a = rec.days[iso]
+  const a = bedsOn(rec, iso)
+  const winter = isWinterNight(rec, iso)
   if (phone) {
     /* On a phone a day shows one number: the free beds of the room types
        picked above the calendar, added up. The page is written with all of
        them picked; data-beds holds each type's count, so src/hutpage.js can
        redo the sum when the pick changes. */
     const n = typesOf(rec).reduce((sum, [, j]) => sum + (a[j] || 0), 0)
-    return `<span class="hp-v" data-beds="${BUCKETS.map((_, j) => a[j] || 0).join(',')}">${gauge(n, 9)}<b style="color:${bedColor(n)}">${esc(n > 0 ? L.nf(n) : L.t('avail.full'))}</b></span>`
+    return `<span class="hp-v" data-beds="${a.join(',')}">${gauge(n, 9)}<b style="color:${bedColor(n)}">${esc(n > 0 ? L.nf(n) : L.t('avail.full'))}</b></span>`
   }
-  return BUCKETS.map((k, j) => {
-    if (!(rec.caps && rec.caps[j] > 0)) return ''
+  // A night is either serviced (its room types) or a winter-room night (that row alone).
+  return typesOf(rec).map(([k, j]) => {
+    if ((j === WINTER) !== winter) return ''
     const n = a[j] || 0
     const text = n > 0 ? L.nf(n) : L.t('avail.full')
     const color = bedColor(n)
@@ -511,7 +509,7 @@ function dayCell(L, rec, iso, { phone = false, inMonth = true } = {}) {
   const num = !phone && dnum === 1 ? L.date(iso, { day: 'numeric', month: 'short' }) : String(dnum)
   if (iso < TODAY) return `<div class="hp-day hp-day-past"><span class="hp-num">${esc(num)}</span></div>`
   if (iso >= WINDOW_END) return `<div class="hp-day hp-day-past"><span class="hp-num">${esc(num)}</span></div>`
-  if (rec.days[iso]) return `<div class="hp-day hp-day-open"><span class="hp-num">${esc(num)}</span>${cellRows(L, rec, iso, phone)}</div>`
+  if (bedsOn(rec, iso)) return `<div class="hp-day hp-day-open"><span class="hp-num">${esc(num)}</span>${cellRows(L, rec, iso, phone)}</div>`
   return `<div class="hp-day hp-day-closed"><span class="hp-num">${esc(num)}</span>${phone ? `<span class="hf-vh">${esc(L.t('page.closed'))}</span>` : `<span>${esc(L.t('page.closed'))}</span>`}</div>`
 }
 
@@ -526,13 +524,25 @@ function bookButton(L, h, cls = 'hp-btn') {
 }
 
 function bedsSection(L, h) {
-  if (!isBookable(h)) return ''
+  const season = seasonOf(L, h)
+  if (!isBookable(h)) {
+    // Not bookable online: the season is still worth knowing before you call.
+    return season
+      ? `<section class="hp-section" aria-labelledby="season-h"><h2 class="hp-h2" id="season-h">${esc(L.t('season.heading'))}</h2><p class="hp-season">${seasonHTML(season)}</p></section>`
+      : ''
+  }
   const rec = recOf(h)
   const days = openDays(rec)
   const head = `<div class="hp-section-head"><h2 class="hp-h2" id="beds-h">${esc(L.t('page.beds'))}</h2>${avail.generated ? `<p class="hp-note">${esc(L.t('avail.asOf', { time: generatedLabel(L) }))}</p>` : ''}</div>`
   if (!days.length) {
-    return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal"><p class="hp-summary">${esc(L.t('avail.none'))}</p><div>${bookButton(L, h)}</div></div></section>`
+    /* Nothing open in the next months. Where we know the season, it says why
+       and when, in place of the bare "no open dates". */
+    const why = season ? `<p class="hp-summary hp-season">${seasonHTML(season)}</p>` : `<p class="hp-summary">${esc(L.t('avail.none'))}</p>`
+    return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${why}<div>${bookButton(L, h)}</div></div></section>`
   }
+  const seasonLine = season ? `<p class="hp-season">${seasonHTML(season)}</p>` : ''
+  // Winter-room nights have no host: say what that means under the calendar.
+  const winterNote = days.some((d) => isWinterNight(rec, d)) ? `<p class="hp-note hp-wr-note">${esc(L.t('avail.winterNote'))}</p>` : ''
 
   // Wide screens: five weeks from this week's Monday.
   const start = mondayOf(TODAY)
@@ -585,7 +595,7 @@ function bedsSection(L, h) {
     .join('')
   const phone = `<div class="hp-months" data-months data-full="${esc(L.t('avail.full'))}" data-locale="${NUMBER_LOCALES[L.lang] || L.locale}">${keys}${months}</div>`
 
-  return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${wide}${phone}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div></section>`
+  return `<section class="hp-section" aria-labelledby="beds-h">${head}${seasonLine}<div class="hp-cal">${wide}${phone}${winterNote}<div class="hp-cal-foot">${legend(L)}${bookButton(L, h)}</div></div></section>`
 }
 
 // ---------------------------------------------------------------- description
@@ -754,12 +764,15 @@ function card(L, o, d, filterable = false, lineOf = null) {
     let line = lineOf
       ? lineOf(o)
       : nf
-      ? `<span>${gauge(nf.free, 11)} ${esc(L.t('avail.nextFree', { date: fmtISO(nf.date), n: L.nf(nf.free) }))}</span>`
+      ? `<span>${gauge(nf.free, 11)} ${esc(nextFreeText(L, nf))}</span>`
       : recOf(o)
         ? `<span>${esc(L.t('avail.none'))}</span>`
         : ''
     // With dates picked, the filters put the free beds of those nights here.
     if (filterable) line = `<div class="hp-avail">${line}</div>`
+    // The opening season under it, as on the app's cards; the filters leave it be.
+    const season = seasonOf(L, o)
+    if (season) line = `<div>${line}<div class="hf-season-line">${esc(season.card)}</div></div>`
     bandHTML = `<div class="hf-card-band">${line}<div>${bookButton(L, o)}</div></div>`
   } else if (o.phone) {
     bandHTML = `<div class="hf-card-band hf-card-band-row"><a class="hf-call hf-tap" href="${esc(telHref(o.phone))}" aria-label="${esc(L.t('call.aria', { hut: o.name, phone: phoneLabel(o.phone) }))}">${icon('phone', 14, 1.8)}${esc(L.t('call.label', { phone: phoneLabel(o.phone) }))}</a><span>${esc(L.t('page.notBookable'))}</span></div>`
@@ -863,6 +876,8 @@ const CLIENT_STRINGS = [
   'contact.website', 'contact.websiteAria', 'contact.email', 'contact.emailAria',
   'detail.closeAria', 'detail.hutPageAria', 'detail.description', 'detail.readMore', 'detail.showLess',
   'detail.priceList', 'detail.priceListAria', 'page.nextFree.priv',
+  // the winter room and the opening season
+  'avail.nextFreeWinter', 'avail.winterNote', 'avail.winterSome', 'bucket.winter', 'season.heading',
 ]
 /* What the hut pop-up on a region page shows, as in the app's pop-up: the
    photo, the name (linking to the hut page), how to reach the hut, every tag
@@ -872,6 +887,9 @@ function popData(L, h) {
   const ph = photos[h.id]
   const o = { n: h.name, m: [typeLabel(L, h), regionName(L, regionOf(h)), elevText(L, h)].filter(Boolean).join(' · ') }
   if (builtIds.has(h.id)) o.u = pagePath(L.lang, h)
+  // The opening season, worded here so the page script needs no season rules.
+  const season = seasonOf(L, h)
+  if (season) o.s = [season.title, season.details]
   // The credit as on the hut page: plain to look at, but the photographer links
   // to the photo on Commons and the licence to its terms. HTML, made here.
   if (ph && ph.full) {
@@ -1154,11 +1172,11 @@ const WEEKEND = (() => {
   const nights = dow === 6 ? [from] : [from, addDays(from, 1)]
   return { from, to: addDays(from, nights.length), nights }
 })()
-// The fewest free beds across the weekend's nights; 0 if any night is full or closed.
+// The fewest free beds across the weekend's nights, winter room included; 0 if any night is full or closed.
 const weekendFree = (h) => {
   const rec = recOf(h)
-  if (!rec || !rec.days) return 0
-  return Math.min(...WEEKEND.nights.map((d) => (rec.days[d] ? rec.days[d].reduce((a, b) => a + (b || 0), 0) : 0)))
+  if (!rec) return 0
+  return Math.min(...WEEKEND.nights.map((d) => totalOf(bedsOn(rec, d))))
 }
 const WEEKEND_HUTS = huts.filter((h) => isBookable(h) && builtIds.has(h.id) && weekendFree(h) > 0)
 
@@ -1179,7 +1197,9 @@ function weekendPage(L, assets) {
   // Each card: the beds free every night of the weekend (the filters then show them per room type).
   const lineOf = (o) => {
     const f = weekendFree(o)
-    return `<span>${gauge(f, 11)} ${esc(L.t('page.weekend.cardFree', { count: f, n: L.nf(f) }))}</span>`
+    // Every night of it in the winter room: say so, it has no host.
+    const winter = WEEKEND.nights.every((d) => isWinterNight(recOf(o), d))
+    return `<span>${gauge(f, 11)} ${esc(L.t(winter ? 'page.weekend.cardFreeWinter' : 'page.weekend.cardFree', { count: f, n: L.nf(f) }))}</span>`
   }
   const sections = regions
     .map((r) => {
