@@ -12,6 +12,13 @@ jobs:
         with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: live site check
+      - name: OSM lookup
+        continue-on-error: true
+        timeout-minutes: 5
+        run: python diag-branch/diag/osm2.py
+      - name: fetch availability with winter rooms
         working-directory: site
-        run: python ../diag-branch/diag/live.py
+        run: |
+          cp ../diag-branch/diag/fetch_new.py scripts/fetch_new.py
+          python scripts/fetch_new.py | grep -E "winter-room|fetched|bookable"
+          echo AVAIL_B64_START; gzip -9c public/availability.json | base64 -w0; echo; echo AVAIL_B64_END
