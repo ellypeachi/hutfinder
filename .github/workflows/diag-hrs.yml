@@ -8,11 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { path: diag-branch }
-      - uses: actions/checkout@v4
-        with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: OSM lookup
-        continue-on-error: true
-        timeout-minutes: 5
-        run: python diag-branch/diag/osm2.py
+      - name: live check
+        run: python diag-branch/diag/live2.py
