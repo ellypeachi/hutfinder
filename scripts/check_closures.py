@@ -141,11 +141,13 @@ def main():
     seen = state.get("seen", {})
     today = date.today().isoformat()
 
-    # Only huts we currently show with an open night: a closure elsewhere changes nothing on the site.
+    # Only huts we currently show with a free bed: a closure elsewhere changes nothing on the site.
     todo = []
     for h in huts:
-        rec = avail.get(str(h.get("hr_hut_id")))
-        nights = sorted(d for d in {**(rec or {}).get("days", {}), **(rec or {}).get("wr", {})} if d >= today)
+        rec = avail.get(str(h.get("hr_hut_id"))) or {}
+        # Nights with at least one free bed: a "Full" night isn't a wrong "free".
+        free = [d for d, v in rec.get("days", {}).items() if sum(v) > 0] + [d for d, v in rec.get("wr", {}).items() if v > 0]
+        nights = sorted(d for d in free if d >= today)
         if nights:
             todo.append((h, rec, nights[0]))
     print(f"{len(todo)} huts with an open night")
