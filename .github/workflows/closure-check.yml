@@ -1,0 +1,55 @@
+name: Weekly closure check
+
+# Reads the websites and booking-form messages of the huts we show with free
+# beds, and opens an issue listing new sentences that mention a closure
+# (scripts/check_closures.py says why it only reports and never hides a hut).
+
+on:
+  schedule:
+    - cron: "23 5 * * 1" # Mondays 05:23 UTC, 06:23 in Vienna
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # to remember what was reported (data/closure_check.json)
+  issues: write
+
+concurrency:
+  group: closure-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read hut websites and booking-form messages
+        run: python scripts/check_closures.py --report closure-report.md
+
+      - name: Open an issue if anything is new
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -s closure-report.md ]; then
+            gh label create closure-check --color C2410C --description "Weekly closure check" 2>/dev/null || true
+            gh issue create --title "$(head -1 closure-report.md | sed 's/^# //')" --body-file closure-report.md --label closure-check
+          else
+            echo "Nothing new."
+          fi
+
+      - name: Remember what was reported
+        run: |
+          git config user.name "closure-check-bot"
+          git config user.email "closure-check-bot@users.noreply.github.com"
+          git add data/closure_check.json
+          if git diff --staged --quiet; then
+            echo "No change."
+          else
+            git commit -m "Closure check: remember what was reported [skip ci]"
+            git pull --rebase
+            git push
+          fi
