@@ -195,5 +195,13 @@
       {"season": "summer", "from": "2026-05-31", "to": "2026-09-06"}
     ],
     "seasons_source": "verified"
+  },
+
+  "w255324844": {
+    "_name": "Freschenhaus",
+    "_source": "freschenhaus.at (winter break from 4 Oct 2026, winter room closed until mid-January, winter room booked through Alpenverein Vorarlberg) and the hut's own message on hut-reservation.org (emergency shelter, cots without bedding, no overnight option)",
+    "_checked": "2026-11-20",
+    "winter_room_online": false,
+    "winter_room_online_source": "verified"
   }
 }

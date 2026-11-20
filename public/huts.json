@@ -9313,7 +9313,9 @@
     "beds_dorm": 24,
     "beds_emergency": 0,
     "winterraum_heated": true,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "winter_room_online": false,
+    "winter_room_online_source": "verified"
   },
   {
     "id": "n3063751728",

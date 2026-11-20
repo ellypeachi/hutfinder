@@ -25,7 +25,11 @@ Some huts also take online bookings on nights without a host, when only the
 winter room is open (hut-reservation.org: hutStatus "UNSERVICED"). Those
 nights go in "wr": { "2026-11-21": 28, ... }, the free beds that night, and
 "wrcap" is the most beds the winter room has shown. A hut whose winter room
-never has a bed free gets neither: it can't be booked that way.
+never has a bed free gets neither: it can't be booked that way. Nor does a hut
+set to "winter_room_online": false in data/overrides.json, checked by hand
+because what the booking system sells on those nights isn't a place to sleep
+(Freschenhaus: an emergency shelter with cots, its winter room is booked by
+email).
 src/avail.js reads both for the app and the pages.
 """
 
@@ -93,6 +97,7 @@ def main():
 
     ids = sorted(catmap)
     print(f"{len(ids)} bookable huts")
+    no_wr = {h["hr_hut_id"] for h in huts if h.get("hr_hut_id") and h.get("winter_room_online") is False}
 
     today = date.today()
     cutoff = today.toordinal() + WINDOW_DAYS
@@ -136,10 +141,10 @@ def main():
             cap = cap or d.get("totalSleepingPlaces")
 
         out[str(hid)] = {"cap": cap, "caps": capmap.get(hid, [0, 0, 0]), "days": days}
-        if wrcap > 0 and wr:
+        if wrcap > 0 and wr and hid not in no_wr:
             out[str(hid)].update(wr=wr, wrcap=wrcap)
         ok += 1
-        print(f"  ✓ {hid}: {len(days)} open days" + (f", {len(wr)} winter-room nights" if wrcap > 0 and wr else ""))
+        print(f"  ✓ {hid}: {len(days)} open days" + (f", {len(wr)} winter-room nights" if wrcap > 0 and wr and hid not in no_wr else ""))
         time.sleep(PAUSE)
 
     if fail > len(ids) * MAX_FAIL_SHARE:
