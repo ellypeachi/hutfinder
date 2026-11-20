@@ -43,7 +43,8 @@ you pick dates:
 
 Nights inside a closure checked by hand are dropped too: a hut's "closed"
 ranges in data/overrides.json and the "closed" gaps in its seasons, each
-[from, to] with both nights included.
+[from, to] with both nights included, and a hut's "closed_days": weekdays
+("mon".."sun") it takes no overnight guests, whatever the calendar says.
 """
 
 import http.cookiejar
@@ -146,6 +147,14 @@ def closures_of(h):
     return [(a, b) for a, b in ranges]
 
 
+WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+
+
+def no_nights_on(h):
+    """Weekdays a hut takes no overnight guests (hut-level "closed_days")."""
+    return {WEEKDAYS.index(d) for d in h.get("closed_days") or [] if d in WEEKDAYS}
+
+
 def main():
     huts = json.loads(HUTS.read_text(encoding="utf-8"))
 
@@ -167,6 +176,7 @@ def main():
     print(f"{len(ids)} bookable huts")
     no_wr = {h["hr_hut_id"] for h in huts if h.get("hr_hut_id") and h.get("winter_room_online") is False}
     closures = {h["hr_hut_id"]: closures_of(h) for h in huts if h.get("hr_hut_id") and closures_of(h)}
+    rest_days = {h["hr_hut_id"]: no_nights_on(h) for h in huts if h.get("hr_hut_id") and no_nights_on(h)}
     try:
         form = BookingForm()
     except Exception as e:  # the notes are a bonus: free beds still go out without them
@@ -218,8 +228,8 @@ def main():
         if not (wrcap > 0 and hid not in no_wr):
             wr = {}
         # Closures checked by hand win over the calendar.
-        shut = closures.get(hid, [])
-        inside = lambda d: any(a <= d <= b for a, b in shut)
+        shut, rest = closures.get(hid, []), rest_days.get(hid, set())
+        inside = lambda d: any(a <= d <= b for a, b in shut) or date.fromisoformat(d).weekday() in rest
         days = {d: v for d, v in days.items() if not inside(d)}
         wr = {d: v for d, v in wr.items() if not inside(d)}
 

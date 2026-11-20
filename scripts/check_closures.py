@@ -65,6 +65,7 @@ CLOSURE = re.compile(
     r"closed|closure|closing|renovation|chius[oa]|chiusura)\b",
     re.I,
 )
+SENTENCE_END = re.compile(r"(?<!\d)[.!?] ")
 # Links on a hut's own site worth reading too.
 SUBPAGE = re.compile(r"öffnungszeit|oeffnungszeit|offnungszeit|aktuell|news|neuigkeit|winterraum|opening|saison|season", re.I)
 
@@ -104,12 +105,13 @@ def snippets(text):
     """Sentences with a closure word, the word marked in bold."""
     out = []
     for m in CLOSURE.finditer(text):
-        cut = text.rfind(". ", 0, m.start())
-        start = max(cut + 2 if cut >= 0 else 0, m.start() - 160)
+        # A full stop after a digit is a date ("15. Dezember"), not the end of a sentence.
+        ends = [e.end() for e in SENTENCE_END.finditer(text, 0, m.start())]
+        start = max(ends[-1] if ends else 0, m.start() - 160)
         if start > 0 and text[start - 1].isalnum():  # don't start mid-word
             start = text.find(" ", start) + 1 or start
-        end = text.find(". ", m.end())
-        end = min(end + 1 if end >= 0 else len(text), m.end() + 200)
+        nxt = SENTENCE_END.search(text, m.end())
+        end = min(nxt.start() + 1 if nxt else len(text), m.end() + 200)
         s = text[start:end].strip(" .")
         # A lone word is a menu button ("Schließen"), not news.
         if len(s.split()) >= 3 and all(s not in o and o not in s for o in out):

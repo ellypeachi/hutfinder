@@ -203,5 +203,15 @@
     "_checked": "2026-11-20",
     "winter_room_online": false,
     "winter_room_online_source": "verified"
+  },
+
+  "w121270054": {
+    "_name": "Julius-Seitner-Hütte",
+    "_source": "https://www.alpenverein.at/juliusseitnerhuette/ (holiday 14.12.2026 to 25.12.2026; Tuesdays and Wednesdays either a rest day or 'eingeschränkter Betrieb', which means no overnight stays)",
+    "_checked": "2026-11-20",
+    "closed": [["2026-12-14", "2026-12-25"]],
+    "closed_source": "verified",
+    "closed_days": ["tue", "wed"],
+    "closed_days_source": "verified"
   }
 }

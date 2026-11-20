@@ -18027,7 +18027,19 @@
     "beds_dorm": 18,
     "beds_emergency": 10,
     "winterraum_heated": false,
-    "warden_source": "alpenverein"
+    "warden_source": "alpenverein",
+    "closed": [
+      [
+        "2026-12-14",
+        "2026-12-25"
+      ]
+    ],
+    "closed_source": "verified",
+    "closed_days": [
+      "tue",
+      "wed"
+    ],
+    "closed_days_source": "verified"
   },
   {
     "id": "w209749219",
