@@ -8,7 +8,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: { path: diag-branch }
+      - uses: actions/checkout@v4
+        with: { ref: main, path: site }
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - name: live check
-        run: python diag-branch/diag/live2.py
+      - name: new fetch
+        working-directory: site
+        run: |
+          cp ../diag-branch/diag/fetch_new.py scripts/fetch_availability.py
+          cp ../diag-branch/diag/check_new.py scripts/check_closures.py
+          python scripts/fetch_availability.py 2>&1 | grep -vE "^  ✓ [0-9]+: 0 open days$" | tail -80
+          echo AVAIL_B64_START; gzip -9c public/availability.json | base64 -w0; echo; echo AVAIL_B64_END
+      - name: closure check preview
+        working-directory: site
+        timeout-minutes: 25
+        run: python scripts/check_closures.py --check
