@@ -549,6 +549,8 @@ export function init(root) {
     // The opening season, worded by build_hut_pages.mjs: [title, details].
     if (o.s)
       body += `<div><div class="hf-label">${escHTML(t('season.heading'))}</div><div class="hf-season-title">${escHTML(o.s[0])}</div>${o.s[1] ? `<div class="hf-season-details">${escHTML(o.s[1])}</div>` : ''}</div>`
+    // The hut's own message in the booking form: [text, language].
+    if (o.n) body += `<div><div class="hf-label">${escHTML(t('note.heading'))}</div><p class="hf-hut-note" lang="${o.n[1]}">${escHTML(o.n[0])}</p></div>`
     body += descHTML(o)
     if (o.book) {
       // The free beds of the picked nights, or else the next free date.

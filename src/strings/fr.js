@@ -68,6 +68,7 @@ export const fr = {
   "avail.nextFree": "Prochaine nuit libre : {date} ({n} lits)",
   "avail.none": "Rien de libre dans les prochains mois",
   "season.heading": "Saison d'ouverture",
+  "note.heading": "Message du refuge",
   "season.openUntil": "Ouvert jusqu'au {date}",
   "season.next.summer": "Saison d'été {range}",
   "season.next.winter": "Saison d'hiver {range}",

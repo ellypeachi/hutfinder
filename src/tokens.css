@@ -375,6 +375,8 @@ h3 { font-size: var(--t-name);    line-height: var(--lh-name);    font-variation
 .hf-season-line { margin-top: 0.2rem; }
 .hf-season-title { font-size: 0.9rem; font-weight: 600; color: var(--ink); line-height: 1.4; }
 .hf-season-details { font-size: 0.875rem; color: var(--ink-soft); line-height: 1.45; }
+/* The hut's own message from the booking form, line breaks kept. */
+.hf-hut-note { margin: 0; font-size: 0.875rem; color: var(--ink); line-height: 1.5; white-space: pre-line; }
 .hf-call {
   display: inline-flex;
   align-items: center;

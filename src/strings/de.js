@@ -68,6 +68,7 @@ export const de = {
   "avail.nextFree": "Nächste freie Nacht: {date} ({n} Betten)",
   "avail.none": "In den nächsten Monaten nichts frei",
   "season.heading": "Öffnungszeiten",
+  "note.heading": "Hinweis der Hütte",
   "season.openUntil": "Geöffnet bis {date}",
   "season.next.summer": "Sommersaison {range}",
   "season.next.winter": "Wintersaison {range}",

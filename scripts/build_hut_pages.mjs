@@ -42,7 +42,7 @@ import { de } from '../src/strings/de.js'
 import { nl } from '../src/strings/nl.js'
 import { fr } from '../src/strings/fr.js'
 import { cs } from '../src/strings/cs.js'
-import { bedsOn, capsOf, isWinterNight, nextFreeOf, openNights, totalOf, WINTER } from '../src/avail.js'
+import { bedsOn, capsOf, isWinterNight, nextFreeOf, noteOf, openNights, totalOf, WINTER } from '../src/avail.js'
 import { seasonText } from '../src/seasons.js'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
@@ -461,6 +461,11 @@ const nextFreeText = (L, nf) => L.t(nf.winter ? 'avail.nextFreeWinter' : 'avail.
    for the hut page and the pop-up: "Winter: 12 Jan – 29 Mar 2027. Rest days:
    Monday and Tuesday." */
 const seasonOf = (L, h) => (h.seasons ? seasonText(h.seasons, { t: L.t, locale: L.locale, today: TODAY }) : null)
+// The hut's own message in the booking form, as a paragraph under "Free beds".
+const hutNoteHTML = (L, h) => {
+  const n = noteOf(recOf(h), L.lang)
+  return n ? `<p class="hp-hut-note"><b>${esc(L.t('note.heading'))}:</b> <span lang="${n.lang}">${esc(n.text)}</span></p>` : ''
+}
 const seasonHTML = (s) => `<b>${esc(`${s.title}.`.replace(/\.\.$/, '.'))}</b>${s.details ? ` ${esc(s.details)}` : ''}`
 const fmtISO = (s) => s.split('-').reverse().join('.')
 
@@ -538,9 +543,9 @@ function bedsSection(L, h) {
     /* Nothing open in the next months. Where we know the season, it says why
        and when, in place of the bare "no open dates". */
     const why = season ? `<p class="hp-summary hp-season">${seasonHTML(season)}</p>` : `<p class="hp-summary">${esc(L.t('avail.none'))}</p>`
-    return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${why}<div>${bookButton(L, h)}</div></div></section>`
+    return `<section class="hp-section" aria-labelledby="beds-h">${head}<div class="hp-cal">${why}${hutNoteHTML(L, h)}<div>${bookButton(L, h)}</div></div></section>`
   }
-  const seasonLine = season ? `<p class="hp-season">${seasonHTML(season)}</p>` : ''
+  const seasonLine = (season ? `<p class="hp-season">${seasonHTML(season)}</p>` : '') + hutNoteHTML(L, h)
   // Winter-room nights have no host: say what that means under the calendar.
   const winterNote = days.some((d) => isWinterNight(rec, d)) ? `<p class="hp-note hp-wr-note">${esc(L.t('avail.winterNote'))}</p>` : ''
 
@@ -877,7 +882,7 @@ const CLIENT_STRINGS = [
   'detail.closeAria', 'detail.hutPageAria', 'detail.description', 'detail.readMore', 'detail.showLess',
   'detail.priceList', 'detail.priceListAria', 'page.nextFree.priv',
   // the winter room and the opening season
-  'avail.nextFreeWinter', 'avail.winterNote', 'avail.winterSome', 'bucket.winter', 'season.heading',
+  'avail.nextFreeWinter', 'avail.winterNote', 'avail.winterSome', 'bucket.winter', 'season.heading', 'note.heading',
 ]
 /* What the hut pop-up on a region page shows, as in the app's pop-up: the
    photo, the name (linking to the hut page), how to reach the hut, every tag
@@ -890,6 +895,9 @@ function popData(L, h) {
   // The opening season, worded here so the page script needs no season rules.
   const season = seasonOf(L, h)
   if (season) o.s = [season.title, season.details]
+  // The hut's own message in the booking form: [text, its language].
+  const hutNote = noteOf(recOf(h), L.lang)
+  if (hutNote) o.n = [hutNote.text, hutNote.lang]
   // The credit as on the hut page: plain to look at, but the photographer links
   // to the photo on Commons and the licence to its terms. HTML, made here.
   if (ph && ph.full) {

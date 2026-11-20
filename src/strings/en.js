@@ -71,6 +71,7 @@ export const en = {
   "avail.nextFree": "Next free: {date} ({n} beds)",
   "avail.none": "No open dates in the next months",
   "season.heading": "Opening season",
+  "note.heading": "Note from the hut",
   "season.openUntil": "Open until {date}",
   "season.next.summer": "Summer season {range}",
   "season.next.winter": "Winter season {range}",

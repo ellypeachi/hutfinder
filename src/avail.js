@@ -75,3 +75,16 @@ export function nextFreeOf(rec, from, i) {
   }
   return null
 }
+
+/* The hut's own message in the booking form ("note", read by
+   fetch_availability.py), in the visitor's language where the hut wrote one,
+   else English, else German. One or two words ("Geschlossen", "Winter") say
+   no more than "no open dates" already does, so those don't show.
+   Returns { text, lang } or null. */
+export function noteOf(rec, lang) {
+  const n = rec && rec.note
+  if (!n) return null
+  const pick = [lang, 'en', 'de', 'fr', 'it'].find((l) => n[l])
+  if (!pick || n[pick].split(/\s+/).filter(Boolean).length < 3) return null
+  return { text: n[pick], lang: pick }
+}

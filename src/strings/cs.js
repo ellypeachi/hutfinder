@@ -71,6 +71,7 @@ export const cs = {
   "avail.nextFree": "Nejbližší volná noc: {date} ({n} lůžek)",
   "avail.none": "V nejbližších měsících nic volného",
   "season.heading": "Otevírací sezóna",
+  "note.heading": "Zpráva od chaty",
   "season.openUntil": "Otevřeno do {date}",
   "season.next.summer": "Letní sezóna {range}",
   "season.next.winter": "Zimní sezóna {range}",

@@ -257,6 +257,8 @@ svg.hp-tape { clip-path: none; }
    bare "no open dates": the season itself in ink, the details quiet. */
 .hp-season { margin: 0; color: var(--ink-soft); }
 .hp-season b { font-weight: 600; color: var(--ink); }
+.hp-hut-note { margin: 0; color: var(--ink-soft); white-space: pre-line; }
+.hp-hut-note b { font-weight: 600; color: var(--ink); }
 .hp-section-head {
   display: flex;
   flex-wrap: wrap;

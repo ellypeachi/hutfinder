@@ -4,7 +4,7 @@ import DateRange from "./DateRange";
 import { useI18n } from "./i18n";
 import NightLandscape from "./NightLandscape";
 import LanguageMenu from "./LanguageMenu";
-import { bedsOn, fewestOn, freeEvery, nextFreeOf, WINTER } from "./avail";
+import { bedsOn, fewestOn, freeEvery, nextFreeOf, noteOf, WINTER } from "./avail";
 import { seasonText } from "./seasons";
 /* The data's own values on the left, a strings key on the right. Anything
    the strings file doesn't cover falls back to the raw value rather than
@@ -947,6 +947,8 @@ export default function App() {
     const list = `${import.meta.env.BASE_URL}${lang === "de" ? "de" : "en"}`;
     const rec = recOf(hut);
     const season = seasonOf(hut);
+    // The hut's own message in the booking form (src/avail.js), in its words.
+    const hutNote = noteOf(rec, lang);
     const tags = hutTags(hut, t, {
       dogsPage: `${list}/huts-with-dogs/`,
       privPage: hut.hr_booking_url && rec && rec.caps && rec.caps[BUCKET_IDX.priv] > 0 ? `${list}/huts-with-private-rooms/` : null,
@@ -1043,6 +1045,14 @@ export default function App() {
               <div className="hf-label">{t("season.heading")}</div>
               <div className="hf-season-title">{season.title}</div>
               {season.details ? <div className="hf-season-details">{season.details}</div> : null}
+            </div>
+          ) : null}
+          {hutNote ? (
+            <div>
+              <div className="hf-label">{t("note.heading")}</div>
+              <p className="hf-hut-note" lang={hutNote.lang}>
+                {hutNote.text}
+              </p>
             </div>
           ) : null}
           {notes ? (

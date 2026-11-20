@@ -67,6 +67,7 @@ export const nl = {
   "avail.nextFree": "Eerstvolgende vrije nacht: {date} ({n} bedden)",
   "avail.none": "De komende maanden niets vrij",
   "season.heading": "Openingsseizoen",
+  "note.heading": "Bericht van de hut",
   "season.openUntil": "Open tot {date}",
   "season.next.summer": "Zomerseizoen {range}",
   "season.next.winter": "Winterseizoen {range}",
